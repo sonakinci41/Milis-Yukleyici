@@ -35,7 +35,7 @@ class merkezSinif(QMainWindow):
         altAyirici.addWidget(dugmeParca)
         #Üst parçamıza resmimizi ekliyoruz ve boyutlarını ayarlıyoruz
         #yiginParca ve dugmeParca nn yüksekliğini ayarlıyoruz
-        ustParca.setStyleSheet("background-image: url(merkezArkaplan.png);")
+        ustParca.setStyleSheet("background-image: url("+yol+"/merkezArkaplan.png);")
         ustParca.setFixedWidth(800)
         ustParca.setFixedHeight(125)
         yiginParca.setFixedHeight(300)
@@ -163,20 +163,194 @@ sistem başlamayacaktır."""),0,0,1,2)
         return grubWidget
 
     def kurulumEkraniDestesi(self):
+        self.slaytnumarasi=1
         kurulumWidget=QWidget()
         kurulumKutu=QGridLayout()
         kurulumWidget.setLayout(kurulumKutu)
-        kurulumKutu.addWidget(QLabel("Milis yükleyici kurulum için gerekli bilgileri topladı\nBaşlata tıklamanız halinde kurulum başlayacak\nve değişiklikler disklere uygulanacaktur."),0,0,1,1)
         inceleDugme=QPushButton("İncele")
         inceleDugme.pressed.connect(self.kurulumBilgiFonksiyon)
-        kurulumKutu.addWidget(inceleDugme,0,1,1,1)
+        kurulumKutu.addWidget(inceleDugme,0,0,1,1)
         self.kurulumBaslatDugme=QPushButton("Kurulumu Başlat")
         self.kurulumBaslatDugme.pressed.connect(self.kurulumFonksiyon)
-        kurulumKutu.addWidget(self.kurulumBaslatDugme,0,2,1,1)
+        kurulumKutu.addWidget(self.kurulumBaslatDugme,0,1,1,1)
+        self.slaytci=QLabel("Milis yükleyici kurulum için gerekli bilgileri topladı\nBaşlata tıklamanız halinde kurulum başlayacak\nve değişiklikler disklere uygulanacaktur.")
+        self.slaytci.setAlignment(Qt.AlignCenter)
+        kurulumKutu.addWidget(self.slaytci,1,0,1,2)
+        self.kurulumBilgisiLabel=QLabel()
+        kurulumKutu.addWidget(self.kurulumBilgisiLabel,2,0,1,2)
+
+        self.zaman = QTimer(self)
+        self.zaman.setInterval(30000)
+        self.zaman.timeout.connect(self.slaytDegistir)
+
         return kurulumWidget
 
+    def kurulumSonuclandiDestesi(self):
+        kurulumSonucWidget=QWidget()
+        kurulumSonucKutu=QGridLayout()
+        kurulumSonucWidget.setLayout(kurulumSonucKutu)
+        milisLogo=QLabel()
+        milisLogo.setPixmap(QPixmap(yol+"/Milis_logo.svg").scaled(230,168))
+        milisLogo.setAlignment(Qt.AlignCenter)
+        kurulumSonucKutu.addWidget(milisLogo,0,0,1,1)
+        milisTesekkurYazi=QLabel("Milis Linux Başarıyla Kurulmuştur.\nMilis Linux Kurduğunuz İçin Teşekkür Ederiz.\nİsterseniz sistemi denemeye devam edebilirsiniz\nYada tekrar başlatıp sisteminizi kullanbilirsiniz.")
+        kurulumSonucKutu.addWidget(milisTesekkurYazi,1,0,1,1)
+        milisTesekkurYazi.setAlignment(Qt.AlignCenter)
+        deneDugme=QPushButton("Milis Linux'u denemeye devam et")
+        deneDugme.pressed.connect(self.deneDugmeFonksiyon)
+        kurulumSonucKutu.addWidget(deneDugme,2,0,1,1)
+        tekrarBaslatDugme=QPushButton("Tekrar Başlat")
+        tekrarBaslatDugme.pressed.connect(self.tekrarBaslatDugmeFonksiyon)
+        kurulumSonucKutu.addWidget(tekrarBaslatDugme,3,0,1,1))
+
+        return kurulumSonucWidget
+
+    def deneDugmeFonksiyon(self):
+        sys.exit()
+
+    def tekrarBaslatDugmeFonksiyon(self):
+        os.system("shutdown -r now")
+
+    def slaytDegistir(self):
+        self.slaytci.setPixmap(QPixmap(yol+"/slaytlar/slayt_"+str(self.slaytnumarasi)+".png").scaled(700,219))
+        if self.slaytnumarasi==6:
+            self.slaytnumarasi=1
+        else:
+            self.slaytnumarasi+=1
+        self.zaman.start()
+
     def kurulumFonksiyon(self):
+        self.kurulumBaslatDugme.setDisabled(True)
+        self.geriDugme.setDisabled(True)
+        self.ileriDugme.setDisabled(True)
+        self.slaytDegistir()
         self.kurulum_yaz(self.kurparam,self.kurulum_dosya)
+        kurulum=self.kurulum_oku(self.kurulum_dosya)
+        kbolum=kurulum["disk"]["bolum"]
+        kformat=kurulum["disk"]["format"]
+        kbaglam=kurulum["disk"]["baglam"]
+        ktakas=kurulum["disk"]["takasbolum"]
+        kisim=kurulum["kullanici"]["isim"]
+        ksifre=kurulum["kullanici"]["sifre"]
+        kgrubkur=kurulum["grub"]["kur"]
+
+        if kformat == "evet":
+            self.kurulumBilgisiLabel.setText("Diskler Formatlanıyor...")
+            self.bolumFormatla(kbolum)
+        if ktakas !="":
+            self.kurulumBilgisiLabel.setText("Takas Alanı Ayarlanıyor...")
+            self.takasAyarla(ktakas)
+
+        self.kurulumBilgisiLabel.setText(kbolum+" bölümü "+kbaglam+" bağlamına bağlanıyor...")
+        self.bolumBagla(kbolum,kbaglam)
+
+        self.kurulumBilgisiLabel.setText("Kullanıcı Oluşturuluyor...")
+        self.kullaniciOlustur(kisim,kisim,ksifre)
+
+        self.kurulumBilgisiLabel.setText("Sistem Kopyalanıyor...")
+        self.sistemKopyala(kbaglam)
+
+        self.kurulumBilgisiLabel.setText("initrd Oluşturuluyor...")
+        self.initrdOlustur(kbaglam)
+
+        if kgrubkur == "evet":
+            self.kurulumBilgisiLabel.setText("Grub Kuruluyor...")
+            self.grubKur(kbolum,kbaglam)
+        self.bolumCoz(kbolum)
+
+
+    def bolumCoz(self,hedef):
+        komut="umount -l "+hedef
+        try:
+            os.system(komut)
+        except OSError as e:
+            QMessageBox.warning(self,"Hata",str(e))
+            sys.exit()
+
+        self.kurulumBilgisiLabel.setText(hedef+" çözüldü.")
+
+    def grubKur(self,hedef,baglam):
+        hedef = hedef[:-1]
+        if hedef == "/dev/mmcblk0": #SD kart'a kurulum fix
+            os.system("grub-install --boot-directory="+baglam+"/boot /dev/mmcblk0")
+        else:
+            os.system("grub-install --boot-directory="+baglam+"/boot " + hedef)
+            os.system("chroot "+baglam+" grub-mkconfig -o /boot/grub/grub.cfg")
+        self.kurulumBilgisiLabel.setText("Grub Kuruldu.")
+
+    def initrdOlustur(self,hedef):
+        os.system("mount --bind /dev "+hedef+"/dev")
+        os.system("mount --bind /sys "+hedef+"/sys")
+        os.system("mount --bind /proc "+hedef+"/proc")
+        os.system('chroot '+hedef+' dracut --no-hostonly --add-drivers "ahci" -f /boot/initramfs')
+        self.kurulumBilgisiLabel.setText("initrd Oluşturuldu")
+
+    def sistemKopyala(self,baglam):
+        os.system("clear")
+        komut=""
+        self.kurulumBilgisiLabel.setText("Kurulum .desktop siliniyor...")
+        komut1="rm /root/Masaüstü/kurulum.desktop"
+        komut2="rm /root/Desktop/kurulum.desktop"
+        os.system(komut1)
+        os.system(komut2)
+        self.kurulumBilgisiLabel.setText("Dizinler kopyalanmaya başlanyor...")
+        dizinler=["bin","boot","home","lib","sources","usr","depo","etc","include","lib64","opt","root","sbin","var"]
+        yenidizinler=["srv","proc","tmp","mnt","sys","run","dev","media"]
+        i=0
+        mikdiz=len(dizinler)
+        for dizin in dizinler:
+            i+=1
+            self.kurulumBilgisiLabel.setText(i+"/"+mikdiz+dizin+" kopyalanıyor...")
+            komut="rsync --delete -a --info=progress2 /"+dizin+" "+baglam+" --exclude /proc"
+            self.kurulumBilgisiLabel.setText(dizin+"kopyalandı.")
+            os.system(komut)
+        for ydizin in yenidizinler:
+            self.kurulumBilgisiLabel.setText(ydizin+" oluşturuluyor...")
+            komut="mkdir -p "+baglam+"/"+ydizin
+            os.system(komut)
+            self.kurulumBilgisiLabel.setText(ydizin+" oluşturuldu.")
+
+    def kullaniciOlustur(self,isim,kullisim,kullsifre):
+        os.system("kopar milislinux-"+isim+" "+kullisim)
+        os.system('echo -e "'+kullsifre+'\n'+kullsifre+'" | passwd '+kullisim)
+        ayar_komut="cp -r /root/.config /home/"+kullisim+"/"
+        os.system(ayar_komut)
+        ayar_komut2="cp -r /root/.xinitrc /home/"+kullisim+"/"
+        os.system(ayar_komut2)
+        saat_komut="saat_ayarla_tr"
+        os.system(saat_komut)
+        self.kurulumBilgisiLabel.setText(kullisim+" kullanıcısı başarıyla oluşturuldu.")
+
+    def bolumBagla(self,hedef,baglam):
+        komut="mount "+hedef+" "+baglam
+        try:
+            os.system(komut)
+        except OSError as e:
+            QMessageBox.warning(self,"Hata",str(e))
+            sys.exit()
+        self.kurulumBilgisiLabel.setText(hedef+" "+baglam+" altına bağlandı.")
+
+    def takasAyarla(self,bolum):
+        self.kurulumBilgisiLabel.setText("mkswap "+"/dev/"+bolum)
+        os.system("mkswap "+"/dev/"+bolum)
+        self.kurulumBilgisiLabel.setText('echo "`lsblk -ln -o UUID /dev/' + bolum + '` none swap sw 0 0" | tee -a /etc/fstab')
+        os.system('echo "`lsblk -ln -o UUID /dev/' + bolum + '` none swap sw 0 0" | tee -a /etc/fstab')
+
+    def bolumFormatla(self,hedef):
+        komut="umount -l "+hedef
+        self.kurulumBilgisiLabel.setText(komut)
+        if os.path.exists(hedef):
+            os.system(komut)
+            komut2="mkfs.ext4 -F " + hedef
+            try:
+                os.system(komut2)
+            except OSError as e:
+                QMessageBox.warning(self,"Hata",str(e))
+                sys.exit()
+            self.kurulumBilgisiLabel.setText(hedef+" disk bölümü formatlandı.")
+        else:
+            QMessageBox.warning(self,"Hata","Disk bulunamadı. Program kapatılacak.")
+            sys.exit()
 
     def kurulumBilgiFonksiyon(self):
         QMessageBox.information(self,"Kurulum Bilgisi",yaml.dump(self.kurparam, default_flow_style=False, explicit_start=True))
@@ -435,4 +609,5 @@ def baslatFonk():
     sys.exit(uygulama_.exec_())
 
 if __name__ == "__main__":
+    yol=os.getcwd()
     baslatFonk()
