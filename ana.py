@@ -306,11 +306,13 @@ sistem başlamayacaktır."""),0,0,1,2)
             komut="rsync --delete -a --info=progress2 /"+dizin+" "+baglam+" --exclude /proc"
             self.kurulumBilgisiLabel.setText(dizin+"kopyalandı.")
             os.system(komut)
+            qApp.processEvents()
         for ydizin in yenidizinler:
             self.kurulumBilgisiLabel.setText(ydizin+" oluşturuluyor...")
             komut="mkdir -p "+baglam+"/"+ydizin
             os.system(komut)
             self.kurulumBilgisiLabel.setText(ydizin+" oluşturuldu.")
+            qApp.processEvents()
 
     def kullaniciOlustur(self,isim,kullisim,kullsifre):
         os.system("kopar milislinux-"+isim+" "+kullisim)
