@@ -35,7 +35,7 @@ class merkezSinif(QMainWindow):
         altAyirici.addWidget(dugmeParca)
         #Üst parçamıza resmimizi ekliyoruz ve boyutlarını ayarlıyoruz
         #yiginParca ve dugmeParca nn yüksekliğini ayarlıyoruz
-        ustParca.setStyleSheet("background-image: url("+yol+"/merkezArkaplan.png);")
+        ustParca.setStyleSheet("background-image: url("+yol+"/slaytlar/merkezArkaplan.png);")
         ustParca.setFixedWidth(800)
         ustParca.setFixedHeight(125)
         yiginParca.setFixedHeight(300)
@@ -53,6 +53,7 @@ class merkezSinif(QMainWindow):
         self.yiginWidget.addWidget(self.diskisleriDestesi())
         self.yiginWidget.addWidget(self.grubKurulacakmiDestesi())
         self.yiginWidget.addWidget(self.kurulumEkraniDestesi())
+        self.yiginWidget.addWidget(self.kurulumSonuclandiDestesi())
 
         dugmeKutusu=QHBoxLayout()
         dugmeParca.setLayout(dugmeKutusu)
@@ -190,7 +191,7 @@ sistem başlamayacaktır."""),0,0,1,2)
         kurulumSonucKutu=QGridLayout()
         kurulumSonucWidget.setLayout(kurulumSonucKutu)
         milisLogo=QLabel()
-        milisLogo.setPixmap(QPixmap(yol+"/Milis_logo.svg").scaled(230,168))
+        milisLogo.setPixmap(QPixmap(yol+"/slaytlar/Milis-logo.svg").scaled(230,168))
         milisLogo.setAlignment(Qt.AlignCenter)
         kurulumSonucKutu.addWidget(milisLogo,0,0,1,1)
         milisTesekkurYazi=QLabel("Milis Linux Başarıyla Kurulmuştur.\nMilis Linux Kurduğunuz İçin Teşekkür Ederiz.\nİsterseniz sistemi denemeye devam edebilirsiniz\nYada tekrar başlatıp sisteminizi kullanbilirsiniz.")
@@ -201,7 +202,7 @@ sistem başlamayacaktır."""),0,0,1,2)
         kurulumSonucKutu.addWidget(deneDugme,2,0,1,1)
         tekrarBaslatDugme=QPushButton("Tekrar Başlat")
         tekrarBaslatDugme.pressed.connect(self.tekrarBaslatDugmeFonksiyon)
-        kurulumSonucKutu.addWidget(tekrarBaslatDugme,3,0,1,1))
+        kurulumSonucKutu.addWidget(tekrarBaslatDugme,3,0,1,1)
 
         return kurulumSonucWidget
 
@@ -257,6 +258,7 @@ sistem başlamayacaktır."""),0,0,1,2)
             self.kurulumBilgisiLabel.setText("Grub Kuruluyor...")
             self.grubKur(kbolum,kbaglam)
         self.bolumCoz(kbolum)
+        self.ileriDugmeFonksiyon()
 
 
     def bolumCoz(self,hedef):
