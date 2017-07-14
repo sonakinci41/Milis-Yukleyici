@@ -302,7 +302,7 @@ sistem başlamayacaktır."""),0,0,1,2)
         mikdiz=len(dizinler)
         for dizin in dizinler:
             i+=1
-            self.kurulumBilgisiLabel.setText(i+"/"+mikdiz+dizin+" kopyalanıyor...")
+            self.kurulumBilgisiLabel.setText(str(i)+"/"+str(mikdiz)+dizin+" kopyalanıyor...")
             komut="rsync --delete -a --info=progress2 /"+dizin+" "+baglam+" --exclude /proc"
             self.kurulumBilgisiLabel.setText(dizin+"kopyalandı.")
             os.system(komut)
