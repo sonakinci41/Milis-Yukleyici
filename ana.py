@@ -12,6 +12,7 @@ import os
 import sys
 import site
 import json
+import yaml
 
 class merkezSinif(QMainWindow):
     def __init__(self,ebeveyn=None):
@@ -50,6 +51,8 @@ class merkezSinif(QMainWindow):
         self.yiginWidget.addWidget(self.baslangicKotrolDestesi())
         self.yiginWidget.addWidget(self.kullaniciBilgileriDestesi())
         self.yiginWidget.addWidget(self.diskisleriDestesi())
+        self.yiginWidget.addWidget(self.grubKurulacakmiDestesi())
+        self.yiginWidget.addWidget(self.kurulumEkraniDestesi())
 
         dugmeKutusu=QHBoxLayout()
         dugmeParca.setLayout(dugmeKutusu)
@@ -142,6 +145,54 @@ isteyenler için bulunmaz bir Türkçe açık kaynak projesidir.\n""")
         self.disklerAcilirDegistiFonksiyon()
         return disklerWidget
 
+    def grubKurulacakmiDestesi(self):
+        grubWidget=QWidget()
+        grubKutu=QGridLayout()
+        grubWidget.setLayout(grubKutu)
+
+        grubKutu.addWidget(QLabel("""Sisteme Grub kurmak istiyormusunuz?\n Grub bir linux önyükleyicisidir\n
+Eğer sisteminizde kurulu bir linux dağıtımı var ise ve disk biçimlendirilmemişse grub kurmayabilirsiniz.\n
+Eğer sisteminizde kurulu bir linux dağıtımı yok veya disk biçimlendirilmişse grub kurmadığınız takdirde\n
+sistem başlamayacaktır."""),0,0,1,2)
+        self.grubKurDugme=QPushButton("Grub Kur")
+        self.grubKurDugme.pressed.connect(self.grubKurFonksiyon)
+        grubKutu.addWidget(self.grubKurDugme,1,0,1,1)
+        self.grubKurmaDugme=QPushButton("Grub Kurma")
+        self.grubKurmaDugme.pressed.connect(self.grubKurmaFonksiyon)
+        grubKutu.addWidget(self.grubKurmaDugme,1,1,1,1)
+        return grubWidget
+
+    def kurulumEkraniDestesi(self):
+        kurulumWidget=QWidget()
+        kurulumKutu=QGridLayout()
+        kurulumWidget.setLayout(kurulumKutu)
+        kurulumKutu.addWidget(QLabel("Milis yükleyici kurulum için gerekli bilgileri topladı\nBaşlata tıklamanız halinde kurulum başlayacak\nve değişiklikler disklere uygulanacaktur."),0,0,1,1)
+        inceleDugme=QPushButton("İncele")
+        inceleDugme.pressed.connect(self.kurulumBilgiFonksiyon)
+        kurulumKutu.addWidget(inceleDugme,0,1,1,1)
+        self.kurulumBaslatDugme=QPushButton("Kurulumu Başlat")
+        self.kurulumBaslatDugme.pressed.connect(self.kurulumFonksiyon)
+        kurulumKutu.addWidget(self.kurulumBaslatDugme,0,2,1,1)
+        return kurulumWidget
+
+    def kurulumFonksiyon(self):
+        self.kurulum_yaz(self.kurparam,self.kurulum_dosya)
+
+    def kurulumBilgiFonksiyon(self):
+        QMessageBox.information(self,"Kurulum Bilgisi",yaml.dump(self.kurparam, default_flow_style=False, explicit_start=True))
+
+    def grubKurFonksiyon(self):
+        self.kurparam["grub"]["kur"]="evet"
+        self.grubKurDugme.setDisabled(True)
+        self.grubKurmaDugme.setDisabled(False)
+        self.ileriDugme.setDisabled(False)
+
+    def grubKurmaFonksiyon(self):
+        self.kurparam["grub"]["kur"]="hayir"
+        self.grubKurDugme.setDisabled(False)
+        self.grubKurmaDugme.setDisabled(True)
+        self.ileriDugme.setDisabled(False)
+
     def disklerAcilirDegistiFonksiyon(self):
         self.disklerListe.clear()
         for i in self.diskler:
@@ -157,12 +208,13 @@ isteyenler için bulunmaz bir Türkçe açık kaynak projesidir.\n""")
         diskOzellikPencere=diskOzellikleriSinif(self)
         diskOzellikPencere.exec_()
         if self.sistemDiski!="":
-#            self.kurparam["disk"]["bolum"]="/dev/"+self.sistemDiski[0]
-#            self.kurparam["disk"]["format"]=self.sistemDiski[1]
-            pass
-        elif self.takasDiski!="":
-#            self.kurparam["disk"]["takasbolum"]="/dev/"+self.takasDiski[0]
-            pass
+            self.kurparam["disk"]["bolum"]="/dev/"+self.sistemDiski[0]
+            self.kurparam["disk"]["format"]=self.sistemDiski[1]
+        if self.takasDiski!="":
+            self.kurparam["disk"]["takasbolum"]="/dev/"+self.takasDiski[0]
+        else:
+            self.kurparam["disk"]["takasbolum"]=""
+
         if self.sistemDiski=="":
             pass
         elif self.sistemDiski!="" and self.takasDiski=="":
@@ -228,8 +280,8 @@ isteyenler için bulunmaz bir Türkçe açık kaynak projesidir.\n""")
             donut += "Yazdığınız Şifreler Birbirinden Farklı\n"
         if donut == "":
             self.kullaniciBilgiLabel.setText("Teşekkürler Lütfen Adınızı Ve Şifrenizi Unutmayınız")
-#            self.kurparam["kullanici"]["isim"]=ad
-#            self.kurparam["kullanici"]["sifre"]=sifre_1
+            self.kurparam["kullanici"]["isim"]=ad
+            self.kurparam["kullanici"]["sifre"]=sifre_1
             self.ileriDugme.setDisabled(False)
         else:
             self.kullaniciBilgiLabel.setText(donut)
@@ -280,16 +332,21 @@ isteyenler için bulunmaz bir Türkçe açık kaynak projesidir.\n""")
 #                cikti+=self.komutCalistirFonksiyon(kur+kont)+"\n"
 #                self.ciktiYazilari.setText(cikti)
 #
-#        f = open("/tmp/kurulum.log","w")
-#        _kurulum_dosya="/root/ayarlar/kurulum.yml"
-#        kurulum_dosya=""
-#        if not os.path.exists(_kurulum_dosya):
-#            QMessageBox.warning(self,"Hata","Milis kurulumu için gerekli olan /root/ayarlar/kurulum.yml\n dosyası bulunamadı. Milis yükleyici sonladırılacak!")
-#            sys.exit()
-#        else:
-#            self.ciktiYazilari.setText(self.komutCalistirFonksiyon("cp "+_kurulum_dosya+" /opt/kurulum.yml"))
-#            self.kurulum_dosya="/opt/kurulum.yml"
-#            self.kurparam=self.kurulum_oku(kurulum_dosya)
+        cikti+="#Log dosyası oluşturuluyor...\n"
+        f = open("/tmp/kurulum.log","w")
+        _kurulum_dosya="/root/ayarlar/kurulum.yml"
+        self.kurulum_dosya=""
+        if not os.path.exists(_kurulum_dosya):
+            QMessageBox.warning(self,"Hata","Milis kurulumu için gerekli olan /root/ayarlar/kurulum.yml\n dosyası bulunamadı. Milis yükleyici sonladırılacak!")
+            sys.exit()
+        else:
+            cikti+="#Yml dosyası kopyalanıyor...\n"
+            cikti+= self.komutCalistirFonksiyon("cp "+_kurulum_dosya+" /opt/kurulum.yml")
+            self.ciktiYazilari.setText(cikti)
+            self.kurulum_dosya="/opt/kurulum.yml"
+            self.kurparam=self.kurulum_oku(self.kurulum_dosya)
+            cikti+="============================\nİşlem tamamlandı devam edebilirsiniz"
+            self.ciktiYazilari.setText(cikti)
         self.ileriDugme.setDisabled(False)
 
     def ileriDugmeFonksiyon(self):
@@ -319,6 +376,16 @@ isteyenler için bulunmaz bir Türkçe açık kaynak projesidir.\n""")
         with open(kurulumdos, 'r') as f:
             param = yaml.load(f)
         return param
+
+    def kurulum_yaz(self,param,kurulumdos):
+        with open(kurulumdos, 'w') as outfile:
+            yaml.dump(param, outfile, default_flow_style=False,allow_unicode=True)
+
+
+
+
+
+
 
 class diskOzellikleriSinif(QDialog):
     def __init__(self,ebeveyn=None):
