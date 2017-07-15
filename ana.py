@@ -38,8 +38,8 @@ class merkezSinif(QMainWindow):
         ustParca.setStyleSheet("background-image: url("+yol+"/slaytlar/merkezArkaplan.png);")
         ustParca.setFixedWidth(800)
         ustParca.setFixedHeight(125)
-        yiginParca.setFixedHeight(300)
-        dugmeParca.setFixedHeight(75)
+        yiginParca.setFixedHeight(325)
+        dugmeParca.setFixedHeight(50)
 
         self.yiginNumarasi=0
         self.sonyigin=0
@@ -169,16 +169,24 @@ sistem başlamayacaktır."""),0,0,1,2)
         kurulumKutu=QGridLayout()
         kurulumWidget.setLayout(kurulumKutu)
         inceleDugme=QPushButton("İncele")
+        inceleDugme.setFixedHeight(25)
         inceleDugme.pressed.connect(self.kurulumBilgiFonksiyon)
         kurulumKutu.addWidget(inceleDugme,0,0,1,1)
         self.kurulumBaslatDugme=QPushButton("Kurulumu Başlat")
+        self.kurulumBaslatDugme.setFixedHeight(25)
         self.kurulumBaslatDugme.pressed.connect(self.kurulumFonksiyon)
         kurulumKutu.addWidget(self.kurulumBaslatDugme,0,1,1,1)
         self.slaytci=QLabel("Milis yükleyici kurulum için gerekli bilgileri topladı\nBaşlata tıklamanız halinde kurulum başlayacak\nve değişiklikler disklere uygulanacaktur.")
         self.slaytci.setAlignment(Qt.AlignCenter)
+        self.slaytci.setFixedWidth(800)
+        self.slaytci.setFixedHeight(250)
         kurulumKutu.addWidget(self.slaytci,1,0,1,2)
         self.kurulumBilgisiLabel=QLabel()
+        self.kurulumBilgisiLabel.setFixedHeight(25)
         kurulumKutu.addWidget(self.kurulumBilgisiLabel,2,0,1,2)
+        self.surecCubugu = QProgressBar()
+        self.surecCubugu.setFixedHeight(25)
+        kurulumKutu.addWidget(self.surecCubugu,3,0,1,2)
 
         self.zaman = QTimer(self)
         self.zaman.setInterval(30000)
@@ -236,27 +244,35 @@ sistem başlamayacaktır."""),0,0,1,2)
         kgrubkur=kurulum["grub"]["kur"]
 
         if kformat == "evet":
+            self.surecCubugu.setValue(0)
             self.kurulumBilgisiLabel.setText("Diskler Formatlanıyor...")
             self.bolumFormatla(kbolum)
         if ktakas !="":
+            self.surecCubugu.setValue(0)
             self.kurulumBilgisiLabel.setText("Takas Alanı Ayarlanıyor...")
             self.takasAyarla(ktakas)
 
+        self.surecCubugu.setValue(0)
         self.kurulumBilgisiLabel.setText(kbolum+" bölümü "+kbaglam+" bağlamına bağlanıyor...")
         self.bolumBagla(kbolum,kbaglam)
 
+        self.surecCubugu.setValue(0)
         self.kurulumBilgisiLabel.setText("Kullanıcı Oluşturuluyor...")
         self.kullaniciOlustur(kisim,kisim,ksifre)
 
+        self.surecCubugu.setValue(0)
         self.kurulumBilgisiLabel.setText("Sistem Kopyalanıyor...")
         self.sistemKopyala(kbaglam)
 
+        self.surecCubugu.setValue(0)
         self.kurulumBilgisiLabel.setText("initrd Oluşturuluyor...")
         self.initrdOlustur(kbaglam)
 
         if kgrubkur == "evet":
+            self.surecCubugu.setValue(0)
             self.kurulumBilgisiLabel.setText("Grub Kuruluyor...")
             self.grubKur(kbolum,kbaglam)
+        self.surecCubugu.setValue(0)
         self.bolumCoz(kbolum)
         self.ileriDugmeFonksiyon()
 
@@ -268,23 +284,30 @@ sistem başlamayacaktır."""),0,0,1,2)
         except OSError as e:
             QMessageBox.warning(self,"Hata",str(e))
             sys.exit()
-
+        self.surecCubugu.setValue(100)
         self.kurulumBilgisiLabel.setText(hedef+" çözüldü.")
 
     def grubKur(self,hedef,baglam):
         hedef = hedef[:-1]
         if hedef == "/dev/mmcblk0": #SD kart'a kurulum fix
             os.system("grub-install --boot-directory="+baglam+"/boot /dev/mmcblk0")
+            self.surecCubugu.setValue(100)
         else:
             os.system("grub-install --boot-directory="+baglam+"/boot " + hedef)
+            self.surecCubugu.setValue(50)
             os.system("chroot "+baglam+" grub-mkconfig -o /boot/grub/grub.cfg")
+            self.surecCubugu.setValue(100)
         self.kurulumBilgisiLabel.setText("Grub Kuruldu.")
 
     def initrdOlustur(self,hedef):
         os.system("mount --bind /dev "+hedef+"/dev")
+        self.surecCubugu.setValue(25)
         os.system("mount --bind /sys "+hedef+"/sys")
+        self.surecCubugu.setValue(50)
         os.system("mount --bind /proc "+hedef+"/proc")
+        self.surecCubugu.setValue(75)
         os.system('chroot '+hedef+' dracut --no-hostonly --add-drivers "ahci" -f /boot/initramfs')
+        self.surecCubugu.setValue(100)
         self.kurulumBilgisiLabel.setText("initrd Oluşturuldu")
 
     def sistemKopyala(self,baglam):
@@ -304,31 +327,50 @@ sistem başlamayacaktır."""),0,0,1,2)
             i+=1
             self.kurulumBilgisiLabel.setText(str(i)+"/"+str(mikdiz)+dizin+" kopyalanıyor...")
             komut="rsync --delete -a --info=progress2 /"+dizin+" "+baglam+" --exclude /proc"
-            self.kurulumBilgisiLabel.setText(dizin+"kopyalandı.")
             os.system(komut)
+            yuzde = str(round(i/mikdiz,2))[2:]
+            if len(yuzde) == 1:
+                yuzde = yuzde + "0"
+            self.surecCubugu.setValue(int(yuzde))
+            self.kurulumBilgisiLabel.setText(dizin+" kopyalandı.")
             qApp.processEvents()
+        self.surecCubugu.setValue(0)
+        self.kurulumBilgisiLabel.setText("Yeni Dizinler Oluşturuluyor...")
+        i=0
+        mikdiz=len(yenidizinler)
         for ydizin in yenidizinler:
+            i+=1
             self.kurulumBilgisiLabel.setText(ydizin+" oluşturuluyor...")
             komut="mkdir -p "+baglam+"/"+ydizin
             os.system(komut)
+            yuzde = str(round(i/mikdiz,2))[2:]
+            if len(yuzde) == 1:
+                yuzde = yuzde + "0"
+            self.surecCubugu.setValue(int(yuzde))
             self.kurulumBilgisiLabel.setText(ydizin+" oluşturuldu.")
             qApp.processEvents()
 
     def kullaniciOlustur(self,isim,kullisim,kullsifre):
         os.system("kopar milislinux-"+isim+" "+kullisim)
+        self.surecCubugu.setValue(20)
         os.system('echo -e "'+kullsifre+'\n'+kullsifre+'" | passwd '+kullisim)
+        self.surecCubugu.setValue(40)
         ayar_komut="cp -r /root/.config /home/"+kullisim+"/"
         os.system(ayar_komut)
+        self.surecCubugu.setValue(60)
         ayar_komut2="cp -r /root/.xinitrc /home/"+kullisim+"/"
         os.system(ayar_komut2)
+        self.surecCubugu.setValue(80)
         saat_komut="saat_ayarla_tr"
         os.system(saat_komut)
+        self.surecCubugu.setValue(100)
         self.kurulumBilgisiLabel.setText(kullisim+" kullanıcısı başarıyla oluşturuldu.")
 
     def bolumBagla(self,hedef,baglam):
         komut="mount "+hedef+" "+baglam
         try:
             os.system(komut)
+            self.surecCubugu.setValue(100)
         except OSError as e:
             QMessageBox.warning(self,"Hata",str(e))
             sys.exit()
@@ -345,9 +387,11 @@ sistem başlamayacaktır."""),0,0,1,2)
         self.kurulumBilgisiLabel.setText(komut)
         if os.path.exists(hedef):
             os.system(komut)
+            self.surecCubugu.setValue(50)
             komut2="mkfs.ext4 -F " + hedef
             try:
                 os.system(komut2)
+                self.surecCubugu.setValue(100)
             except OSError as e:
                 QMessageBox.warning(self,"Hata",str(e))
                 sys.exit()
