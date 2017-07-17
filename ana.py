@@ -6,12 +6,9 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import subprocess
-import re
-import crypt
 import os
 import sys
-import site
-import json
+#import site
 import yaml
 
 class merkezSinif(QMainWindow):
@@ -326,7 +323,7 @@ sistem başlamayacaktır."""),0,0,1,2)
         for dizin in dizinler:
             i+=1
             self.kurulumBilgisiLabel.setText(str(i)+"/"+str(mikdiz)+dizin+" kopyalanıyor...")
-            komut="rsync --delete -a --info=progress2 /"+dizin+" "+baglam+" --exclude /proc"
+            komut="rsync --delete -a /"+dizin+" "+baglam+" --exclude /proc"
             os.system(komut)
             yuzde = str(round(i/mikdiz,2))[2:]
             if len(yuzde) == 1:
