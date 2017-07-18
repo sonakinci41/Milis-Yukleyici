@@ -23,9 +23,9 @@ class merkezSinif(QMainWindow):
         self.setFixedWidth(800)
         self.setFixedHeight(500)
         #Üst ve alt parçaya birer widget atatyacağız
-        ustParca=QWidget()
+        self.ustParca=QWidget()
         altAyirici=QSplitter(Qt.Vertical)
-        anaAyirici.addWidget(ustParca)
+        anaAyirici.addWidget(self.ustParca)
         anaAyirici.addWidget(altAyirici)
         yiginParca=QWidget()
         dugmeParca=QWidget()
@@ -33,9 +33,9 @@ class merkezSinif(QMainWindow):
         altAyirici.addWidget(dugmeParca)
         #Üst parçamıza resmimizi ekliyoruz ve boyutlarını ayarlıyoruz
         #yiginParca ve dugmeParca nn yüksekliğini ayarlıyoruz
-        ustParca.setStyleSheet("background-image: url("+yol+"/slaytlar/merkezArkaplan.png);")
-        ustParca.setFixedWidth(800)
-        ustParca.setFixedHeight(125)
+        self.ustParca.setStyleSheet("background-image: url("+yol+"/slaytlar/merkezArkaplan_1.png);")
+        self.ustParca.setFixedWidth(800)
+        self.ustParca.setFixedHeight(125)
         yiginParca.setFixedHeight(325)
         dugmeParca.setFixedHeight(50)
 
@@ -214,6 +214,9 @@ sistem başlamayacaktır."""),0,0,1,2)
 
         return kurulumSonucWidget
 
+    def ustParcaGuncelle(self,numara):
+        self.ustParca.setStyleSheet("background-image: url("+yol+"/slaytlar/merkezArkaplan_"+numara+".png);")
+
     def deneDugmeFonksiyon(self):
         sys.exit()
 
@@ -332,7 +335,6 @@ sistem başlamayacaktır."""),0,0,1,2)
         dizinler=["bin","boot","home","lib","sources","usr","depo","etc","lib64","opt","root","sbin","var"]
         yenidizinler=["srv","proc","tmp","mnt","sys","run","dev","media"]
         self.toplamBoyutTespit(dizinler)
-        print(self.toplamBoyut)
         self.baglam=baglam
         self.prgresDongu=True
         progresThread=progressAyarciSinif(self)
@@ -595,6 +597,7 @@ sistem başlamayacaktır."""),0,0,1,2)
             self.ileriDugme.setDisabled(True)
         elif self.sonyigin==self.yiginNumarasi:
             self.ileriDugme.setDisabled(True)
+        self.ustParcaGuncelle(str(self.yiginNumarasi+1))
         self.yiginWidget.setCurrentIndex(self.yiginNumarasi)
 
     def geriDugmeFonksiyon(self):
@@ -603,6 +606,7 @@ sistem başlamayacaktır."""),0,0,1,2)
             self.geriDugme.setDisabled(True)
         if self.sonyigin>self.yiginNumarasi:
             self.ileriDugme.setDisabled(False)
+        self.ustParcaGuncelle(str(self.yiginNumarasi+1))
         self.yiginWidget.setCurrentIndex(self.yiginNumarasi)
 
     def komutCalistirFonksiyon(self,komut):
@@ -631,7 +635,6 @@ class progressAyarciSinif(QThread):
         while self.ebeveyn.prgresDongu:
             self.guncelle()
             time.sleep(1)
-        print("basladi")
 
     def guncelle(self):
         boyut=self.boyutTespit()
@@ -641,7 +644,6 @@ class progressAyarciSinif(QThread):
             if len(yuzde) == 1:
                 yuzde = yuzde + "0"
             self.ebeveyn.surecCubugu.setValue(int(yuzde))
-            print(yuzde)
         else:
             self.ebeveyn.surecCubugu.setValue(100)
 
