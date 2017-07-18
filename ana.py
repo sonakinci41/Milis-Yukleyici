@@ -10,6 +10,7 @@ import os
 import sys
 #import site
 import yaml
+import time
 
 class merkezSinif(QMainWindow):
     def __init__(self,ebeveyn=None):
@@ -163,27 +164,29 @@ sistem başlamayacaktır."""),0,0,1,2)
     def kurulumEkraniDestesi(self):
         self.slaytnumarasi=1
         kurulumWidget=QWidget()
-        kurulumKutu=QGridLayout()
+        kurulumKutu=QVBoxLayout()
         kurulumWidget.setLayout(kurulumKutu)
+        inceleKutu=QHBoxLayout()
+        kurulumKutu.addLayout(inceleKutu)
         inceleDugme=QPushButton("İncele")
         inceleDugme.setFixedHeight(25)
         inceleDugme.pressed.connect(self.kurulumBilgiFonksiyon)
-        kurulumKutu.addWidget(inceleDugme,0,0,1,1)
+        inceleKutu.addWidget(inceleDugme)
         self.kurulumBaslatDugme=QPushButton("Kurulumu Başlat")
         self.kurulumBaslatDugme.setFixedHeight(25)
         self.kurulumBaslatDugme.pressed.connect(self.kurulumFonksiyon)
-        kurulumKutu.addWidget(self.kurulumBaslatDugme,0,1,1,1)
+        inceleKutu.addWidget(self.kurulumBaslatDugme)
         self.slaytci=QLabel("Milis yükleyici kurulum için gerekli bilgileri topladı\nBaşlata tıklamanız halinde kurulum başlayacak\nve değişiklikler disklere uygulanacaktur.")
         self.slaytci.setAlignment(Qt.AlignCenter)
         self.slaytci.setFixedWidth(800)
-        self.slaytci.setFixedHeight(250)
-        kurulumKutu.addWidget(self.slaytci,1,0,1,2)
+        self.slaytci.setFixedHeight(190)
+        kurulumKutu.addWidget(self.slaytci)
         self.kurulumBilgisiLabel=QLabel()
         self.kurulumBilgisiLabel.setFixedHeight(25)
-        kurulumKutu.addWidget(self.kurulumBilgisiLabel,2,0,1,2)
+        kurulumKutu.addWidget(self.kurulumBilgisiLabel)
         self.surecCubugu = QProgressBar()
         self.surecCubugu.setFixedHeight(25)
-        kurulumKutu.addWidget(self.surecCubugu,3,0,1,2)
+        kurulumKutu.addWidget(self.surecCubugu)
 
         self.zaman = QTimer(self)
         self.zaman.setInterval(30000)
@@ -218,7 +221,7 @@ sistem başlamayacaktır."""),0,0,1,2)
         os.system("shutdown -r now")
 
     def slaytDegistir(self):
-        self.slaytci.setPixmap(QPixmap(yol+"/slaytlar/slayt_"+str(self.slaytnumarasi)+".png").scaled(700,219))
+        self.slaytci.setPixmap(QPixmap(yol+"/slaytlar/slayt_"+str(self.slaytnumarasi)+".png").scaled(607,190))
         if self.slaytnumarasi==6:
             self.slaytnumarasi=1
         else:
@@ -273,6 +276,16 @@ sistem başlamayacaktır."""),0,0,1,2)
         self.bolumCoz(kbolum)
         self.ileriDugmeFonksiyon()
 
+    def toplamBoyutTespit(self,liste):
+        self.toplamBoyut=[]
+        for i in liste:
+            if os.path.exists("/"+i):
+                komut = "du -s /"+i
+                donut_=self.komutCalistirFonksiyon(komut)
+                donut=donut_.split("\n")
+                boyut_=donut[len(donut)-2]
+                boyut=boyut_.split("\t")
+                self.toplamBoyut.append(int(boyut[0]))
 
     def bolumCoz(self,hedef):
         komut="umount -l "+hedef
@@ -316,35 +329,40 @@ sistem başlamayacaktır."""),0,0,1,2)
         os.system(komut1)
         os.system(komut2)
         self.kurulumBilgisiLabel.setText("Dizinler kopyalanmaya başlanyor...")
-        dizinler=["bin","boot","home","lib","sources","usr","depo","etc","include","lib64","opt","root","sbin","var"]
+        dizinler=["bin","boot","home","lib","sources","usr","depo","etc","lib64","opt","root","sbin","var"]
         yenidizinler=["srv","proc","tmp","mnt","sys","run","dev","media"]
-        i=0
+        self.toplamBoyutTespit(dizinler)
+        print(self.toplamBoyut)
+        self.baglam=baglam
+        self.prgresDongu=True
+        progresThread=progressAyarciSinif(self)
+        progresThread.start()
+
+        self.dizinSirasi=0
         mikdiz=len(dizinler)
         for dizin in dizinler:
-            i+=1
-            self.kurulumBilgisiLabel.setText(str(i)+"/"+str(mikdiz)+dizin+" kopyalanıyor...")
+            self.kopyalanacakDizinAdi=dizin
+            self.dizinSirasi+=1
+            self.kurulumBilgisiLabel.setText(str(self.dizinSirasi)+"/"+str(mikdiz)+dizin+" kopyalanıyor...")
             komut="rsync --delete -a /"+dizin+" "+baglam+" --exclude /proc"
             os.system(komut)
-            yuzde = str(round(i/mikdiz,2))[2:]
-            if len(yuzde) == 1:
-                yuzde = yuzde + "0"
-            self.surecCubugu.setValue(int(yuzde))
-            self.kurulumBilgisiLabel.setText(dizin+" kopyalandı.")
             qApp.processEvents()
+
         self.surecCubugu.setValue(0)
         self.kurulumBilgisiLabel.setText("Yeni Dizinler Oluşturuluyor...")
+
+        self.prgresDongu=False
         i=0
         mikdiz=len(yenidizinler)
         for ydizin in yenidizinler:
             i+=1
-            self.kurulumBilgisiLabel.setText(ydizin+" oluşturuluyor...")
             komut="mkdir -p "+baglam+"/"+ydizin
             os.system(komut)
             yuzde = str(round(i/mikdiz,2))[2:]
             if len(yuzde) == 1:
                 yuzde = yuzde + "0"
             self.surecCubugu.setValue(int(yuzde))
-            self.kurulumBilgisiLabel.setText(ydizin+" oluşturuldu.")
+            self.kurulumBilgisiLabel.setText(dizin+" kopyalandı.")
             qApp.processEvents()
 
     def kullaniciOlustur(self,isim,kullisim,kullsifre):
@@ -588,8 +606,11 @@ sistem başlamayacaktır."""),0,0,1,2)
         self.yiginWidget.setCurrentIndex(self.yiginNumarasi)
 
     def komutCalistirFonksiyon(self,komut):
-        out = subprocess.check_output(komut,stderr=subprocess.STDOUT,shell=True,universal_newlines=True)
-        return out.replace("\b","")
+        try:
+            out = subprocess.check_output(komut,stderr=subprocess.STDOUT,shell=True,universal_newlines=True)
+            return out.replace("\b","")
+        except subprocess.CalledProcessError as e:
+            return e.output
 
     def kurulum_oku(self,kurulumdos):
         with open(kurulumdos, 'r') as f:
@@ -601,9 +622,39 @@ sistem başlamayacaktır."""),0,0,1,2)
             yaml.dump(param, outfile, default_flow_style=False,allow_unicode=True)
 
 
+class progressAyarciSinif(QThread):
+    def __init__(self,ebeveyn=None):
+        super(progressAyarciSinif,self).__init__(ebeveyn)
+        self.ebeveyn = ebeveyn
 
+    def run(self):
+        while self.ebeveyn.prgresDongu:
+            self.guncelle()
+            time.sleep(1)
+        print("basladi")
 
+    def guncelle(self):
+        boyut=self.boyutTespit()
+        toplamBoyut=self.ebeveyn.toplamBoyut[self.ebeveyn.dizinSirasi-1]
+        if boyut<toplamBoyut:
+            yuzde = str(round(boyut/toplamBoyut,2))[2:]
+            if len(yuzde) == 1:
+                yuzde = yuzde + "0"
+            self.ebeveyn.surecCubugu.setValue(int(yuzde))
+            print(yuzde)
+        else:
+            self.ebeveyn.surecCubugu.setValue(100)
 
+    def boyutTespit(self):
+        try:
+            komut = "du -s "+self.ebeveyn.baglam+"/"+self.ebeveyn.kopyalanacakDizinAdi
+            donut_=self.ebeveyn.komutCalistirFonksiyon(komut)
+            donut=donut_.split("\n")
+            boyut_=donut[len(donut)-2]
+            boyut=boyut_.split("\t")
+            return int(boyut[0])
+        except:
+            return 0
 
 
 class diskOzellikleriSinif(QDialog):
