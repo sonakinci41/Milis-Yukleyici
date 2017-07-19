@@ -15,6 +15,7 @@ import time
 class merkezSinif(QMainWindow):
     def __init__(self,ebeveyn=None):
         super(merkezSinif,self).__init__(ebeveyn)
+        self.setWindowIcon(QIcon(yol+"/slaytlar/icon.svg"))
         #Merkez pencereyi 2 parçaya böleceğiz üst ve alt parça olarak
         #Bu bölümü merkze widget olarak atıyoruz
         #Pencereyi 800px 500px e sabitledik
