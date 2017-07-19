@@ -136,8 +136,13 @@ isteyenler için bulunmaz bir Türkçe açık kaynak projesidir.\n""")
         disklerKutu.addWidget(QLabel("Diskler"),0,0,1,1)
         self.disklerAcilirKutu=QComboBox()
         disklerKutu.addWidget(self.disklerAcilirKutu,0,1,1,1)
+        diskDuzenleDugme=QPushButton("Düzenle")
+        diskDuzenleDugme.pressed.connect(self.diskDuzenleFonksiyon)
+        disklerKutu.addWidget(diskDuzenleDugme,0,2,1,1)
+        yenileDugme=QPushButton("Yenile")
+        yenileDugme.pressed.connect(self.disklerYenileFonksiyon)
         self.disklerListe=QListWidget()
-        disklerKutu.addWidget(self.disklerListe,1,0,1,2)
+        disklerKutu.addWidget(self.disklerListe,1,0,1,3)
         self.diskler = self.disklerListesiSonuc()
         self.disklerListe.itemClicked.connect(self.disklerListeDegistiFonksiyon)
         self.disklerAcilirKutu.currentIndexChanged.connect(self.disklerAcilirDegistiFonksiyon)
@@ -214,6 +219,18 @@ sistem başlamayacaktır."""),0,0,1,2)
 
         return kurulumSonucWidget
 
+    def diskDuzenleFonksiyon(self):
+        try:
+            subprocess.Popen("gparted")
+        except:
+            try:
+                subprocess.Popen("kdepartitionmanager")
+            except:
+                try:
+                    subprocess.Popen("cfdisk")
+                except:
+                    QMessageBox.warning(self,"Hata","Live isoda disk düzenleyecek bir program bulunamadı.")
+
     def ustParcaGuncelle(self,numara):
         self.ustParca.setStyleSheet("background-image: url("+yol+"/slaytlar/merkezArkaplan_"+numara+".png);")
 
@@ -278,6 +295,9 @@ sistem başlamayacaktır."""),0,0,1,2)
         self.surecCubugu.setValue(0)
         self.bolumCoz(kbolum)
         self.ileriDugmeFonksiyon()
+
+    def disklerYenileFonksiyon(self):
+        self.diskler = self.disklerListesiSonuc()
 
     def toplamBoyutTespit(self,liste):
         self.toplamBoyut=[]
@@ -346,7 +366,7 @@ sistem başlamayacaktır."""),0,0,1,2)
             self.kopyalanacakDizinAdi=dizin
             self.dizinSirasi+=1
             self.kurulumBilgisiLabel.setText(str(self.dizinSirasi)+"/"+str(mikdiz)+dizin+" kopyalanıyor...")
-            komut="rsync --delete -a /"+dizin+" "+baglam+" --exclude /proc"
+            komut="rsync --delete -axHAWX --numeric-ids /"+dizin+" "+baglam+" --exclude /proc"
             os.system(komut)
             qApp.processEvents()
 
