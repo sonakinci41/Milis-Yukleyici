@@ -948,5 +948,8 @@ def baslatFonk():
 	sys.exit(uygulama_.exec_())
 
 if __name__ == "__main__":
-	yol=os.getcwd()
-	baslatFonk()
+	if os.getuid() != 0:
+		print("Hata\n","Lütfen Milis-Kuru Root olarak çalıştırınız")
+	else:
+		yol=os.getcwd()
+		baslatFonk()
