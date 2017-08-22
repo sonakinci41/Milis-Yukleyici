@@ -3,7 +3,7 @@
 
 import parted
 from PyQt5.QtGui import  QIcon, QPixmap
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QComboBox, QPushButton, QListWidget, QListWidgetItem, QVBoxLayout, QMessageBox, QDialog, QCheckBox, QGridLayout
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QComboBox, QPushButton, QListWidget, QListWidgetItem, QVBoxLayout, QMessageBox, QDialog, QCheckBox, QGridLayout, QInputDialog
 from PyQt5.QtCore import Qt
 
 class BolumlemePencere(QWidget):
@@ -189,6 +189,7 @@ class BolumlemePencere(QWidget):
                 except parted.PartitionException:
                     QMessageBox.warning(self,self.tr("Uyarı"),self.tr("Lütfen uzatılmış bölümleri silmeden önce mantıksal bölümleri siliniz."))
         self.bolumListeKutu.setCurrentRow(self.bolumListeKutu.count() - 2)
+        self.bolumSilBtn.setDisabled(True)
 
 
     def bolumBilgi(self, bolum, birim):
@@ -223,6 +224,46 @@ class BolumlemePencere(QWidget):
                 alan = _alan
                 maks_boyut = _alan.length
         return alan
+
+
+    def bolumOlustur(self, alan, bolumTur):
+        if bolumTur == parted.PARTITION_NORMAL or bolumTur == parted.PARTITION_EXTENDED:
+            for bosBolum in self.disk.getFreeSpacePartitions():
+                _bolum = self.bolumBilgi(bosBolum, "GB")
+                if _bolum["tur"] == parted.PARTITION_FREESPACE:
+                    maksBoyut = float(_bolum["boyut"])
+        elif bolumTur == bolumTur == parted.PARTITION_LOGICAL:
+            for bosBolum in self.disk.getFreeSpacePartitions():
+                _bolum = self.bolumBilgi(bosBolum, "GB")
+                if _bolum["tur"] == 5:
+                    maksBoyut = float(_bolum["boyut"])
+
+        alignment = self.aygit.optimalAlignedConstraint
+        constraint = self.aygit.getConstraint()
+        data = {
+            'start': constraint.startAlign.alignUp(alan, alan.start),
+            'end': constraint.endAlign.alignDown(alan, alan.end),
+        }
+
+        boyut, ok = QInputDialog().getDouble(self, self.tr('Bölüm oluştur'), self.tr('GB cinsinden boyut:'), min=0.001, value=1,max=maksBoyut, decimals=3)
+
+        if ok:
+            data["end"] = int(data["start"]) + int(parted.sizeToSectors(float(boyut), "GiB", self.aygit.sectorSize))
+            try:
+                geometry = parted.Geometry(device=self.aygit, start=int(data["start"]), end=int(data["end"]))
+                partition = parted.Partition(
+                    disk=self.disk,
+                    type=bolumTur,
+                    geometry=geometry,
+                )
+
+                self.disk.addPartition(partition=partition, constraint=constraint)
+            except (parted.PartitionException, parted.GeometryException, parted.CreateException) as e:
+                # GeometryException accounts for incorrect start/end values (e.g. start < end),
+                # CreateException is raised e.g. when the partition doesn't fit on the disk.
+                # PartedException is a generic error (e.g. start/end values out of range)
+                raise RuntimeError(e.message)
+
 
 
 class diskOzellikleriSinif(QDialog):
