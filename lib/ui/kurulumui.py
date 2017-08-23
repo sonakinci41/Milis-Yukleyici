@@ -60,6 +60,13 @@ class KurulumPencere(QWidget):
         ksifre = kurulum["kullanici"]["sifre"]
         kgrubkur = kurulum["grub"]["kur"]
 
+        self.kurulumBilgisiLabel.setText(self.tr("Değişiklikler Diske Uygulanıyor..."))
+        if self.ebeveyn.disk:
+            try:
+                self.ebeveyn.disk.commit()
+            except:
+                pass
+
         if kformat == "evet":
             self.surecCubugu.setValue(0)
             self.kurulumBilgisiLabel.setText(self.tr("Diskler Formatlanıyor..."))
@@ -140,6 +147,18 @@ class KurulumPencere(QWidget):
         self.kurulumBilgisiLabel.setText(hedef + " " + baglam + self.tr(" altına bağlandı."))
 
 
+    def toplamBoyutTespit(self,liste):
+        self.toplamBoyut=[]
+        for i in liste:
+            if os.path.exists("/"+i):
+                komut = "du -s /"+i
+                donut_=self.ebeveyn.komutCalistirFonksiyon(komut)
+                donut=donut_.split("\n")
+                boyut_=donut[len(donut)-2]
+                boyut=boyut_.split("\t")
+                self.toplamBoyut.append(int(boyut[0]))
+
+
     def kullaniciOlustur(self, isim, kullisim, kullsifre):
         os.system("kopar milislinux-" + isim + " " + kullisim)
         self.surecCubugu.setValue(20)
@@ -169,7 +188,8 @@ class KurulumPencere(QWidget):
         yenidizinler = ["srv", "proc", "tmp", "mnt", "sys", "run", "dev", "media"]
         self.toplamBoyutTespit(dizinler)
         self.baglam = baglam
-        self.prgresDongu = True
+
+        self.progressDurum = True
         progresThread = progressAyarciSinif(self)
         progresThread.start()
 
@@ -186,7 +206,7 @@ class KurulumPencere(QWidget):
         self.surecCubugu.setValue(0)
         self.kurulumBilgisiLabel.setText(self.tr("Yeni Dizinler Oluşturuluyor..."))
 
-        self.prgresDongu = False
+        self.progressDurum = False
         i = 0
         mikdiz = len(yenidizinler)
         for ydizin in yenidizinler:
@@ -200,19 +220,54 @@ class KurulumPencere(QWidget):
             self.kurulumBilgisiLabel.setText(dizin + self.tr(" kopyalandı."))
             qApp.processEvents()
 
+    def initrdOlustur(self, hedef):
+        os.system("mount --bind /dev " + hedef + "/dev")
+        self.surecCubugu.setValue(25)
+        os.system("mount --bind /sys " + hedef + "/sys")
+        self.surecCubugu.setValue(50)
+        os.system("mount --bind /proc " + hedef + "/proc")
+        self.surecCubugu.setValue(75)
+        os.system('chroot ' + hedef + ' dracut --no-hostonly --add-drivers "ahci" -f /boot/initramfs')
+        self.surecCubugu.setValue(100)
+        self.kurulumBilgisiLabel.setText(self.tr("initrd Oluşturuldu"))
+
+    def grubKur(self,hedef,baglam):
+        hedef = hedef[:-1]
+        if hedef == "/dev/mmcblk0": #SD kart'a kurulum fix
+            os.system("grub-install --boot-directory="+baglam+"/boot /dev/mmcblk0")
+            self.surecCubugu.setValue(100)
+        else:
+            os.system("grub-install --boot-directory="+baglam+"/boot " + hedef)
+            self.surecCubugu.setValue(50)
+            os.system("chroot "+baglam+" grub-mkconfig -o /boot/grub/grub.cfg")
+            self.surecCubugu.setValue(100)
+        self.kurulumBilgisiLabel.setText(self.tr("Grub Kuruldu."))
+
+    def bolumCoz(self,hedef):
+        komut="umount -l "+hedef
+        try:
+           os.system(komut)
+        except OSError as e:
+            QMessageBox.warning(self,self.tr("Hata"),str(e))
+            qApp.closeAllWindows()
+        self.surecCubugu.setValue(100)
+        self.kurulumBilgisiLabel.setText(hedef+self.tr(" çözüldü."))
+
 class progressAyarciSinif(QThread):
     def __init__(self,ebeveyn=None):
         super(progressAyarciSinif,self).__init__(ebeveyn)
         self.ebeveyn = ebeveyn
 
     def run(self):
-        while self.ebeveyn.prgresDongu:
+        while self.ebeveyn.progressDurum:
             self.guncelle()
             time.sleep(1)
 
     def guncelle(self):
         boyut=self.boyutTespit()
         toplamBoyut=self.ebeveyn.toplamBoyut[self.ebeveyn.dizinSirasi-1]
+        print(boyut)
+        print(toplamBoyut)
         if boyut<toplamBoyut:
             yuzde = str(round(boyut/toplamBoyut,2))[2:]
             if len(yuzde) == 1:
@@ -224,21 +279,10 @@ class progressAyarciSinif(QThread):
     def boyutTespit(self):
         try:
             komut = "du -s "+self.ebeveyn.baglam+"/"+self.ebeveyn.kopyalanacakDizinAdi
-            donut_=self.ebeveyn.komutCalistirFonksiyon(komut)
+            donut_=self.ebeveyn.ebeveyn.komutCalistirFonksiyon(komut)
             donut=donut_.split("\n")
             boyut_=donut[len(donut)-2]
             boyut=boyut_.split("\t")
             return int(boyut[0])
         except:
             return 0
-
-    def initrdOlustur(self, hedef):
-        os.system("mount --bind /dev " + hedef + "/dev")
-        self.surecCubugu.setValue(25)
-        os.system("mount --bind /sys " + hedef + "/sys")
-        self.surecCubugu.setValue(50)
-        os.system("mount --bind /proc " + hedef + "/proc")
-        self.surecCubugu.setValue(75)
-        os.system('chroot ' + hedef + ' dracut --no-hostonly --add-drivers "ahci" -f /boot/initramfs')
-        self.surecCubugu.setValue(100)
-        self.kurulumBilgisiLabel.setText(self.tr("initrd Oluşturuldu"))

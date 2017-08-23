@@ -64,6 +64,7 @@ class MilisMerkezPencere(QMainWindow):
         ###################################
         self.kurulum_dosya = "/opt/kurulum.yml"
         self.kurparam = None
+        self.disk = None
 
     def ileriDugmeFonksiyon(self):
         self.yiginNumarasi += 1
@@ -97,6 +98,7 @@ class MilisMerkezPencere(QMainWindow):
         with open(kurulumdos, 'r') as f:
             param = yaml.load(f)
         self.kurparam = param
+        return param
 
     def kurulum_yaz(self, param, kurulumdos):
         with open(kurulumdos, 'w') as outfile:

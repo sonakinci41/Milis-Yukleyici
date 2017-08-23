@@ -12,8 +12,8 @@ class BolumlemePencere(QWidget):
         self.ebeveyn = ebeveyn
 
 
-        self.sistemDiski = ""
-        self.takasDiski = ""
+        self.sistemDiski = ["",""]
+        self.takasDiski = ["",""]
         self.seciliDisk = None
         self.diskler = parted.getAllDevices()
         disklerWidget = QWidget()
@@ -75,15 +75,15 @@ class BolumlemePencere(QWidget):
     def diskDegisti(self):
         if self.disklerAcilirKutu.currentData():
             self.aygit = parted.getDevice(self.disklerAcilirKutu.currentData())
-            self.disk = parted.Disk(self.aygit)
+            self.ebeveyn.disk = parted.Disk(self.aygit)
             self.bolumListeYenile()
 
     def bolumListeYenile(self):
         self.bolumListeKutu.clear()
-        for bolum in self.disk.partitions:
+        for bolum in self.ebeveyn.disk.partitions:
             _bolum = self.bolumBilgi(bolum, "GB")
             if self.sistemDiski and bolum.path == self.sistemDiski[0]:
-                if self.sistemDiski[1] == self.tr("Evet"):
+                if self.sistemDiski[1] == "evet":
                     item = QListWidgetItem(self.tr("{}\t\t Sistem Diski \t\t {} GB \t\t {} \t\t {}").format(_bolum["yol"], _bolum["boyut"], "ext4",_bolum["bayraklar"]))
                 else:
                     item = QListWidgetItem(self.tr("{}\t\t Sistem Diski \t\t {} GB \t\t {} \t\t {}").format(_bolum["yol"], _bolum["boyut"],_bolum["dosyaSis"], _bolum["bayraklar"]))
@@ -101,7 +101,7 @@ class BolumlemePencere(QWidget):
                 item.setIcon(QIcon("gorseller/logical.xpm"))
             self.bolumListeKutu.addItem(item)
 
-            for bosBolum in self.disk.getFreeSpacePartitions():
+            for bosBolum in self.ebeveyn.disk.getFreeSpacePartitions():
                 _toplam = 0
                 _bolum = self.bolumBilgi(bosBolum, "GB")
                 if float(_bolum["boyut"]) > 0:
@@ -129,21 +129,21 @@ class BolumlemePencere(QWidget):
             self.seciliDisk = tiklanan.text()
             diskOzellikPencere = diskOzellikleriSinif(self)
             diskOzellikPencere.exec_()
-            if self.sistemDiski != "":
+            if self.sistemDiski[0] != "":
                 self.ebeveyn.kurparam["disk"]["bolum"] = self.sistemDiski[0]
                 self.ebeveyn.kurparam["disk"]["format"] = self.sistemDiski[1]
-            if self.takasDiski != "":
+            if self.takasDiski[0] != "":
                 self.ebeveyn.kurparam["disk"]["takasbolum"] = self.takasDiski[0]
             else:
                 self.ebeveyn.kurparam["disk"]["takasbolum"] = ""
 
-            if self.sistemDiski == "":
+            if self.sistemDiski[0] == "":
                 pass
-            elif self.sistemDiski != "" and self.takasDiski == "":
+            elif self.sistemDiski[0] != "" and self.takasDiski[0] == "":
                 QMessageBox.information(self, self.tr("Bilgi"),self.tr("Takas Alanı Belirtmediniz\nTakas alanı ram miktarınızın düşük olduğu durumlarda\nram yerine disk kullanarak işlemlerin devam etmesini sağlar."))
                 self.ebeveyn.ileriDugme.setDisabled(False)
                 self.bolumListeYenile()
-            elif self.sistemDiski != "" and self.takasDiski != "":
+            elif self.sistemDiski[0] != "" and self.takasDiski[0] != "":
                 if self.sistemDiski[0] == self.takasDiski[0]:
                     QMessageBox.warning(self, self.tr("Hata"), self.takasDiski[0] + self.tr(" diskini hem sistem hem takas için seçtiniz\nAynı diski hem sistem hem takas olarak kullanmazsınız"))
                     self.ebeveyn.ileriDugme.setDisabled(True)
@@ -154,9 +154,9 @@ class BolumlemePencere(QWidget):
     def bolumEkleFonk(self):
         if self._en_buyuk_bos_alan():
             alan = self._en_buyuk_bos_alan()
-            birincilSayi = len(self.disk.getPrimaryPartitions())
-            uzatilmisSayi = ext_count = 1 if self.disk.getExtendedPartition() else 0
-            parts_avail = self.disk.maxPrimaryPartitionCount - (birincilSayi + uzatilmisSayi)
+            birincilSayi = len(self.ebeveyn.disk.getPrimaryPartitions())
+            uzatilmisSayi = ext_count = 1 if self.ebeveyn.disk.getExtendedPartition() else 0
+            parts_avail = self.ebeveyn.disk.maxPrimaryPartitionCount - (birincilSayi + uzatilmisSayi)
             if not parts_avail and not ext_count:
                 QMessageBox.warning(self,self.tr("Uyarı"),
                                     self.tr("""Eğer dörtten fazla disk bölümü oluşturmak istiyorsanız birincil bölümlerden birini silip uzatılmış bölüm oluşturun. 
@@ -170,7 +170,7 @@ class BolumlemePencere(QWidget):
                         self.bolumOlustur(alan, parted.PARTITION_EXTENDED)
                         self.bolumListeYenile()
                 if uzatilmisSayi:
-                    ext_part = self.disk.getExtendedPartition()
+                    ext_part = self.ebeveyn.disk.getExtendedPartition()
                     try:
                         alan = ext_part.geometry.intersect(alan)
                     except ArithmeticError:
@@ -181,10 +181,10 @@ class BolumlemePencere(QWidget):
 
     def bolumSilFonk(self):
         bolumNo = self.bolumListeKutu.currentItem().data(Qt.UserRole)
-        for bolum in self.disk.partitions:
+        for bolum in self.ebeveyn.disk.partitions:
             if bolum.number == bolumNo:
                 try:
-                    self.disk.deletePartition(bolum)
+                    self.ebeveyn.disk.deletePartition(bolum)
                     self.bolumListeYenile()
                 except parted.PartitionException:
                     QMessageBox.warning(self,self.tr("Uyarı"),self.tr("Lütfen uzatılmış bölümleri silmeden önce mantıksal bölümleri siliniz."))
@@ -219,7 +219,7 @@ class BolumlemePencere(QWidget):
         alan = None
         alignment = self.aygit.optimumAlignment
 
-        for _alan in self.disk.getFreeSpaceRegions():
+        for _alan in self.ebeveyn.disk.getFreeSpaceRegions():
             if _alan.length > maks_boyut and _alan.length > alignment.grainSize:
                 alan = _alan
                 maks_boyut = _alan.length
@@ -228,12 +228,12 @@ class BolumlemePencere(QWidget):
 
     def bolumOlustur(self, alan, bolumTur):
         if bolumTur == parted.PARTITION_NORMAL or bolumTur == parted.PARTITION_EXTENDED:
-            for bosBolum in self.disk.getFreeSpacePartitions():
+            for bosBolum in self.ebeveyn.disk.getFreeSpacePartitions():
                 _bolum = self.bolumBilgi(bosBolum, "GB")
                 if _bolum["tur"] == parted.PARTITION_FREESPACE:
                     maksBoyut = float(_bolum["boyut"])
         elif bolumTur == bolumTur == parted.PARTITION_LOGICAL:
-            for bosBolum in self.disk.getFreeSpacePartitions():
+            for bosBolum in self.ebeveyn.disk.getFreeSpacePartitions():
                 _bolum = self.bolumBilgi(bosBolum, "GB")
                 if _bolum["tur"] == 5:
                     maksBoyut = float(_bolum["boyut"])
@@ -252,12 +252,12 @@ class BolumlemePencere(QWidget):
             try:
                 geometry = parted.Geometry(device=self.aygit, start=int(data["start"]), end=int(data["end"]))
                 partition = parted.Partition(
-                    disk=self.disk,
+                    disk=self.ebeveyn.disk,
                     type=bolumTur,
                     geometry=geometry,
                 )
 
-                self.disk.addPartition(partition=partition, constraint=constraint)
+                self.ebeveyn.disk.addPartition(partition=partition, constraint=constraint)
             except (parted.PartitionException, parted.GeometryException, parted.CreateException) as e:
                 # GeometryException accounts for incorrect start/end values (e.g. start < end),
                 # CreateException is raised e.g. when the partition doesn't fit on the disk.
@@ -293,13 +293,13 @@ class diskOzellikleriSinif(QDialog):
         if self.secenekAcilirListe.currentText() == self.tr("Sistem Diski"):
             self.ebeveyn.sistemDiski = [self.baslik_]
             if self.diskBicimlendirKutu.isChecked():
-                self.ebeveyn.sistemDiski.append(self.tr("Evet"))
+                self.ebeveyn.sistemDiski.append("evet")
             else:
-                self.ebeveyn.sistemDiski.append(self.tr("Hayır"))
+                self.ebeveyn.sistemDiski.append("hayır")
         elif self.secenekAcilirListe.currentText() == self.tr("Takas Alanı"):
             self.ebeveyn.takasDiski = [self.baslik_]
             if self.diskBicimlendirKutu.isChecked():
-                self.ebeveyn.takasDiski.append(self.tr("Evet"))
+                self.ebeveyn.takasDiski.append("evet")
             else:
-                self.ebeveyn.takasDiski.append(self.tr("Hayır"))
+                self.ebeveyn.takasDiski.append("hayir")
         QDialog.accept(self)
