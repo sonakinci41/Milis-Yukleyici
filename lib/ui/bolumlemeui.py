@@ -142,14 +142,14 @@ class BolumlemePencere(QWidget):
             elif self.sistemDiski[0] != "" and self.takasDiski[0] == "":
                 QMessageBox.information(self, self.tr("Bilgi"),self.tr("Takas Alanı Belirtmediniz\nTakas alanı ram miktarınızın düşük olduğu durumlarda\nram yerine disk kullanarak işlemlerin devam etmesini sağlar."))
                 self.ebeveyn.ileriDugme.setDisabled(False)
-                self.bolumListeYenile()
+                self.diskDegisti()
             elif self.sistemDiski[0] != "" and self.takasDiski[0] != "":
                 if self.sistemDiski[0] == self.takasDiski[0]:
                     QMessageBox.warning(self, self.tr("Hata"), self.takasDiski[0] + self.tr(" diskini hem sistem hem takas için seçtiniz\nAynı diski hem sistem hem takas olarak kullanmazsınız"))
                     self.ebeveyn.ileriDugme.setDisabled(True)
                 else:
                     self.ebeveyn.ileriDugme.setDisabled(False)
-                    self.bolumListeYenile()
+                    self.diskDegisti()
 
     def bolumEkleFonk(self):
         if self._en_buyuk_bos_alan():
@@ -165,10 +165,10 @@ class BolumlemePencere(QWidget):
                 if parts_avail:
                     if not uzatilmisSayi and parts_avail > 1:
                         self.bolumOlustur(alan, parted.PARTITION_NORMAL)
-                        self.bolumListeYenile()
+                        self.diskDegisti()
                     elif parts_avail == 1:
                         self.bolumOlustur(alan, parted.PARTITION_EXTENDED)
-                        self.bolumListeYenile()
+                        self.diskDegisti()
                 if uzatilmisSayi:
                     ext_part = self.ebeveyn.disk.getExtendedPartition()
                     try:
@@ -177,7 +177,7 @@ class BolumlemePencere(QWidget):
                         QMessageBox.critical(self,self.tr("Hata"),self.tr("Yeni disk bölümü oluşturmak için yeterli alan yok ! Uzatılmış bölümün boyutunu arttırmayı deneyiniz."))
                     else:
                         self.bolumOlustur(alan, parted.PARTITION_LOGICAL)
-                        self.bolumListeYenile()
+                        self.diskDegisti()
 
     def bolumSilFonk(self):
         bolumNo = self.bolumListeKutu.currentItem().data(Qt.UserRole)
@@ -185,7 +185,7 @@ class BolumlemePencere(QWidget):
             if bolum.number == bolumNo:
                 try:
                     self.ebeveyn.disk.deletePartition(bolum)
-                    self.bolumListeYenile()
+                    self.diskDegisti()
                 except parted.PartitionException:
                     QMessageBox.warning(self,self.tr("Uyarı"),self.tr("Lütfen uzatılmış bölümleri silmeden önce mantıksal bölümleri siliniz."))
         self.bolumListeKutu.setCurrentRow(self.bolumListeKutu.count() - 2)

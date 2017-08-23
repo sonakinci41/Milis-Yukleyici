@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QSplitter,QWidget, QHBoxLayout, QStackedWidget, QPushButton, QApplication
 from PyQt5.QtGui import QIcon
 from lib import miliskurqrc
-from lib.ui import hosgeldinizui, kontrolui, kullaniciui, bolumlemeui, grubui, kurulumui, bitisui
+from lib.ui import hosgeldinizui, kontrolui, kullaniciui, bolumlemeui, grubui, kurulumui, bitisui, saatdilimiui
 
 class MilisMerkezPencere(QMainWindow):
     def __init__(self, ebeveyn=None):
@@ -41,6 +41,7 @@ class MilisMerkezPencere(QMainWindow):
         yiginKutusu.addWidget(self.yiginWidget)
         self.yiginWidget.addWidget(hosgeldinizui.HosgeldinizPencere(self))
         self.yiginWidget.addWidget(kontrolui.KontrolPencere(self))
+        self.yiginWidget.addWidget(saatdilimiui.SaatDilimiPencere(self))
         self.yiginWidget.addWidget(kullaniciui.KullaniciPencere(self))
         self.yiginWidget.addWidget(bolumlemeui.BolumlemePencere(self))
         self.yiginWidget.addWidget(grubui.GrubPencere(self))
@@ -65,6 +66,7 @@ class MilisMerkezPencere(QMainWindow):
         self.kurulum_dosya = "/opt/kurulum.yml"
         self.kurparam = None
         self.disk = None
+        self.sistemDili = None
 
     def ileriDugmeFonksiyon(self):
         self.yiginNumarasi += 1
