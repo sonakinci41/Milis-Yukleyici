@@ -3,7 +3,7 @@
 
 import parted
 from PyQt5.QtGui import  QIcon, QPixmap
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QComboBox, QPushButton, QListWidget, QListWidgetItem, QVBoxLayout, QMessageBox, QDialog, QCheckBox, QGridLayout, QInputDialog
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QComboBox, QPushButton, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QMessageBox, QDialog, QCheckBox, QGridLayout, QInputDialog
 from PyQt5.QtCore import Qt
 
 class BolumlemePencere(QWidget):
@@ -22,10 +22,15 @@ class BolumlemePencere(QWidget):
         self.yenileButon = QPushButton(self.tr("Yenile"))
         self.yenileButon.pressed.connect(self.diskYenile)
 
-        self.bolumListeKutu = QListWidget()
-        self.diskYenile()
+        self.bolumListeKutu = QTreeWidget()
+        self.bolumListeKutu.setColumnCount(5)
+        self.bolumListeKutu.headerItem().setText(0, self.tr("bölüm"))
+        self.bolumListeKutu.headerItem().setText(1, self.tr("kullanım"))
+        self.bolumListeKutu.headerItem().setText(2, self.tr("boyut"))
+        self.bolumListeKutu.headerItem().setText(3, self.tr("format"))
+        self.bolumListeKutu.headerItem().setText(4, self.tr("bayraklar"))
+        self.bolumListeKutu.headerItem().setText(5, self.tr("bölüm numarası"))
         self.disklerAcilirKutu.currentIndexChanged.connect(self.diskDegisti)
-        self.diskDegisti()
 
         disklerLayout.addWidget(self.disklerAcilirKutu)
         disklerLayout.addWidget(self.yenileButon)
@@ -53,6 +58,7 @@ class BolumlemePencere(QWidget):
 
         self.bolumSilBtn.setEnabled(False)
         self.setLayout(layout)
+        self.diskYenile()
 
     def diskYenile(self):
         self.disklerAcilirKutu.clear()
@@ -84,49 +90,56 @@ class BolumlemePencere(QWidget):
             _bolum = self.bolumBilgi(bolum, "GB")
             if self.sistemDiski and bolum.path == self.sistemDiski[0]:
                 if self.sistemDiski[1] == "evet":
-                    item = QListWidgetItem(self.tr("{}\t\t Sistem Diski \t\t {} GB \t\t {} \t\t {}").format(_bolum["yol"], _bolum["boyut"], "ext4",_bolum["bayraklar"]))
+                    item = self.treeWidgetItemOlustur(_bolum["yol"], self.tr("Sistem Diski"), _bolum["boyut"]+" GB", "ext4", _bolum["bayraklar"],_bolum["no"])
                 else:
-                    item = QListWidgetItem(self.tr("{}\t\t Sistem Diski \t\t {} GB \t\t {} \t\t {}").format(_bolum["yol"], _bolum["boyut"],_bolum["dosyaSis"], _bolum["bayraklar"]))
+                    item = self.treeWidgetItemOlustur(_bolum["yol"], self.tr("Sistem Diski"), _bolum["boyut"],_bolum["dosyaSis"], _bolum["bayraklar"],_bolum["no"])
             elif self.takasDiski and bolum.path == self.takasDiski[0]:
-                item = QListWidgetItem(self.tr("{}\t\t Takas Alanı \t\t {} GB \t\t {} \t\t {}").format(_bolum["yol"], _bolum["boyut"], "takas",_bolum["bayraklar"]))
+                item = self.treeWidgetItemOlustur(_bolum["yol"], self.tr("Takas Alanı"), _bolum["boyut"], self.tr("takas"), _bolum["bayraklar"],_bolum["no"])
             else:
-                item = QListWidgetItem(self.tr("{}\t\t {} GB \t\t {} \t\t {}").format(_bolum["yol"], _bolum["boyut"], _bolum["dosyaSis"],_bolum["bayraklar"]))
+                item = self.treeWidgetItemOlustur(_bolum["yol"], "", _bolum["boyut"], _bolum["dosyaSis"],_bolum["bayraklar"],_bolum["no"])
 
-            item.setData(Qt.UserRole, _bolum["no"])
             if _bolum["tur"] == parted.PARTITION_NORMAL:
-                item.setIcon(QIcon("gorseller/primary.xpm"))
+                item.setIcon(0,QIcon("gorseller/primary.xpm"))
             elif _bolum["tur"] == parted.PARTITION_EXTENDED:
-                item.setIcon(QIcon("gorseller/extended.xpm"))
+                item.setIcon(0,QIcon("gorseller/extended.xpm"))
             elif _bolum["tur"] == parted.PARTITION_LOGICAL:
-                item.setIcon(QIcon("gorseller/logical.xpm"))
-            self.bolumListeKutu.addItem(item)
+                item.setIcon(0,QIcon("gorseller/logical.xpm"))
+            self.bolumListeKutu.addTopLevelItem(item)
 
-            for bosBolum in self.ebeveyn.disk.getFreeSpacePartitions():
-                _toplam = 0
-                _bolum = self.bolumBilgi(bosBolum, "GB")
-                if float(_bolum["boyut"]) > 0:
-                    if _bolum["tur"] == 5:
-                        uzatilmisKalan = QListWidgetItem("{}\t{} GB".format(self.tr("Uzatılmış Bölüm Kalan"), _bolum["boyut"]))
-                        uzatilmisKalan.setIcon(QIcon(":/gorseller/blank.xpm"))
-                        uzatilmisKalan.setData(Qt.UserRole, "ayrilmamis")
-                        self.bolumListeKutu.addItem(uzatilmisKalan)
-                    if _bolum["tur"] == parted.PARTITION_FREESPACE:
-                        _toplam = _toplam + float(_bolum["boyut"])
-                    ayrilmamis = QListWidgetItem("{}\t{} GB".format(self.tr("Ayrılmamış Bölüm"), _toplam))
-                    ayrilmamis.setIcon(QIcon(":/gorseller/blank.xpm"))
-                    ayrilmamis.setData(Qt.UserRole, "ayrilmamis")
-                    self.bolumListeKutu.addItem(ayrilmamis)
+        for bosBolum in self.ebeveyn.disk.getFreeSpacePartitions():
+            _toplam = 0
+            _bolum = self.bolumBilgi(bosBolum, "GB")
+            if float(_bolum["boyut"]) > 0:
+                if _bolum["tur"] == 5:
+                    uzatilmisKalan = self.treeWidgetItemOlustur("",self.tr("Uzatılmış Bölüm Kalan"), _bolum["boyut"], "","" , "ayrilmamis")
+                    uzatilmisKalan.setIcon(0,QIcon(":/gorseller/blank.xpm"))
+                    self.bolumListeKutu.addTopLevelItem(uzatilmisKalan)
+                if _bolum["tur"] == parted.PARTITION_FREESPACE:
+                    _toplam = _toplam + float(_bolum["boyut"])
+                ayrilmamis = self.treeWidgetItemOlustur("", self.tr("Ayrılmamış Bölüm"), _toplam, "", "", "ayrilmamis")
+                ayrilmamis.setIcon(0,QIcon(":/gorseller/blank.xpm"))
+                self.bolumListeKutu.addTopLevelItem(ayrilmamis)
+
+    def treeWidgetItemOlustur(self,bolum,kullanim,boyut,format,islev,bolumno):
+        item = QTreeWidgetItem()
+        item.setText(0,str(bolum))
+        item.setText(1, str(kullanim))
+        item.setText(2, str(boyut))
+        item.setText(3, str(format))
+        item.setText(4, str(islev))
+        item.setText(5, str(bolumno))
+        return item
 
     def bolumSecildiFonk(self, tiklanan):
-        if tiklanan.data(Qt.UserRole) != "ayrilmamis":
+        if tiklanan.text(5) != "ayrilmamis":
             self.bolumSilBtn.setEnabled(True)
         else:
             self.bolumSilBtn.setEnabled(False)
 
 
     def bolumFormatSecFonk(self, tiklanan):
-        if tiklanan.data(Qt.UserRole) != "ayrilmamis":
-            self.seciliDisk = tiklanan.text()
+        if tiklanan.text(5) != "ayrilmamis":
+            self.seciliDisk = tiklanan
             diskOzellikPencere = diskOzellikleriSinif(self)
             diskOzellikPencere.exec_()
             if self.sistemDiski[0] != "":
@@ -142,14 +155,14 @@ class BolumlemePencere(QWidget):
             elif self.sistemDiski[0] != "" and self.takasDiski[0] == "":
                 QMessageBox.information(self, self.tr("Bilgi"),self.tr("Takas Alanı Belirtmediniz\nTakas alanı ram miktarınızın düşük olduğu durumlarda\nram yerine disk kullanarak işlemlerin devam etmesini sağlar."))
                 self.ebeveyn.ileriDugme.setDisabled(False)
-                self.diskDegisti()
+                self.bolumListeYenile()
             elif self.sistemDiski[0] != "" and self.takasDiski[0] != "":
                 if self.sistemDiski[0] == self.takasDiski[0]:
                     QMessageBox.warning(self, self.tr("Hata"), self.takasDiski[0] + self.tr(" diskini hem sistem hem takas için seçtiniz\nAynı diski hem sistem hem takas olarak kullanmazsınız"))
                     self.ebeveyn.ileriDugme.setDisabled(True)
                 else:
                     self.ebeveyn.ileriDugme.setDisabled(False)
-                    self.diskDegisti()
+                    self.bolumListeYenile()
 
     def bolumEkleFonk(self):
         if self._en_buyuk_bos_alan():
@@ -165,10 +178,10 @@ class BolumlemePencere(QWidget):
                 if parts_avail:
                     if not uzatilmisSayi and parts_avail > 1:
                         self.bolumOlustur(alan, parted.PARTITION_NORMAL)
-                        self.diskDegisti()
+                        self.bolumListeYenile()
                     elif parts_avail == 1:
                         self.bolumOlustur(alan, parted.PARTITION_EXTENDED)
-                        self.diskDegisti()
+                        self.bolumListeYenile()
                 if uzatilmisSayi:
                     ext_part = self.ebeveyn.disk.getExtendedPartition()
                     try:
@@ -177,18 +190,17 @@ class BolumlemePencere(QWidget):
                         QMessageBox.critical(self,self.tr("Hata"),self.tr("Yeni disk bölümü oluşturmak için yeterli alan yok ! Uzatılmış bölümün boyutunu arttırmayı deneyiniz."))
                     else:
                         self.bolumOlustur(alan, parted.PARTITION_LOGICAL)
-                        self.diskDegisti()
+                        self.bolumListeYenile()
 
     def bolumSilFonk(self):
-        bolumNo = self.bolumListeKutu.currentItem().data(Qt.UserRole)
+        bolumNo = int(self.bolumListeKutu.currentItem().text(5))
         for bolum in self.ebeveyn.disk.partitions:
             if bolum.number == bolumNo:
                 try:
                     self.ebeveyn.disk.deletePartition(bolum)
-                    self.diskDegisti()
+                    self.bolumListeYenile()
                 except parted.PartitionException:
                     QMessageBox.warning(self,self.tr("Uyarı"),self.tr("Lütfen uzatılmış bölümleri silmeden önce mantıksal bölümleri siliniz."))
-        self.bolumListeKutu.setCurrentRow(self.bolumListeKutu.count() - 2)
         self.bolumSilBtn.setDisabled(True)
 
 
@@ -270,9 +282,9 @@ class diskOzellikleriSinif(QDialog):
     def __init__(self,ebeveyn=None):
         super(diskOzellikleriSinif,self).__init__(ebeveyn)
         self.ebeveyn = ebeveyn
-        disk_=self.ebeveyn.seciliDisk.split("\t")
-        self.baslik_=disk_[0]
-        format_=disk_[3]
+        disk_=self.ebeveyn.seciliDisk
+        self.baslik_=disk_.text(0)
+        format_=disk_.text(3)
         self.setWindowTitle(self.baslik_)
         diskOzellikKutu=QGridLayout()
         self.setLayout(diskOzellikKutu)

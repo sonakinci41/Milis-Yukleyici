@@ -13,6 +13,14 @@ class MilisMerkezPencere(QMainWindow):
         super(MilisMerkezPencere, self).__init__(ebeveyn)
         self.setWindowIcon(QIcon(":/slaytlar/icon.svg"))
 
+        ###################################
+        ##      Kurulum Değişkenleri     ##
+        ###################################
+        self.kurulum_dosya = "/opt/kurulum.yml"
+        self.kurparam = None
+        self.disk = None
+        self.sistemDili = None
+
         #Milis Yükleyici Temel Görünümünü Ayarlıyoruz
         anaAyirici = QSplitter(Qt.Vertical)
         self.setCentralWidget(anaAyirici)
@@ -59,14 +67,6 @@ class MilisMerkezPencere(QMainWindow):
         dugmeKutusu.addWidget(self.geriDugme)
         dugmeKutusu.addWidget(self.ileriDugme)
 
-
-        ###################################
-        ##      Kurulum Değişkenleri     ##
-        ###################################
-        self.kurulum_dosya = "/opt/kurulum.yml"
-        self.kurparam = None
-        self.disk = None
-        self.sistemDili = None
 
     def ileriDugmeFonksiyon(self):
         self.yiginNumarasi += 1
