@@ -4,6 +4,7 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QComboBox, QHBoxLayout, QVBoxLayout, QLabel
 from PyQt5.QtGui import QPixmap
+import pytz
 
 class SaatDilimiPencere(QWidget):
     def __init__(self, ebeveyn=None):
@@ -43,8 +44,7 @@ class SaatDilimiPencere(QWidget):
 
     def saatDilimiSozlukOlustur(self):
         self.saatDilimiSozluk = {}
-        saatDilimiListe = self.ebeveyn.komutCalistirFonksiyon("timedatectl list-timezones")
-        saatDilimiListe = saatDilimiListe.split("\n")
+        saatDilimiListe = pytz.all_timezones
         for saatDilimi in saatDilimiListe:
             saatDilimi = saatDilimi.split("/")
             if len(saatDilimi) == 2:
