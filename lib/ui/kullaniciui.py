@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit
+from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QCheckBox
 
 class KullaniciPencere(QWidget):
     def __init__(self, ebeveyn=None):
@@ -29,25 +29,71 @@ class KullaniciPencere(QWidget):
         self.kullaniciSifreTekrar.setEchoMode(QLineEdit.Password)
         kullaniciKutu.addWidget(self.kullaniciSifreTekrar, 4, 1, 1, 1)
 
+        self.rootSifresiCheckBox = QCheckBox(self.tr("Root şifresi kullanıcı şifresiyle aynı olsun"))
+        self.rootSifresiCheckBox.setChecked(True)
+        self.rootSifresiCheckBox.stateChanged.connect(self.rootSifresiDurumDegisti)
+        kullaniciKutu.addWidget(self.rootSifresiCheckBox,5,0,1,2)
+        self.rootLabel = QLabel(self.tr("Root Şifresi"))
+        self.rootLabel.setHidden(True)
+        kullaniciKutu.addWidget(self.rootLabel,6,0,1,1)
+        self.rootTekrarLabel = QLabel(self.tr("Root Şifresi Tekrar"))
+        self.rootTekrarLabel.setHidden(True)
+        kullaniciKutu.addWidget(self.rootTekrarLabel,7,0,1,1)
+        self.rootSifresi_1 = QLineEdit()
+        self.rootSifresi_1.setEchoMode(QLineEdit.Password)
+        self.rootSifresi_1.textChanged.connect(self.kullaniciBilgiYaziGirildi)
+        kullaniciKutu.addWidget(self.rootSifresi_1,6,1,1,1)
+        self.rootSifresi_1.setHidden(True)
+        self.rootSifresi_2 = QLineEdit()
+        self.rootSifresi_2.setEchoMode(QLineEdit.Password)
+        self.rootSifresi_2.textChanged.connect(self.kullaniciBilgiYaziGirildi)
+        kullaniciKutu.addWidget(self.rootSifresi_2,7,1,1,1)
+        self.rootSifresi_2.setHidden(True)
+
+
+    def rootSifresiDurumDegisti(self):
+        if self.rootSifresiCheckBox.isChecked():
+            self.rootSifresi_1.setHidden(True)
+            self.rootSifresi_2.setHidden(True)
+            self.rootLabel.setHidden(True)
+            self.rootTekrarLabel.setHidden(True)
+        else:
+            self.rootSifresi_1.setHidden(False)
+            self.rootSifresi_2.setHidden(False)
+            self.rootLabel.setHidden(False)
+            self.rootTekrarLabel.setHidden(False)
 
     def kullaniciBilgiYaziGirildi(self):
-        donut = ""
         ad = self.kullaniciAdi.text()
+        self.donut = ""
+        if len(ad) > 0 and not ad[0].isalpha():
+            self.donut += self.tr("Lütfen Karakter Adında Harf İle Başlanyın\n")
+        if not ad.isalnum():
+            self.donut += self.tr("Lütfen Karakter Adında Sadece Harf Ve Rakam Kullanın\n")
+
         sifre_1 = self.kullaniciSifre.text()
         sifre_2 = self.kullaniciSifreTekrar.text()
-        if len(ad) > 0 and not ad[0].isalpha():
-            donut += self.tr("Lütfen Karakter Adında Harf İle Başlanyın\n")
-        if not ad.isalnum():
-            donut += self.tr("Lütfen Karakter Adında Sadece Harf Ve Rakam Kullanın\n")
-        if len(sifre_1) == 0 or len(sifre_2) == 0:
-            donut += self.tr("Lütfen Bir Şifre Girin\n")
-        if sifre_1 != sifre_2:
-            donut += self.tr("Yazdığınız Şifreler Birbirinden Farklı\n")
-        if donut == "":
+        self.donutOlustur(sifre_1,sifre_2)
+        if not self.rootSifresiCheckBox.isChecked():
+            root_1 = self.rootSifresi_1.text()
+            root_2 = self.rootSifresi_2.text()
+            self.donutOlustur(root_1,root_2)
+
+        if self.donut == "":
             self.kullaniciBilgiLabel.setText(self.tr("Teşekkürler Lütfen Adınızı Ve Şifrenizi Unutmayınız"))
             self.ebeveyn.kurparam["kullanici"]["isim"] = ad
             self.ebeveyn.kurparam["kullanici"]["sifre"] = sifre_1
+            if self.rootSifresiCheckBox.isChecked():
+                self.ebeveyn.kurparam["kullanici"]["root"] = sifre_1
+            else:
+                self.ebeveyn.kurparam["kullanici"]["root"] = root_1
             self.ebeveyn.ileriDugme.setDisabled(False)
         else:
             self.ebeveyn.ileriDugme.setDisabled(True)
-            self.kullaniciBilgiLabel.setText(donut)
+            self.kullaniciBilgiLabel.setText(self.donut)
+
+    def donutOlustur(self,sifre_1,sifre_2):
+        if len(sifre_1) == 0 or len(sifre_2) == 0:
+            self.donut += self.tr("Lütfen Bir Şifre Girin\n")
+        if sifre_1 != sifre_2:
+            self.donut += self.tr("Yazdığınız Şifreler Birbirinden Farklı\n")
