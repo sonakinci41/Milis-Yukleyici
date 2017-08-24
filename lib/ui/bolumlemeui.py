@@ -151,13 +151,13 @@ class BolumlemePencere(QWidget):
         return item
 
     def bolumSecildiFonk(self, tiklanan):
-        if tiklanan.text(5) != "ayrilmamis":
+        if tiklanan.text(4) != "ayrilmamis":
             self.bolumSilBtn.setEnabled(True)
         else:
             self.bolumSilBtn.setEnabled(False)
 
     def bolumFormatSecFonk(self, tiklanan):
-        if tiklanan.text(5) != "ayrilmamis":
+        if tiklanan.text(4) != "ayrilmamis":
             self.seciliDisk = tiklanan
             diskOzellikPencere = diskOzellikleriSinif(self)
             diskOzellikPencere.exec_()
