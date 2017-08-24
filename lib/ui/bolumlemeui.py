@@ -215,16 +215,17 @@ class BolumlemePencere(QWidget):
                         self.bolumListeYenile()
 
     def bolumSilFonk(self):
-        bolumNo = int(self.bolumListeKutu.currentItem().text(4))
-        for bolum in self.ebeveyn.disk.partitions:
-            if bolum.number == bolumNo:
-                try:
-                    self.ebeveyn.disk.deletePartition(bolum)
-                    self.bolumListeYenile()
-                except parted.PartitionException:
-                    QMessageBox.warning(self, self.tr("Uyarı"), self.tr(
-                        "Lütfen uzatılmış bölümleri silmeden önce mantıksal bölümleri siliniz."))
-        self.bolumSilBtn.setDisabled(True)
+        if self.bolumListeKutu.currentItem().text(4) != "ayrilmamis":
+            bolumNo = int(self.bolumListeKutu.currentItem().text(4))
+            for bolum in self.ebeveyn.disk.partitions:
+                if bolum.number == bolumNo:
+                    try:
+                        self.ebeveyn.disk.deletePartition(bolum)
+                        self.bolumListeYenile()
+                    except parted.PartitionException:
+                        QMessageBox.warning(self, self.tr("Uyarı"), self.tr(
+                            "Lütfen uzatılmış bölümleri silmeden önce mantıksal bölümleri siliniz."))
+            self.bolumSilBtn.setDisabled(True)
 
     def bolumBilgi(self, bolum, birim):
         _bolum = {}
