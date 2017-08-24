@@ -31,16 +31,14 @@ class SaatDilimiPencere(QWidget):
         self.ulkelerCombo.currentTextChanged.connect(self.sehirlerComboDoldur)
         self.ulkelerComboDoldur()
         self.sehirlerCombo.currentTextChanged.connect(self.saatDilimiSecildi)
+        self.ulkelerCombo.setCurrentText("Europe")
 
 
     def saatDilimiSecildi(self,sehir):
-        if sehir == "------":
-            self.ebeveyn.ileriDugme.setDisabled(True)
-        else:
-            self.ebeveyn.ileriDugme.setDisabled(False)
+        if self.ebeveyn.kurparam != None:
             self.ebeveyn.kurparam["bolgesel"]["zaman"] = self.ulkelerCombo.currentText()+"/"+sehir
             self.ebeveyn.kurparam["bolgesel"]["dil"] = self.ebeveyn.sistemDili
-
+            self.ebeveyn.ileriDugme.setDisabled(False)
 
     def saatDilimiSozlukOlustur(self):
         self.saatDilimiSozluk = {}

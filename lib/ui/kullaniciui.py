@@ -66,10 +66,14 @@ class KullaniciPencere(QWidget):
     def kullaniciBilgiYaziGirildi(self):
         ad = self.kullaniciAdi.text()
         self.donut = ""
+        if not ad.islower():
+            self.donut += self.tr("Lütfen Kullanıcı Adında Büyük Harf Kullanmayınız\n")
+        kontrol = ad.replace("-","")
+        kontrol = kontrol.replace("_","")
         if len(ad) > 0 and not ad[0].isalpha():
-            self.donut += self.tr("Lütfen Karakter Adında Harf İle Başlanyın\n")
-        if not ad.isalnum():
-            self.donut += self.tr("Lütfen Karakter Adında Sadece Harf Ve Rakam Kullanın\n")
+            self.donut += self.tr("Lütfen Kullanıcı Adında Harf İle Başlanyın\n")
+        if not kontrol.isalnum():
+            self.donut += self.tr("Lütfen Kullanıcı Adında Sadece Harf Ve Rakam Kullanın\n")
 
         sifre_1 = self.kullaniciSifre.text()
         sifre_2 = self.kullaniciSifreTekrar.text()
@@ -93,6 +97,10 @@ class KullaniciPencere(QWidget):
             self.kullaniciBilgiLabel.setText(self.donut)
 
     def donutOlustur(self,sifre_1,sifre_2):
+        kontrol = sifre_1.replace("-","")
+        kontrol = kontrol.replace("_","")
+        if not kontrol.isalnum():
+            self.donut += self.tr("Lütfen Şifrelerde Sadece Rakam Ve Harf Kullanınız\n")
         if len(sifre_1) == 0 or len(sifre_2) == 0:
             self.donut += self.tr("Lütfen Bir Şifre Girin\n")
         if sifre_1 != sifre_2:

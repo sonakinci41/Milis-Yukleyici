@@ -49,7 +49,8 @@ class MilisMerkezPencere(QMainWindow):
         yiginKutusu.addWidget(self.yiginWidget)
         self.yiginWidget.addWidget(hosgeldinizui.HosgeldinizPencere(self))
         self.yiginWidget.addWidget(kontrolui.KontrolPencere(self))
-        self.yiginWidget.addWidget(saatdilimiui.SaatDilimiPencere(self))
+        self.saatDilimiPencere = saatdilimiui.SaatDilimiPencere(self)
+        self.yiginWidget.addWidget(self.saatDilimiPencere)
         self.yiginWidget.addWidget(kullaniciui.KullaniciPencere(self))
         self.yiginWidget.addWidget(bolumlemeui.BolumlemePencere(self))
         self.yiginWidget.addWidget(grubui.GrubPencere(self))
@@ -77,6 +78,8 @@ class MilisMerkezPencere(QMainWindow):
             self.ileriDugme.setDisabled(True)
         elif self.sonyigin == self.yiginNumarasi:
             self.ileriDugme.setDisabled(True)
+        if self.yiginNumarasi == 2:
+            self.saatDilimiPencere.sehirlerCombo.setCurrentText("Istanbul")
         self.ustParcaGuncelle(str(self.yiginNumarasi + 1))
         self.yiginWidget.setCurrentIndex(self.yiginNumarasi)
 

@@ -307,7 +307,7 @@ class diskOzellikleriSinif(QDialog):
             if self.diskBicimlendirKutu.isChecked():
                 self.ebeveyn.sistemDiski.append("evet")
             else:
-                self.ebeveyn.sistemDiski.append("hayır")
+                self.ebeveyn.sistemDiski.append("hayir")
         elif self.secenekAcilirListe.currentText() == self.tr("Takas Alanı"):
             self.ebeveyn.takasDiski = [self.baslik_]
             if self.diskBicimlendirKutu.isChecked():
