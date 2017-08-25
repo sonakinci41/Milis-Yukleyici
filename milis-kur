@@ -1,7 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys, os, subprocess,yaml
+import sys
+import pkgutil
+
+if pkgutil.find_loader("pytz") is None:
+	print("pytz paketi bulunumadı.\n","mps kur python3-pytz")
+	sys.exit(0)
+
+if pkgutil.find_loader("pyparted") is None:
+	print("pyparted paketi bulunumadı.\n","mps kur python3-pyparted")
+	sys.exit(0)
+
+import os, subprocess,yaml
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QSplitter,QWidget, QHBoxLayout, QStackedWidget, QPushButton, QApplication
 from PyQt5.QtGui import QIcon
