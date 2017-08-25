@@ -2,17 +2,22 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import os
 import pkgutil
 
 if pkgutil.find_loader("pytz") is None:
-	print("pytz paketi bulunumadı.\n","mps kur python3-pytz")
+	print("pytz paketi bulunamadı.\n","mps kur python3-pytz")
 	sys.exit(0)
 
 if pkgutil.find_loader("pyparted") is None:
-	print("pyparted paketi bulunumadı.\n","mps kur python3-pyparted")
+	print("pyparted paketi bulunamadı.\n","mps kur python3-pyparted")
+	sys.exit(0)
+	
+if os.path.exists("/var/lib/pkg/DB/python3-qt5") is False:
+	print("python3-qt5 paketi bulunamadı.\n","mps kur python3-qt5")
 	sys.exit(0)
 
-import os, subprocess,yaml
+import subprocess,yaml
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QSplitter,QWidget, QHBoxLayout, QStackedWidget, QPushButton, QApplication
 from PyQt5.QtGui import QIcon
