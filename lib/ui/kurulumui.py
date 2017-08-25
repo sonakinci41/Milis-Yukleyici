@@ -130,10 +130,10 @@ class KurulumPencere(QWidget):
 
 
     def takasAyarla(self, bolum):
-        self.kurulumBilgisiLabel.setText("mkswap " + "/dev/" + bolum)
-        os.system("mkswap " + "/dev/" + bolum)
-        self.kurulumBilgisiLabel.setText('echo "`lsblk -ln -o UUID /dev/' + bolum + '` none swap sw 0 0" | tee -a /etc/fstab')
-        os.system('echo "`lsblk -ln -o UUID /dev/' + bolum + '` none swap sw 0 0" | tee -a /etc/fstab')
+        self.kurulumBilgisiLabel.setText("mkswap " + bolum)
+        os.system("mkswap " + bolum)
+        self.kurulumBilgisiLabel.setText('echo "`lsblk -ln -o UUID ' + bolum + '` none swap sw 0 0" | tee -a /etc/fstab')
+        os.system('echo "`lsblk -ln -o UUID ' + bolum + '` none swap sw 0 0" | tee -a /etc/fstab')
 
 
     def bolumBagla(self, hedef, baglam):
