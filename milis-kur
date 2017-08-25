@@ -120,11 +120,11 @@ class MilisMerkezPencere(QMainWindow):
 if __name__ == "__main__":
     if os.getuid() != 0:
         print("Hata\n","Lütfen Milis-Kuru Root olarak çalıştırınız")
-    if pkgutil.find_loader("pytz") is None:
+    elif pkgutil.find_loader("pytz") is None:
         print("pytz paketi bulunamadı.\n", "mps kur python3-pytz")
-    if pkgutil.find_loader("pyparted") is None:
+    elif pkgutil.find_loader("parted") is None:
         print("pyparted paketi bulunamadı.\n", "mps kur python3-pyparted")
-    if os.path.exists("/var/lib/pkg/DB/python3-qt5") is False:
+    elif pkgutil.find_loader("PyQt5") is False:
         print("python3-qt5 paketi bulunamadı.\n", "mps kur python3-qt5")
     else:
         yol=os.getcwd()
