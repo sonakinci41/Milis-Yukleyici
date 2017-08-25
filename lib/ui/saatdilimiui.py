@@ -23,20 +23,21 @@ class SaatDilimiPencere(QWidget):
         comboLayout = QHBoxLayout()
         merkezLayout.addLayout(comboLayout)
 
-        self.ulkelerCombo = QComboBox()
-        comboLayout.addWidget(self.ulkelerCombo)
+        self.kitalarCombo = QComboBox()
+        comboLayout.addWidget(self.kitalarCombo)
 
         self.sehirlerCombo = QComboBox()
         comboLayout.addWidget(self.sehirlerCombo)
-        self.ulkelerCombo.currentTextChanged.connect(self.sehirlerComboDoldur)
-        self.ulkelerComboDoldur()
+        self.kitalarCombo.currentTextChanged.connect(self.sehirlerComboDoldur)
+        self.kitalarComboDoldur()
         self.sehirlerCombo.currentTextChanged.connect(self.saatDilimiSecildi)
-        self.ulkelerCombo.setCurrentText("Europe")
+        self.kitalarCombo.setCurrentText("Europe")
 
 
     def saatDilimiSecildi(self,sehir):
         if self.ebeveyn.kurparam != None:
-            self.ebeveyn.kurparam["bolgesel"]["zaman"] = self.ulkelerCombo.currentText()+"/"+sehir
+            saatDilimi = self.kitalarCombo.currentText()+"/"+sehir			
+            self.ebeveyn.kurparam["bolgesel"]["zaman"] = saatDilimi.replace(" ","_")
             self.ebeveyn.kurparam["bolgesel"]["dil"] = self.ebeveyn.sistemDili
             self.ebeveyn.ileriDugme.setDisabled(False)
 
@@ -44,18 +45,22 @@ class SaatDilimiPencere(QWidget):
         self.saatDilimiSozluk = {}
         saatDilimiListe = pytz.all_timezones
         for saatDilimi in saatDilimiListe:
+            saatDilimi = saatDilimi.replace("_"," ")
             saatDilimi = saatDilimi.split("/")
-            if len(saatDilimi) == 2:
+            if len(saatDilimi) >= 2:					
                 varmi = self.saatDilimiSozluk.get(saatDilimi[0],"yok")
-                if varmi == "yok":
+                if varmi == "yok":			
                     self.saatDilimiSozluk[saatDilimi[0]] = [saatDilimi[1]]
                 else:
-                    varmi.append(saatDilimi[1])
+                    if len(saatDilimi) == 2:
+                        varmi.append(saatDilimi[1])
+                    elif len(saatDilimi) == 3:
+                        varmi.append(saatDilimi[1] + "/" + saatDilimi[2])
 
-    def ulkelerComboDoldur(self):
+    def kitalarComboDoldur(self):
         liste = list(self.saatDilimiSozluk.keys())
         liste.sort()
-        self.ulkelerCombo.addItems(liste)
+        self.kitalarCombo.addItems(liste)
 
     def sehirlerComboDoldur(self,ulke):
         self.sehirlerCombo.clear()
