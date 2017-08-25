@@ -5,18 +5,6 @@ import sys
 import os
 import pkgutil
 
-if pkgutil.find_loader("pytz") is None:
-	print("pytz paketi bulunamadı.\n","mps kur python3-pytz")
-	sys.exit(0)
-
-if pkgutil.find_loader("pyparted") is None:
-	print("pyparted paketi bulunamadı.\n","mps kur python3-pyparted")
-	sys.exit(0)
-	
-if os.path.exists("/var/lib/pkg/DB/python3-qt5") is False:
-	print("python3-qt5 paketi bulunamadı.\n","mps kur python3-qt5")
-	sys.exit(0)
-
 import subprocess,yaml
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QSplitter,QWidget, QHBoxLayout, QStackedWidget, QPushButton, QApplication
@@ -132,6 +120,12 @@ class MilisMerkezPencere(QMainWindow):
 if __name__ == "__main__":
     if os.getuid() != 0:
         print("Hata\n","Lütfen Milis-Kuru Root olarak çalıştırınız")
+    if pkgutil.find_loader("pytz") is None:
+        print("pytz paketi bulunamadı.\n", "mps kur python3-pytz")
+    if pkgutil.find_loader("pyparted") is None:
+        print("pyparted paketi bulunamadı.\n", "mps kur python3-pyparted")
+    if os.path.exists("/var/lib/pkg/DB/python3-qt5") is False:
+        print("python3-qt5 paketi bulunamadı.\n", "mps kur python3-qt5")
     else:
         yol=os.getcwd()
         uygulama = QApplication(sys.argv)
