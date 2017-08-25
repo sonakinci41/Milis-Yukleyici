@@ -257,6 +257,8 @@ class progressAyarciSinif(QThread):
     def __init__(self,ebeveyn=None):
         super(progressAyarciSinif,self).__init__(ebeveyn)
         self.ebeveyn = ebeveyn
+        self.ebeveyn.zaman.stop()
+        self.ebeveyn.zaman.start()
 
     def run(self):
         while self.ebeveyn.progressDurum:
