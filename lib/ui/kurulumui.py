@@ -90,7 +90,7 @@ class KurulumPencere(QWidget):
         self.kurulumBilgisiLabel.setText(self.tr("Sistem Kopyalanıyor..."))
         self.sistemKopyala(kbaglam)
 
-		self.surecCubugu.setValue(0)
+        self.surecCubugu.setValue(0)
         self.kurulumBilgisiLabel.setText(self.tr("kişisel ayarlar Oluşturuluyor..."))
         self.kisiselOlustur(kbaglam,kdil,kzaman)
 
@@ -229,7 +229,7 @@ class KurulumPencere(QWidget):
             qApp.processEvents()
 
 
-	def kisiselOlustur(self, hedef,dil,zaman):
+    def kisiselOlustur(self, hedef,dil,zaman):
         bolge=zaman.split("/")[0]
         yer=zaman.split("/")[1]
         lokal_ayarlar=open("/tmp/locale.conf","w")
