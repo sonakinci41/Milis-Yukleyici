@@ -59,6 +59,8 @@ class KurulumPencere(QWidget):
         kisim = kurulum["kullanici"]["isim"]
         ksifre = kurulum["kullanici"]["sifre"]
         kgrubkur = kurulum["grub"]["kur"]
+        kdil = kurulum["bolgesel"]["dil"]
+        kzaman = kurulum["bolgesel"]["zaman"]
 
         self.kurulumBilgisiLabel.setText(self.tr("Değişiklikler Diske Uygulanıyor..."))
         if self.ebeveyn.disk:
@@ -88,9 +90,15 @@ class KurulumPencere(QWidget):
         self.kurulumBilgisiLabel.setText(self.tr("Sistem Kopyalanıyor..."))
         self.sistemKopyala(kbaglam)
 
+		self.surecCubugu.setValue(0)
+        self.kurulumBilgisiLabel.setText(self.tr("kişisel ayarlar Oluşturuluyor..."))
+        self.kisiselOlustur(kbaglam,kdil,kzaman)
+
         self.surecCubugu.setValue(0)
         self.kurulumBilgisiLabel.setText(self.tr("initrd Oluşturuluyor..."))
         self.initrdOlustur(kbaglam)
+        
+        
 
         if kgrubkur == "evet":
             self.surecCubugu.setValue(0)
@@ -220,7 +228,16 @@ class KurulumPencere(QWidget):
             self.kurulumBilgisiLabel.setText(dizin + self.tr(" kopyalandı."))
             qApp.processEvents()
 
-    def initrdOlustur(self, hedef):
+
+	def kisiselOlustur(self, hedef,dil,zaman):
+        bolge=zaman.split("/")[0]
+        yer=zaman.split("/")[1]
+        lokal_ayarlar=open("/tmp/locale.conf","w")
+        lokal_ayarlar.write("LC_ALL="+dil+".UTF-8")
+        lokal_ayarlar.write("LANG="+dil+".UTF-8")
+        lokal_ayarlar.write("LANGUAGE="+dil+".UTF-8")
+        os.system("cp -f /tmp/locale.conf " + hedef + "/etc/locale.conf")
+        os.system("cp /usr/share/zoneinfo/"+bolge+"/"+yer+" " + hedef + "/etc/localtime")
         os.system("mount --bind /dev " + hedef + "/dev")
         self.surecCubugu.setValue(25)
         os.system("mount --bind /sys " + hedef + "/sys")
@@ -228,16 +245,21 @@ class KurulumPencere(QWidget):
         os.system("mount --bind /proc " + hedef + "/proc")
         os.system("mount --bind /run " + hedef + "/run")
         self.surecCubugu.setValue(75)
-        os.system('chroot ' + hedef + ' rm -f /boot/initramfs')
-        os.system('chroot ' + hedef + ' rm -f /boot/kernel')
         os.system('chroot ' + hedef + ' rm -rf /home/atilla')
         os.system('chroot ' + hedef + ' rm -rf /root/bin/atilla.sh')
         os.system('chroot ' + hedef + ' userdel atilla')
         os.system('chroot ' + hedef + ' rm /etc/shadow- /etc/gshadow- /etc/passwd- /etc/group- ')
         os.system('chroot ' + hedef + ' sed -i "/^atilla/d" /etc/security/opasswd ')
         os.system('chroot ' + hedef + ' cp /etc/slim.conf.orj /etc/slim.conf ')
-        os.system('chroot ' + hedef + ' dracut --no-hostonly --add-drivers "ahci" -f /boot/initramfs')
+        self.surecCubugu.setValue(100)
+        self.kurulumBilgisiLabel.setText(self.tr("kişisel ayarlar Oluşturuldu"))
+
+    def initrdOlustur(self, hedef):
+        self.surecCubugu.setValue(75)
+        os.system('chroot ' + hedef + ' rm -f /boot/initramfs')
+        os.system('chroot ' + hedef + ' rm -f /boot/kernel')
         os.system("cp /run/initramfs/live/boot/kernel "+hedef+"/boot/kernel-$(uname -r)")
+        os.system('chroot ' + hedef + ' dracut --no-hostonly --add-drivers "ahci" -f /boot/initramfs')
         self.surecCubugu.setValue(100)
         self.kurulumBilgisiLabel.setText(self.tr("initrd Oluşturuldu"))
 
