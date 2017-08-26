@@ -179,8 +179,8 @@ class KurulumPencere(QWidget):
     def sistemKopyala(self, baglam):
         os.system("clear")
         self.kurulumBilgisiLabel.setText(self.tr("Kurulum .desktop siliniyor..."))
-        komut1 = "rm /root/Masaüstü/kurulum.desktop"
-        komut2 = "rm /root/Desktop/kurulum.desktop"
+        komut1 = "rm -rf /root/Masaüstü/kurulum.desktop"
+        komut2 = "rm -rf /root/Desktop/kurulum.desktop"
         os.system(komut1)
         os.system(komut2)
         self.kurulumBilgisiLabel.setText(self.tr("Dizinler kopyalanmaya başlanyor..."))
@@ -227,7 +227,15 @@ class KurulumPencere(QWidget):
         self.surecCubugu.setValue(50)
         os.system("mount --bind /proc " + hedef + "/proc")
         self.surecCubugu.setValue(75)
+        os.system('chroot ' + hedef + ' rm -f /boot/initramfs')
+        os.system('chroot ' + hedef + ' rm -f /boot/kernel')
+        os.system('chroot ' + hedef + ' rm -rf /home/atilla')
+        os.system('chroot ' + hedef + ' userdel atilla')
+        os.system('chroot ' + hedef + ' rm /etc/shadow- /etc/gshadow- /etc/passwd- /etc/group- ')
+        os.system('chroot ' + hedef + ' sed -i "/^atilla/d" /etc/security/opasswd ')
+        os.system('chroot ' + hedef + ' cp /etc/slim.conf.orj /etc/slim.conf ')
         os.system('chroot ' + hedef + ' dracut --no-hostonly --add-drivers "ahci" -f /boot/initramfs')
+        os.system("cp /run/initramfs/live/boot/kernel "+hedef+"/boot/kernel")
         self.surecCubugu.setValue(100)
         self.kurulumBilgisiLabel.setText(self.tr("initrd Oluşturuldu"))
 
@@ -237,6 +245,8 @@ class KurulumPencere(QWidget):
             os.system("grub-install --boot-directory="+baglam+"/boot /dev/mmcblk0")
             self.surecCubugu.setValue(100)
         else:
+            print ("baglam nokta",baglam)
+            print ("grub hedef bolumu",hedef)
             os.system("grub-install --boot-directory="+baglam+"/boot " + hedef)
             self.surecCubugu.setValue(50)
             os.system("chroot "+baglam+" grub-mkconfig -o /boot/grub/grub.cfg")
