@@ -57,10 +57,10 @@ class KurulumPencere(QWidget):
         kbaglam = kurulum["disk"]["baglam"]
         ktakas = kurulum["disk"]["takasbolum"]
         kisim = kurulum["kullanici"]["isim"]
-        #kuisim = kurulum["kullanici"]["uzunisim"]
-        kuisim=kisim
+        kuisim = kurulum["kullanici"]["uzunisim"]
         ksifre = kurulum["kullanici"]["sifre"]
         krootsifre = kurulum["kullanici"]["root"]
+        kotogiris = kurulum["kullanici"]["otogiris"]
         kgrubkur = kurulum["grub"]["kur"]
         kdil = kurulum["bolgesel"]["dil"]
         kzaman = kurulum["bolgesel"]["zaman"]
@@ -95,7 +95,7 @@ class KurulumPencere(QWidget):
 
         self.surecCubugu.setValue(0)
         self.kurulumBilgisiLabel.setText(self.tr("kişisel ayarlar Oluşturuluyor..."))
-        self.kisiselOlustur(kbaglam,kdil,kzaman)
+        self.kisiselOlustur(kbaglam,kdil,kzaman,kotogiris)
 
         self.surecCubugu.setValue(0)
         self.kurulumBilgisiLabel.setText(self.tr("initrd Oluşturuluyor..."))
@@ -233,7 +233,7 @@ class KurulumPencere(QWidget):
             qApp.processEvents()
 
 
-    def kisiselOlustur(self, hedef,dil,zaman):
+    def kisiselOlustur(self, hedef,dil,zaman,otogiris):
         bolge=zaman.split("/")[0]
         yer=zaman.split("/")[1]
         lokal_ayarlar=open("/tmp/locale.conf","w")
