@@ -241,7 +241,7 @@ class KurulumPencere(QWidget):
         icerik+="LANG="+dil+".UTF-8 \n"
         icerik+="LANGUAGE="+dil+".UTF-8"
         lokal_ayarlar.write(icerik)
-        os.system("cp -f /tmp/locale.conf " + hedef + "/etc/locale.conf")
+        lokal_ayarlar.close()
         os.system("cp /usr/share/zoneinfo/"+bolge+"/"+yer+" " + hedef + "/etc/localtime")
         os.system("mount --bind /dev " + hedef + "/dev")
         self.surecCubugu.setValue(25)
@@ -250,10 +250,14 @@ class KurulumPencere(QWidget):
         os.system("mount --bind /proc " + hedef + "/proc")
         os.system("mount --bind /run " + hedef + "/run")
         self.surecCubugu.setValue(75)
+        os.system("cp -rf /tmp/locale.conf " + hedef + "/etc/locale.conf")
         os.system("cp -rf /home/atilla/.config "+ hedef + "/etc/skel/")
         os.system('chroot ' + hedef + ' rm -rf /home/atilla')
         os.system('chroot ' + hedef + ' rm -rf /root/bin/atilla.sh')
         os.system('chroot ' + hedef + ' rm -rf /opt/Milis-Yukleyici')
+        os.system('chroot ' + hedef + ' rm -rf /root/Desktop/kurulum.desktop')
+        os.system('chroot ' + hedef + ' rm -rf /root/Masaüstü/kurulum.desktop')
+        os.system('chroot ' + hedef + ' rm -rf /root/Masaüstü/milis-kur.desktop')
         os.system('chroot ' + hedef + ' userdel atilla')
         os.system('chroot ' + hedef + ' rm /etc/shadow- /etc/gshadow- /etc/passwd- /etc/group- ')
         os.system('chroot ' + hedef + ' sed -i "/^atilla/d" /etc/security/opasswd ')
