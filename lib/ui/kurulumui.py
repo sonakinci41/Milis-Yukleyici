@@ -57,7 +57,9 @@ class KurulumPencere(QWidget):
         kbaglam = kurulum["disk"]["baglam"]
         ktakas = kurulum["disk"]["takasbolum"]
         kisim = kurulum["kullanici"]["isim"]
+        kuisim = kurulum["kullanici"]["uzunisim"]
         ksifre = kurulum["kullanici"]["sifre"]
+        krootsifre = kurulum["kullanici"]["root"]
         kgrubkur = kurulum["grub"]["kur"]
         kdil = kurulum["bolgesel"]["dil"]
         kzaman = kurulum["bolgesel"]["zaman"]
@@ -84,7 +86,7 @@ class KurulumPencere(QWidget):
 
         self.surecCubugu.setValue(0)
         self.kurulumBilgisiLabel.setText(self.tr("Kullanıcı Oluşturuluyor..."))
-        self.kullaniciOlustur(kisim, kisim, ksifre)
+        self.kullaniciOlustur(kuisim, kisim, ksifre,krootsifre)
 
         self.surecCubugu.setValue(0)
         self.kurulumBilgisiLabel.setText(self.tr("Sistem Kopyalanıyor..."))
@@ -167,12 +169,13 @@ class KurulumPencere(QWidget):
                 self.toplamBoyut.append(int(boyut[0]))
 
 
-    def kullaniciOlustur(self, isim, kullisim, kullsifre):
-        os.system("kopar milislinux-" + isim + " " + kullisim)
+    def kullaniciOlustur(self, uzun_isim, kullisim, kullsifre,rootsifre):
+        os.system("kopar " + uzun_isim + " " + kullisim)
         self.surecCubugu.setValue(20)
         os.system('echo -e "' + kullsifre + '\n' + kullsifre + '" | passwd ' + kullisim)
+        os.system('echo -e "' + rootsifre + '\n' + rootsifre + '" | passwd root')
         self.surecCubugu.setValue(40)
-        ayar_komut = "cp -r /root/.config /home/" + kullisim + "/"
+        ayar_komut = "cp -r /home/atilla/.config /home/" + kullisim + "/"
         os.system(ayar_komut)
         self.surecCubugu.setValue(60)
         ayar_komut2 = "cp -r /root/.xinitrc /home/" + kullisim + "/"
@@ -246,6 +249,7 @@ class KurulumPencere(QWidget):
         os.system("mount --bind /proc " + hedef + "/proc")
         os.system("mount --bind /run " + hedef + "/run")
         self.surecCubugu.setValue(75)
+        os.system("cp -rf /home/atilla/.config "+ hedef + "/etc/skel/")
         os.system('chroot ' + hedef + ' rm -rf /home/atilla')
         os.system('chroot ' + hedef + ' rm -rf /root/bin/atilla.sh')
         os.system('chroot ' + hedef + ' userdel atilla')
