@@ -252,6 +252,7 @@ class KurulumPencere(QWidget):
         os.system("cp -rf /home/atilla/.config "+ hedef + "/etc/skel/")
         os.system('chroot ' + hedef + ' rm -rf /home/atilla')
         os.system('chroot ' + hedef + ' rm -rf /root/bin/atilla.sh')
+        os.system('chroot ' + hedef + ' rm -rf /opt/Milis-Yukleyici')
         os.system('chroot ' + hedef + ' userdel atilla')
         os.system('chroot ' + hedef + ' rm /etc/shadow- /etc/gshadow- /etc/passwd- /etc/group- ')
         os.system('chroot ' + hedef + ' sed -i "/^atilla/d" /etc/security/opasswd ')
