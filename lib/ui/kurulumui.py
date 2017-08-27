@@ -57,7 +57,8 @@ class KurulumPencere(QWidget):
         kbaglam = kurulum["disk"]["baglam"]
         ktakas = kurulum["disk"]["takasbolum"]
         kisim = kurulum["kullanici"]["isim"]
-        kuisim = kurulum["kullanici"]["uzunisim"]
+        #kuisim = kurulum["kullanici"]["uzunisim"]
+        kuisim=kisim
         ksifre = kurulum["kullanici"]["sifre"]
         krootsifre = kurulum["kullanici"]["root"]
         kgrubkur = kurulum["grub"]["kur"]
