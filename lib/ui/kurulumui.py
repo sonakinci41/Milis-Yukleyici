@@ -233,8 +233,8 @@ class KurulumPencere(QWidget):
         bolge=zaman.split("/")[0]
         yer=zaman.split("/")[1]
         lokal_ayarlar=open("/tmp/locale.conf","w")
-        lokal_ayarlar.write("LC_ALL="+dil+".UTF-8")
-        lokal_ayarlar.write("LANG="+dil+".UTF-8")
+        lokal_ayarlar.write("LC_ALL="+dil+".UTF-8 \n")
+        lokal_ayarlar.write("LANG="+dil+".UTF-8 \n")
         lokal_ayarlar.write("LANGUAGE="+dil+".UTF-8")
         os.system("cp -f /tmp/locale.conf " + hedef + "/etc/locale.conf")
         os.system("cp /usr/share/zoneinfo/"+bolge+"/"+yer+" " + hedef + "/etc/localtime")
