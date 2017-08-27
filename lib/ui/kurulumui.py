@@ -95,7 +95,7 @@ class KurulumPencere(QWidget):
 
         self.surecCubugu.setValue(0)
         self.kurulumBilgisiLabel.setText(self.tr("kişisel ayarlar Oluşturuluyor..."))
-        self.kisiselOlustur(kbaglam,kdil,kzaman,kotogiris)
+        self.kisiselOlustur(kbaglam,kdil,kzaman,kotogiris,kisim)
 
         self.surecCubugu.setValue(0)
         self.kurulumBilgisiLabel.setText(self.tr("initrd Oluşturuluyor..."))
@@ -233,7 +233,7 @@ class KurulumPencere(QWidget):
             qApp.processEvents()
 
 
-    def kisiselOlustur(self, hedef,dil,zaman,otogiris):
+    def kisiselOlustur(self, hedef,dil,zaman,otogiris,isim):
         bolge=zaman.split("/")[0]
         yer=zaman.split("/")[1]
         lokal_ayarlar=open("/tmp/locale.conf","w")
@@ -262,6 +262,11 @@ class KurulumPencere(QWidget):
         os.system('chroot ' + hedef + ' rm /etc/shadow- /etc/gshadow- /etc/passwd- /etc/group- ')
         os.system('chroot ' + hedef + ' sed -i "/^atilla/d" /etc/security/opasswd ')
         os.system('chroot ' + hedef + ' cp /etc/slim.conf.orj /etc/slim.conf ')
+        
+		if otogiris=="evet":
+			os.system('chroot ' + hedef + ' sed -i s/"#default_user .*"/"default_user '+isim+'/" /etc/slim.conf')
+			os.system('chroot ' + hedef + ' sed -i s/"#auto_login .*"/"auto_login  yes/" /etc/slim.conf')
+        
         self.surecCubugu.setValue(100)
         self.kurulumBilgisiLabel.setText(self.tr("kişisel ayarlar Oluşturuldu"))
 
