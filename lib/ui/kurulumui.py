@@ -250,7 +250,7 @@ class KurulumPencere(QWidget):
         os.system("mount --bind /proc " + hedef + "/proc")
         os.system("mount --bind /run " + hedef + "/run")
         self.surecCubugu.setValue(75)
-        os.system("cp -rf /tmp/locale.conf " + hedef + "/etc/locale.conf")
+        os.system("cp -rf /tmp/locale.conf " + hedef + "/etc/")
         os.system("cp -rf /home/atilla/.config "+ hedef + "/etc/skel/")
         os.system('chroot ' + hedef + ' rm -rf /home/atilla')
         os.system('chroot ' + hedef + ' rm -rf /root/bin/atilla.sh')
