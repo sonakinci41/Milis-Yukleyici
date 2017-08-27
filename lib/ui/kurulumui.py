@@ -263,9 +263,9 @@ class KurulumPencere(QWidget):
         os.system('chroot ' + hedef + ' sed -i "/^atilla/d" /etc/security/opasswd ')
         os.system('chroot ' + hedef + ' cp /etc/slim.conf.orj /etc/slim.conf ')
         
-		if otogiris=="evet":
-			os.system('chroot ' + hedef + ' sed -i s/"#default_user .*"/"default_user '+isim+'/" /etc/slim.conf')
-			os.system('chroot ' + hedef + ' sed -i s/"#auto_login .*"/"auto_login  yes/" /etc/slim.conf')
+        if otogiris=="evet":
+            os.system('chroot ' + hedef + ' sed -i s/"#default_user .*"/"default_user '+isim+'/" /etc/slim.conf')
+            os.system('chroot ' + hedef + ' sed -i s/"#auto_login .*"/"auto_login  yes/" /etc/slim.conf')
         
         self.surecCubugu.setValue(100)
         self.kurulumBilgisiLabel.setText(self.tr("kişisel ayarlar Oluşturuldu"))
