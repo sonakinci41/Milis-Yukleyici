@@ -271,7 +271,7 @@ class KurulumPencere(QWidget):
             self.surecCubugu.setValue(100)
         else:
             #os.system("grub-install --boot-directory="+baglam+"/boot " + hedef)
-            os.system('chroot ' + baglam + 'grub-install '+hedef)
+            os.system('chroot ' + baglam + ' grub-install '+hedef)
             self.surecCubugu.setValue(50)
             os.system("chroot "+baglam+" grub-mkconfig -o /boot/grub/grub.cfg")
             self.surecCubugu.setValue(100)
