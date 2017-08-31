@@ -171,8 +171,7 @@ class KurulumPencere(QWidget):
 
 
     def kullaniciOlustur(self, uzun_isim, kullisim, kullsifre,rootsifre):
-        uzun=uzun_isim.split()
-        uzun_isim=uzun[0]+"_"+uzun[1]
+        uzun_isim = uzun_isim.replace(' ', '_')
         os.system("kopar " + uzun_isim + " " + kullisim)
         self.surecCubugu.setValue(20)
         os.system('echo -e "' + kullsifre + '\n' + kullsifre + '" | passwd ' + kullisim)
