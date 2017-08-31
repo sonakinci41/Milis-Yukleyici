@@ -267,6 +267,7 @@ class KurulumPencere(QWidget):
         os.system('chroot ' + hedef + ' rm /etc/shadow- /etc/gshadow- /etc/passwd- /etc/group- ')
         os.system('chroot ' + hedef + ' sed -i "/^atilla/d" /etc/security/opasswd ')
         os.system('chroot ' + hedef + ' cp /etc/slim.conf.orj /etc/slim.conf ')
+        os.system('chroot ' + hedef + ' chown '+isim+':'+isim+' -R /home/'+isim)
         
         if otogiris=="evet":
             os.system('chroot ' + hedef + ' sed -i s/"#default_user .*"/"default_user '+isim+'/" /etc/slim.conf')
