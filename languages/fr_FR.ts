@@ -259,63 +259,63 @@ Ayn&#xc4;&#xb1; diski hem sistem hem takas olarak kullanmazs&#xc4;&#xb1;n&#xc4;&
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kullaniciui.py" line="46"/>
+        <location filename="../lib/ui/kullaniciui.py" line="47"/>
         <source>Root &#xc5;&#x9e;ifresi</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kullaniciui.py" line="49"/>
+        <location filename="../lib/ui/kullaniciui.py" line="50"/>
         <source>Root &#xc5;&#x9e;ifresi Tekrar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kullaniciui.py" line="89"/>
+        <location filename="../lib/ui/kullaniciui.py" line="90"/>
         <source>Ad Soyad Bo&#xc5;&#x9f; b&#xc4;&#xb1;rak&#xc4;&#xb1;lamaz
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kullaniciui.py" line="91"/>
+        <location filename="../lib/ui/kullaniciui.py" line="92"/>
         <source>Ad Soyad B&#xc3;&#xb6;l&#xc3;&#xbc;m&#xc3;&#xbc;n Harf Ve Bo&#xc5;&#x9f;luk Kullan&#xc4;&#xb1;n&#xc4;&#xb1;z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kullaniciui.py" line="95"/>
+        <location filename="../lib/ui/kullaniciui.py" line="96"/>
         <source>L&#xc3;&#xbc;tfen Kullan&#xc4;&#xb1;c&#xc4;&#xb1; Ad&#xc4;&#xb1;nda B&#xc3;&#xbc;y&#xc3;&#xbc;k Harf Kullanmay&#xc4;&#xb1;n&#xc4;&#xb1;z
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kullaniciui.py" line="99"/>
+        <location filename="../lib/ui/kullaniciui.py" line="100"/>
         <source>L&#xc3;&#xbc;tfen Kullan&#xc4;&#xb1;c&#xc4;&#xb1; Ad&#xc4;&#xb1;nda Harf &#xc4;&#xb0;le Ba&#xc5;&#x9f;lany&#xc4;&#xb1;n
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kullaniciui.py" line="101"/>
+        <location filename="../lib/ui/kullaniciui.py" line="102"/>
         <source>L&#xc3;&#xbc;tfen Kullan&#xc4;&#xb1;c&#xc4;&#xb1; Ad&#xc4;&#xb1;nda Sadece Harf Ve Rakam Kullan&#xc4;&#xb1;n
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kullaniciui.py" line="112"/>
+        <location filename="../lib/ui/kullaniciui.py" line="113"/>
         <source>Te&#xc5;&#x9f;ekk&#xc3;&#xbc;rler L&#xc3;&#xbc;tfen Kullan&#xc4;&#xb1;c&#xc4;&#xb1; Ad&#xc4;&#xb1;n&#xc4;&#xb1;z&#xc4;&#xb1; Ve &#xc5;&#x9e;ifrenizi Unutmay&#xc4;&#xb1;n&#xc4;&#xb1;z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kullaniciui.py" line="129"/>
+        <location filename="../lib/ui/kullaniciui.py" line="130"/>
         <source>L&#xc3;&#xbc;tfen &#xc5;&#x9e;ifrelerde Sadece Rakam Ve Harf Kullan&#xc4;&#xb1;n&#xc4;&#xb1;z
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kullaniciui.py" line="131"/>
+        <location filename="../lib/ui/kullaniciui.py" line="132"/>
         <source>L&#xc3;&#xbc;tfen Bir &#xc5;&#x9e;ifre Girin
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kullaniciui.py" line="133"/>
+        <location filename="../lib/ui/kullaniciui.py" line="134"/>
         <source>Yazd&#xc4;&#xb1;&#xc4;&#x9f;&#xc4;&#xb1;n&#xc4;&#xb1;z &#xc5;&#x9e;ifreler Birbirinden Farkl&#xc4;&#xb1;
 </source>
         <translation type="unfinished"></translation>
@@ -381,7 +381,7 @@ ve de&#xc4;&#x9f;i&#xc5;&#x9f;iklikler disklere uygulanacaktur.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kurulumui.py" line="296"/>
+        <location filename="../lib/ui/kurulumui.py" line="308"/>
         <source>Hata</source>
         <translation type="unfinished"></translation>
     </message>
@@ -401,52 +401,52 @@ ve de&#xc4;&#x9f;i&#xc5;&#x9f;iklikler disklere uygulanacaktur.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kurulumui.py" line="188"/>
+        <location filename="../lib/ui/kurulumui.py" line="189"/>
         <source> kullan&#xc4;&#xb1;c&#xc4;&#xb1;s&#xc4;&#xb1; ba&#xc5;&#x9f;ar&#xc4;&#xb1;yla olu&#xc5;&#x9f;turuldu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kurulumui.py" line="193"/>
+        <location filename="../lib/ui/kurulumui.py" line="194"/>
         <source>Kurulum .desktop siliniyor...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kurulumui.py" line="198"/>
+        <location filename="../lib/ui/kurulumui.py" line="199"/>
         <source>Dizinler kopyalanmaya ba&#xc5;&#x9f;lanyor...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kurulumui.py" line="213"/>
+        <location filename="../lib/ui/kurulumui.py" line="214"/>
         <source> kopyalan&#xc4;&#xb1;yor...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kurulumui.py" line="219"/>
+        <location filename="../lib/ui/kurulumui.py" line="220"/>
         <source>Yeni Dizinler Olu&#xc5;&#x9f;turuluyor...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kurulumui.py" line="232"/>
+        <location filename="../lib/ui/kurulumui.py" line="233"/>
         <source> kopyaland&#xc4;&#xb1;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kurulumui.py" line="266"/>
+        <location filename="../lib/ui/kurulumui.py" line="278"/>
         <source>ki&#xc5;&#x9f;isel ayarlar Olu&#xc5;&#x9f;turuldu</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kurulumui.py" line="275"/>
+        <location filename="../lib/ui/kurulumui.py" line="287"/>
         <source>initrd Olu&#xc5;&#x9f;turuldu</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kurulumui.py" line="289"/>
+        <location filename="../lib/ui/kurulumui.py" line="301"/>
         <source>Grub Kuruldu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/kurulumui.py" line="299"/>
+        <location filename="../lib/ui/kurulumui.py" line="311"/>
         <source> &#xc3;&#xa7;&#xc3;&#xb6;z&#xc3;&#xbc;ld&#xc3;&#xbc;.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -462,23 +462,33 @@ ve de&#xc4;&#x9f;i&#xc5;&#x9f;iklikler disklere uygulanacaktur.</source>
 <context>
     <name>diskOzellikleriSinif</name>
     <message>
-        <location filename="../lib/ui/bolumlemeui.py" line="328"/>
+        <location filename="../lib/ui/bolumlemeui.py" line="326"/>
         <source>Sistem Diski</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/bolumlemeui.py" line="334"/>
+        <location filename="../lib/ui/bolumlemeui.py" line="338"/>
         <source>Takas Alan&#xc4;&#xb1;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/bolumlemeui.py" line="318"/>
+        <location filename="../lib/ui/bolumlemeui.py" line="316"/>
         <source>Diski Bi&#xc3;&#xa7;imlendir</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../lib/ui/bolumlemeui.py" line="323"/>
+        <location filename="../lib/ui/bolumlemeui.py" line="321"/>
         <source>Tamam</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../lib/ui/bolumlemeui.py" line="336"/>
+        <source>Hata</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../lib/ui/bolumlemeui.py" line="336"/>
+        <source>Bu b&#xc3;&#xb6;l&#xc3;&#xbc;m sistem diski olu&#xc5;&#x9f;turmak i&#xc3;&#xa7;in &#xc3;&#xa7;ok k&#xc3;&#xbc;&#xc3;&#xa7;&#xc3;&#xbc;k ! Sistem diski se&#xc3;&#xa7;ilecek b&#xc3;&#xb6;l&#xc3;&#xbc;m en az&#xc4;&#xb1;ndan {} GB boyutunda olmal&#xc4;&#xb1;d&#xc4;&#xb1;r.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
