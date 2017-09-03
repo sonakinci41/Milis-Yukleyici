@@ -100,7 +100,7 @@ class BolumlemePencere(QWidget):
             _bolum = self.bolumBilgi(bolum, "GB")
             if self.sistemDiski and bolum.path == self.sistemDiski[0]:
                 if self.sistemDiski[1] == "evet":
-                    item = self.treeWidgetItemOlustur(_bolum["yol"], self.tr("Sistem Diski"), _bolum["boyut"] + " GB",
+                    item = self.treeWidgetItemOlustur(_bolum["yol"], self.tr("Sistem Diski"), _bolum["boyut"],
                                                       "ext4", _bolum["bayraklar"], _bolum["no"])
                 else:
                     item = self.treeWidgetItemOlustur(_bolum["yol"], self.tr("Sistem Diski"), _bolum["boyut"],
