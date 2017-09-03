@@ -36,6 +36,7 @@ class KontrolPencere(QWidget):
             cikti += self.ebeveyn.komutCalistirFonksiyon("cp " + kurulum_dosya + " /opt/kurulum.yml")
             self.ciktiYazilari.setText(cikti)
             self.ebeveyn.kurulum_oku(self.ebeveyn.kurulum_dosya)
+            self.ebeveyn.kurparam["kullanici"]["otogiris"] = "hayir"
             cikti += "============================\n"+self.tr("İşlem tamamlandı devam edebilirsiniz")
             self.ciktiYazilari.setText(cikti)
             self.ebeveyn.ileriDugme.setDisabled(False)
