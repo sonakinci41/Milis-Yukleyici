@@ -42,6 +42,7 @@ class KullaniciPencere(QWidget):
         self.otomatikGiris = QCheckBox(self.tr("Oluşturulan kullanıcıya otomatik giriş yapılsın"))
         self.otomatikGiris.clicked.connect(self.otogirisCheckBoxDegisti)
         kullaniciKutu.addWidget(self.otomatikGiris,9,0,1,2)
+        self.ebeveyn.kurparam["kullanici"]["otogiris"] = "hayir"
 
         self.rootLabel = QLabel(self.tr("Root Şifresi"))
         self.rootLabel.setHidden(True)
