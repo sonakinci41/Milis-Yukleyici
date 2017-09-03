@@ -294,9 +294,6 @@ class BolumlemePencere(QWidget):
 
                 self.ebeveyn.disk.addPartition(partition=partition, constraint=constraint)
             except (parted.PartitionException, parted.GeometryException, parted.CreateException) as e:
-                # GeometryException accounts for incorrect start/end values (e.g. start < end),
-                # CreateException is raised e.g. when the partition doesn't fit on the disk.
-                # PartedException is a generic error (e.g. start/end values out of range)
                 raise RuntimeError(e.message)
 
 
@@ -306,6 +303,7 @@ class diskOzellikleriSinif(QDialog):
         self.ebeveyn = ebeveyn
         disk_ = self.ebeveyn.seciliDisk
         self.baslik_ = disk_.text(0)
+        self.boyut_ = float(disk_.text(2).replace(" GB",""))
         format_ = disk_.text(3)
         self.setWindowTitle(self.baslik_)
         diskOzellikKutu = QGridLayout()
@@ -325,11 +323,17 @@ class diskOzellikleriSinif(QDialog):
 
     def tamamBasildiFonk(self):
         if self.secenekAcilirListe.currentText() == self.tr("Sistem Diski"):
-            self.ebeveyn.sistemDiski = [self.baslik_]
-            if self.diskBicimlendirKutu.isChecked():
-                self.ebeveyn.sistemDiski.append("evet")
+            komut = "LC_ALL=C df -h / | awk '{ print $3 }' | tail -n 1 | sed 's/G//'g"
+            boyut = self.ebeveyn.ebeveyn.komutCalistirFonksiyon(komut)
+            if self.boyut_ >= round(float(boyut)):
+                self.ebeveyn.sistemDiski = [self.baslik_]
+                if self.diskBicimlendirKutu.isChecked():
+                    self.ebeveyn.sistemDiski.append("evet")
+                else:
+                    self.ebeveyn.sistemDiski.append("hayir")
             else:
-                self.ebeveyn.sistemDiski.append("hayir")
+                    QMessageBox.critical(self, self.tr("Hata"), self.tr(
+                            "Bu bölüm sistem diski oluşturmak için çok küçük ! Sistem diski seçilecek bölüm en azından {} GB boyutunda olmalıdır.".format(round(float(boyut)))))
         elif self.secenekAcilirListe.currentText() == self.tr("Takas Alanı"):
             self.ebeveyn.takasDiski = [self.baslik_]
             if self.diskBicimlendirKutu.isChecked():
