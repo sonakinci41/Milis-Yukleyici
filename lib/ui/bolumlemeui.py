@@ -4,7 +4,7 @@
 import parted
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QComboBox, QPushButton, QTreeWidget, QTreeWidgetItem, \
-    QVBoxLayout, QMessageBox, QDialog, QCheckBox, QGridLayout, QInputDialog
+    QVBoxLayout, QMessageBox, QDialog, QCheckBox, QGridLayout, QInputDialog, QHeaderView
 from PyQt5.QtCore import Qt
 
 
@@ -25,12 +25,15 @@ class BolumlemePencere(QWidget):
 
         self.bolumListeKutu = QTreeWidget()
         self.bolumListeKutu.setColumnCount(4)
-        self.bolumListeKutu.headerItem().setText(0, self.tr("bölüm"))
-        self.bolumListeKutu.headerItem().setText(1, self.tr("kullanım"))
-        self.bolumListeKutu.headerItem().setText(2, self.tr("boyut"))
-        self.bolumListeKutu.headerItem().setText(3, self.tr("format"))
-        # self.bolumListeKutu.headerItem().setText(4, self.tr("bayraklar"))
-        self.bolumListeKutu.headerItem().setText(4, self.tr("bölüm numarası"))
+        self.bolumListeKutu.header().setStretchLastSection(False);
+        self.bolumListeKutu.header().setSectionResizeMode(0, QHeaderView.Stretch);
+        self.bolumListeKutu.header().setSectionResizeMode(1, QHeaderView.Stretch);
+        self.bolumListeKutu.header().setSectionResizeMode(2, QHeaderView.Stretch);
+        self.bolumListeKutu.header().setSectionResizeMode(3, QHeaderView.Stretch);                        
+        self.bolumListeKutu.headerItem().setText(0, self.tr("Bölüm"))
+        self.bolumListeKutu.headerItem().setText(1, self.tr("Kullanım Şekli"))
+        self.bolumListeKutu.headerItem().setText(2, self.tr("Boyut"))
+        self.bolumListeKutu.headerItem().setText(3, self.tr("Dosya Sistemi"))
 
         self.disklerAcilirKutu.currentIndexChanged.connect(self.diskDegisti)
 
@@ -135,10 +138,6 @@ class BolumlemePencere(QWidget):
                 ayrilmamis = self.treeWidgetItemOlustur("", self.tr("Ayrılmamış Bölüm"), _toplam, "", "", "ayrilmamis")
                 ayrilmamis.setIcon(0, QIcon(":/gorseller/blank.xpm"))
                 self.bolumListeKutu.addTopLevelItem(ayrilmamis)
-        self.bolumListeKutu.resizeColumnToContents(0)
-        self.bolumListeKutu.resizeColumnToContents(1)
-        self.bolumListeKutu.resizeColumnToContents(2)
-        self.bolumListeKutu.resizeColumnToContents(3)
 
     def treeWidgetItemOlustur(self, bolum, kullanim, boyut, format, islev, bolumno):
         item = QTreeWidgetItem()
@@ -146,18 +145,17 @@ class BolumlemePencere(QWidget):
         item.setText(1, str(kullanim))
         item.setText(2, str(boyut) + " GB ")
         item.setText(3, str(format))
-        # item.setText(4, str(islev))
-        item.setText(4, str(bolumno))
+        item.setData(0,Qt.UserRole, bolumno)
         return item
 
     def bolumSecildiFonk(self, tiklanan):
-        if tiklanan.text(4) != "ayrilmamis":
+        if tiklanan.data(0,Qt.UserRole) != "ayrilmamis":
             self.bolumSilBtn.setEnabled(True)
         else:
             self.bolumSilBtn.setEnabled(False)
 
     def bolumFormatSecFonk(self, tiklanan):
-        if tiklanan.text(4) != "ayrilmamis":
+        if tiklanan.data(0,Qt.UserRole) != "ayrilmamis":
             self.seciliDisk = tiklanan
             diskOzellikPencere = diskOzellikleriSinif(self)
             diskOzellikPencere.exec_()
@@ -215,8 +213,8 @@ class BolumlemePencere(QWidget):
                         self.bolumListeYenile()
 
     def bolumSilFonk(self):
-        if self.bolumListeKutu.currentItem().text(4) != "ayrilmamis":
-            bolumNo = int(self.bolumListeKutu.currentItem().text(4))
+        if self.bolumListeKutu.currentItem().data(0,Qt.UserRole) != "ayrilmamis":
+            bolumNo = int(self.bolumListeKutu.currentItem().data(0,Qt.UserRole))
             for bolum in self.ebeveyn.disk.partitions:
                 if bolum.number == bolumNo:
                     try:
