@@ -269,6 +269,7 @@ class KurulumPencere(QWidget):
         os.system('chroot ' + hedef + ' rm -rf /home/'+isim+'/Desktop')
         os.system('chroot ' + hedef + ' su - '+isim+' -c "xdg-user-dirs-update" ')
         os.system('chroot ' + hedef + ' chown '+isim+':'+isim+' -R /home/'+isim)
+        os.system('chroot ' + hedef + ' setfacl -m u:'+isim+':rw /dev/snd/* ')
         
         if otogiris=="evet":
             os.system('chroot ' + hedef + ' sed -i s/"#default_user .*"/"default_user '+isim+'/" /etc/slim.conf')
