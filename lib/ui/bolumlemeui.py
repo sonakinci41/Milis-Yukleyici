@@ -70,7 +70,7 @@ class BolumlemePencere(QWidget):
         self.diskler = parted.getAllDevices()
         for disk in self.diskler:
             try:
-                if parted.Disk(disk).type == "msdos":
+                if parted.Disk(disk).type == "msdos" or parted.Disk(disk).type == "gpt" :
                     self.disklerAcilirKutu.addItem(
                         "{} {} GB ({})".format(disk.model, format(disk.getSize(unit="GB"), '.2f'), disk.path),
                         userData=disk.path)
