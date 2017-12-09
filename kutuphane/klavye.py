@@ -165,6 +165,7 @@ class Klavye(QWidget):
                     for key in self.variant_list[variant]:
                         if key[list(key.keys())[0]] == value:
                             self.e.milis_ayarlar["klavye_varyantı"] = list(key.keys())[0], list(key.values())[0]
+                            print("setxkbmap -variant {}".format(self.e.milis_ayarlar["klavye_varyantı"][0]))
                             os.system("setxkbmap -variant {}".format(self.e.milis_ayarlar["klavye_varyantı"][0]))
 
             varyant = self.e.milis_ayarlar["klavye_varyantı"]
