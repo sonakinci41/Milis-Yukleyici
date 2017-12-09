@@ -206,7 +206,7 @@ class kurulumThread(QThread):
             self.kopyalanacakDizinAdi = dizin
             self.dizinSirasi += 1
             self.f.bilgi_label.setText(
-                str(self.dizinSirasi) + "/" + str(mikdiz) + dizin + self.e.d[self.e.s_d][" kopyalanıyor..."])
+                str(self.dizinSirasi) + "/" + str(mikdiz) +" "+ dizin + self.e.d[self.e.s_d][" kopyalanıyor..."])
             komut = "rsync --delete -axHAWX --numeric-ids /" + dizin + " " + baglam + " --exclude /proc"
             os.system(komut)
             qApp.processEvents()
