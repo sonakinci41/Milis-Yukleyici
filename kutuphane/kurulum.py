@@ -44,6 +44,16 @@ class Kurulum(QWidget):
         kurulum.start()
 
 class kurulumThread(QThread):
+    
+    CANLI_KULL="atilla"
+    canli_kull_yol="/etc/canli_kullanici"
+    if os.path.exists(canli_kull_yol):
+        CANLI_KULL=open(canli_kull_yol,"r").read()
+        CANLI_KULL=CANLI_KULL.strip()
+    else:
+        print ("canlı kullanıcını belirten dosya bulunamadı.")
+        sys.exit(1)
+    
     def __init__(self, ebeveyn=None):
         super(kurulumThread, self).__init__(ebeveyn)
         self.f = ebeveyn
@@ -162,14 +172,14 @@ class kurulumThread(QThread):
         os.system('echo -e "' + kullsifre + '\n' + kullsifre + '" | passwd ' + kullisim)
         os.system('echo -e "' + rootsifre + '\n' + rootsifre + '" | passwd root')
         self.f.surec_cubugu.setValue(40)
-        ayar_komut = "cp -r /home/atilla/.config /home/" + kullisim + "/"
+        ayar_komut = "cp -rf /home/"+self.CANLI_KULL+"/.config  /home/"+kullisim
         os.system(ayar_komut)
         self.f.surec_cubugu.setValue(60)
         ayar_komut2 = "cp -r /root/.xinitrc /home/" + kullisim + "/"
         os.system(ayar_komut2)
         self.f.surec_cubugu.setValue(80)
-        saat_komut = "saat_ayarla_tr"
-        os.system(saat_komut)
+        #saat_komut = "saat_ayarla_tr"
+        #os.system(saat_komut)
         self.f.surec_cubugu.setValue(100)
         self.f.bilgi_label.setText(kullisim + self.e.d[self.e.s_d][" kullanıcısı başarıyla oluşturuldu."])
 
@@ -236,27 +246,30 @@ class kurulumThread(QThread):
         os.system("mount --bind /run " + hedef + "/run")
         self.f.surec_cubugu.setValue(75)
         os.system("cp -rf /tmp/locale.conf " + hedef + "/etc/")
-        os.system("cp -rf /run/initramfs/live/updates/home/atilla/.* " + hedef + "/etc/skel/")
-        os.system("cp -rf /run/initramfs/live/updates/home/atilla/.* " + hedef + "/home/" + isim + "/")
-        os.system('chroot ' + hedef + ' rm -rf /home/atilla')
-        os.system('chroot ' + hedef + ' rm -rf /root/bin/atilla.sh')
+        komut_skel="cp -rf /run/initramfs/live/updates/home/"+self.CANLI_KULL+"/* "+ hedef + "/etc/skel/"
+        komut_evdizin="cp -rf /run/initramfs/live/updates/home/"+self.CANLI_KULL+"/.* "+ hedef + "/home/"+isim+"/"
+        os.system(komut_evdizin)
+        os.system('chroot ' + hedef + ' rm -rf /home/'+self.CANLI_KULL)
+        os.system('chroot ' + hedef + ' rm -rf /root/bin/canli_kullanici.sh')
+        os.system('chroot ' + hedef + ' rm -rf /etc/canli_kullanici')
         os.system('chroot ' + hedef + ' rm -rf /opt/Milis-Yukleyici')
+        os.system('chroot ' + hedef + ' rm -rf '+self.canli_kull_yol)
         os.system('chroot ' + hedef + ' rm -rf /root/Desktop/kurulum.desktop')
-        os.system('chroot ' + hedef + ' rm -rf /home/' + isim + '/Desktop/kurulum.desktop')
+        os.system('chroot ' + hedef + ' rm -rf /home/'+isim+'/Desktop/kurulum.desktop')
         os.system('chroot ' + hedef + ' rm -rf /root/Masaüstü/kurulum.desktop')
-        os.system('chroot ' + hedef + ' rm -rf /home/' + isim + '/Masaüstü/kurulum.desktop')
+        os.system('chroot ' + hedef + ' rm -rf /home/'+isim+'/Masaüstü/kurulum.desktop')
         os.system('chroot ' + hedef + ' rm -rf /root/Masaüstü/milis-kur.desktop')
-        os.system('chroot ' + hedef + ' userdel atilla')
+        os.system('chroot ' + hedef + ' userdel '+self.CANLI_KULL)
         os.system('chroot ' + hedef + ' rm /etc/shadow- /etc/gshadow- /etc/passwd- /etc/group- ')
-        os.system('chroot ' + hedef + ' sed -i "/^atilla/d" /etc/security/opasswd ')
+        os.system('chroot ' + hedef + ' sed -i "/^'+self.CANLI_KULL+'/d" /etc/security/opasswd ')
         os.system('chroot ' + hedef + ' cp /etc/slim.conf.orj /etc/slim.conf ')
-        os.system('chroot ' + hedef + ' rm -rf /home/' + isim + '/Desktop')
-        os.system('chroot ' + hedef + ' su - ' + isim + ' -c "xdg-user-dirs-update" ')
-        os.system('chroot ' + hedef + ' chown ' + isim + ':' + isim + ' -R /home/' + isim)
-        os.system('chroot ' + hedef + ' setfacl -m u:' + isim + ':rw /dev/snd/* ')
-
-        if otogiris:
-            os.system('chroot ' + hedef + ' sed -i s/"#default_user .*"/"default_user ' + isim + '/" /etc/slim.conf')
+        os.system('chroot ' + hedef + ' rm -rf /home/'+isim+'/Desktop')
+        os.system('chroot ' + hedef + ' su - '+isim+' -c "xdg-user-dirs-update" ')
+        os.system('chroot ' + hedef + ' chown '+isim+':'+isim+' -R /home/'+isim)
+        os.system('chroot ' + hedef + ' setfacl -m u:'+isim+':rw /dev/snd/* ')
+        
+        if otogiris=="evet":
+            os.system('chroot ' + hedef + ' sed -i s/"#default_user .*"/"default_user '+isim+'/" /etc/slim.conf')
             os.system('chroot ' + hedef + ' sed -i s/"#auto_login .*"/"auto_login  yes/" /etc/slim.conf')
 
         self.f.surec_cubugu.setValue(100)
@@ -266,13 +279,17 @@ class kurulumThread(QThread):
         self.f.surec_cubugu.setValue(75)
         os.system('chroot ' + hedef + ' rm -f /boot/initramfs')
         os.system('chroot ' + hedef + ' rm -f /boot/kernel')
-        os.system("cp /run/initramfs/live/boot/kernel " + hedef + "/boot/kernel-$(uname -r)")
+        #os.system("cp /run/initramfs/live/boot/kernel "+hedef+"/boot/kernel-$(uname -r)")
+        os.system("cp /boot/kernel-* "+hedef+"/boot/")
         os.system('chroot ' + hedef + ' dracut --no-hostonly --add-drivers "ahci" -f /boot/initramfs')
+        os.system('chroot ' + hedef + ' ln -s /boot/kernel-* /boot/kernel')
         self.f.surec_cubugu.setValue(100)
         self.f.bilgi_label.setText(self.e.d[self.e.s_d]["initrd oluşturuldu"])
 
     def grubKur(self, hedef, baglam):
         hedef = hedef[:-1]
+        os.system("cp -f /root/bin/tamir_grub_plymouth "+baglam+"/root/bin/")
+        os.system("chroot "+baglam+" tamir_grub_plymouth")
         if hedef == "/dev/mmcblk0":  # SD kart'a kurulum fix
             os.system('chroot ' + baglam + 'grub-install /dev/mmcblk0')
             # os.system("grub-install --boot-directory="+baglam+"/boot /dev/mmcblk0")
