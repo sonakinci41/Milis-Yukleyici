@@ -46,28 +46,30 @@ class KlavyeLabel(QLabel):
 
     def proc(self, model, layout, variant):
         if model in klavye_modeli:
-            self.ciziliyor = True
             self.tus_yerlesimi = self.unicodeToString(model, layout, variant)
-            self.klavye_modeli = model
+            if self.tus_yerlesimi:
+                self.ciziliyor = True
+                self.klavye_modeli = model
+                self.update()
         else:
             self.ciziliyor = False
 
-        self.update()
-
     def unicodeToString(self, model, layout, variant=""):
-        keycodes = {}
-        tus_yerlesimi_command = subprocess.Popen(["ckbcomp", "-model", model, "-layout", layout, "-variant", variant],
-                               stdout=subprocess.PIPE)
-        ciktilar = tus_yerlesimi_command.stdout.read()
-        for cikti in ciktilar.decode("utf-8").split("\n"):
-            if cikti.startswith("keycode") and cikti.count("="):
-                cikti = cikti.split()
-                if cikti[3].startswith("U+") or cikti[3].startswith("+U"):
-                    first = bytes("\\u" + cikti[3][2:].replace("+", ""), "ascii").decode("unicode-escape")
-                    second = bytes("\\u" + cikti[4][2:].replace("+", ""), "ascii").decode("unicode-escape")
-                    keycodes[int(cikti[1])] = [first, second]
-
-        return keycodes
+        try:
+            keycodes = {}
+            tus_yerlesimi_command = subprocess.Popen(["ckbcomp", "-model", model, "-layout", layout, "-variant", variant],
+                                   stdout=subprocess.PIPE)
+            ciktilar = tus_yerlesimi_command.stdout.read()
+            for cikti in ciktilar.decode("utf-8").split("\n"):
+                if cikti.startswith("keycode") and cikti.count("="):
+                    cikti = cikti.split()
+                    if cikti[3].startswith("U+") or cikti[3].startswith("+U"):
+                        first = bytes("\\u" + cikti[3][2:].replace("+", ""), "ascii").decode("unicode-escape")
+                        second = bytes("\\u" + cikti[4][2:].replace("+", ""), "ascii").decode("unicode-escape")
+                        keycodes[int(cikti[1])] = [first, second]
+            return keycodes
+        except:
+            return False
 
     def paintEvent(self, event):
         boyayici = QPainter(self)
