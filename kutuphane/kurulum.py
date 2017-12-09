@@ -187,8 +187,10 @@ class kurulumThread(QThread):
         os.system("clear")
         komut1 = "rm -rf /root/Masaüstü/kurulum.desktop"
         komut2 = "rm -rf /root/Desktop/kurulum.desktop"
+        komut3 = "umount -l /home/"+self.CANLI_KULL+"/.gvfs"
         os.system(komut1)
         os.system(komut2)
+        os.system(komut3)
         self.f.bilgi_label.setText(self.e.d[self.e.s_d]["Dizinler kopyalanmaya başlanıyor..."])
         dizinler = ["bin", "boot", "home", "lib", "sources", "usr", "depo", "etc", "lib64", "opt", "root", "sbin","var"]
         yenidizinler = ["srv", "proc", "tmp", "mnt", "sys", "run", "dev", "media"]
