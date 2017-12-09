@@ -270,7 +270,7 @@ class kurulumThread(QThread):
         os.system('chroot ' + hedef + ' chown '+isim+':'+isim+' -R /home/'+isim)
         os.system('chroot ' + hedef + ' setfacl -m u:'+isim+':rw /dev/snd/* ')
         
-        if otogiris:
+        if otogiris is True:
             os.system('chroot ' + hedef + ' sed -i s/"#default_user .*"/"default_user '+isim+'/" /etc/slim.conf')
             os.system('chroot ' + hedef + ' sed -i s/"#auto_login .*"/"auto_login  yes/" /etc/slim.conf')
 
