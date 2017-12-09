@@ -97,6 +97,8 @@ class Kullanici(QWidget):
         sol_kutu.addWidget(self.giris_sifresi_info)
 
         self.oto_giris_cb = QCheckBox()
+        self.oto_giris_cb.stateChanged.connect(self.oto_giris_degisti)
+        self.oto_giris_degisti()
         sol_kutu.addWidget(self.oto_giris_cb)
         self.admin_giris_ayni_cb = QCheckBox()
         self.admin_giris_ayni_cb.stateChanged.connect(self.admin_giris_degisti)
@@ -198,6 +200,12 @@ class Kullanici(QWidget):
             self.admin_sifresi_info.setHidden(False)
         self.ileri_kontrol()
 
+    def oto_giris_degisti(self):
+        if self.oto_giris_cb.isChecked():
+            self.e.milis_ayarlar["otomatik_giris"] = True
+        else:
+            self.e.milis_ayarlar["otomatik_giris"] = False
+
     def ileri_kontrol(self):
         if self.kullanici_adi_ != None and self.gercek_ad_ != None and self.bilgisayar_adi_ != None and self.giris_sifresi_ != None:
             if self.admin_sifresi_ != None:
@@ -207,10 +215,6 @@ class Kullanici(QWidget):
                 self.e.milis_ayarlar["giris_sifresi"] = self.giris_sifresi_
                 self.e.milis_ayarlar["admin_sifresi"] = self.admin_sifresi_
                 self.e.ileri_dugme.setDisabled(False)
-                if self.oto_giris_cb.isChecked():
-                    self.e.milis_ayarlar["otomatik_giris"] = True
-                else:
-                    self.e.milis_ayarlar["otomatik_giris"] = False
             elif self.admin_giris_ayni_cb.isChecked():
                 self.e.milis_ayarlar["gercek_ad"] = self.gercek_ad_
                 self.e.milis_ayarlar["kullanici_adi"] = self.kullanici_adi_
@@ -218,10 +222,6 @@ class Kullanici(QWidget):
                 self.e.milis_ayarlar["giris_sifresi"] = self.giris_sifresi_
                 self.e.milis_ayarlar["admin_sifresi"] = self.giris_sifresi_
                 self.e.ileri_dugme.setDisabled(False)
-                if self.oto_giris_cb.isChecked():
-                    self.e.milis_ayarlar["otomatik_giris"] = True
-                else:
-                    self.e.milis_ayarlar["otomatik_giris"] = False
             else:
                 self.e.ileri_dugme.setDisabled(True)
         else:
