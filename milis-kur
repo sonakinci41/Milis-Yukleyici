@@ -9,7 +9,7 @@ from kutuphane import asamacizimi,hosgeldiniz,klavye,konum,kullanici,disk,bilgi,
 class MerkezPencere(QMainWindow):
     def __init__(self, ebeveyn=None):
         super(MerkezPencere, self).__init__(ebeveyn)
-        self.setStyleSheet("font: 11pt Comic Sans MS")
+        self.setStyleSheet("font: 11pt Dejavu Sans")
         ##################################
         #Yükleyici için temel değişkenler
         self.toplam_asama_sayisi = 8
@@ -21,7 +21,6 @@ class MerkezPencere(QMainWindow):
         ##################################
         #Yükleyici dilleri tespit ediyor
         self.dil_tespit()
-
 
         #Pencere boyutunu 950 ye 640 olarak ayarladık
         self.setFixedWidth(950)

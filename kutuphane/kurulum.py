@@ -52,7 +52,7 @@ class kurulumThread(QThread):
         CANLI_KULL=CANLI_KULL.strip()
     else:
         print ("canlı kullanıcını belirten dosya bulunamadı.")
-        sys.exit(1)
+        qApp.closeAllWindows()
     
     def __init__(self, ebeveyn=None):
         super(kurulumThread, self).__init__(ebeveyn)
