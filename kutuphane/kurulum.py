@@ -190,8 +190,7 @@ class kurulumThread(QThread):
         os.system(komut1)
         os.system(komut2)
         self.f.bilgi_label.setText(self.e.d[self.e.s_d]["Dizinler kopyalanmaya başlanıyor..."])
-        dizinler = ["bin", "boot", "home", "lib", "sources", "usr", "depo", "etc", "lib64", "opt", "root", "sbin",
-                    "var"]
+        dizinler = ["bin", "boot", "home", "lib", "sources", "usr", "depo", "etc", "lib64", "opt", "root", "sbin","var"]
         yenidizinler = ["srv", "proc", "tmp", "mnt", "sys", "run", "dev", "media"]
         self.toplamBoyutTespit(dizinler)
         self.baglam = baglam
@@ -205,8 +204,7 @@ class kurulumThread(QThread):
         for dizin in dizinler:
             self.kopyalanacakDizinAdi = dizin
             self.dizinSirasi += 1
-            self.f.bilgi_label.setText(
-                str(self.dizinSirasi) + "/" + str(mikdiz) +" "+ dizin + self.e.d[self.e.s_d][" kopyalanıyor..."])
+            self.f.bilgi_label.setText(str(self.dizinSirasi) + "/" + str(mikdiz) +" "+ dizin + self.e.d[self.e.s_d][" kopyalanıyor..."])
             komut = "rsync --delete -axHAWX --numeric-ids /" + dizin + " " + baglam + " --exclude /proc"
             os.system(komut)
             qApp.processEvents()
@@ -229,15 +227,15 @@ class kurulumThread(QThread):
             qApp.processEvents()
 
     def kisiselOlustur(self, hedef, dil, zaman, otogiris, isim):
-        bolge = zaman.split("/")[0]
-        yer = zaman.split("/")[1]
-        lokal_ayarlar = open("/tmp/locale.conf", "w")
-        icerik = "LC_ALL=" + dil + ".UTF-8 \n"
-        icerik += "LANG=" + dil + ".UTF-8 \n"
-        icerik += "LANGUAGE=" + dil + ".UTF-8"
+        bolge=zaman.split("/")[0]
+        yer=zaman.split("/")[1]
+        lokal_ayarlar=open("/tmp/locale.conf","w")
+        icerik="LC_ALL="+dil+".UTF-8 \n"
+        icerik+="LANG="+dil+".UTF-8 \n"
+        icerik+="LANGUAGE="+dil+".UTF-8"
         lokal_ayarlar.write(icerik)
         lokal_ayarlar.close()
-        os.system("cp /usr/share/zoneinfo/" + bolge + "/" + yer + " " + hedef + "/etc/localtime")
+        os.system("cp /usr/share/zoneinfo/"+bolge+"/"+yer+" " + hedef + "/etc/localtime")
         os.system("mount --bind /dev " + hedef + "/dev")
         self.f.surec_cubugu.setValue(25)
         os.system("mount --bind /sys " + hedef + "/sys")
@@ -247,7 +245,9 @@ class kurulumThread(QThread):
         self.f.surec_cubugu.setValue(75)
         os.system("cp -rf /tmp/locale.conf " + hedef + "/etc/")
         komut_skel="cp -rf /run/initramfs/live/updates/home/"+self.CANLI_KULL+"/* "+ hedef + "/etc/skel/"
+        print("komut_koş:",komut_skel)
         komut_evdizin="cp -rf /run/initramfs/live/updates/home/"+self.CANLI_KULL+"/.* "+ hedef + "/home/"+isim+"/"
+        print("komut_koş:",komut_evdizin)
         os.system(komut_evdizin)
         os.system('chroot ' + hedef + ' rm -rf /home/'+self.CANLI_KULL)
         os.system('chroot ' + hedef + ' rm -rf /root/bin/canli_kullanici.sh')
@@ -329,8 +329,6 @@ class progressAyarciSinif(QThread):
     def guncelle(self):
         boyut = self.boyutTespit()
         toplamBoyut = self.e.toplamBoyut[self.e.dizinSirasi - 1]
-        print(boyut)
-        print(toplamBoyut)
         if boyut < toplamBoyut:
             yuzde = str(round(boyut / toplamBoyut, 2))[2:]
             if len(yuzde) == 1:
