@@ -28,6 +28,7 @@ class Konum(QWidget):
         self.sehir_combo.currentTextChanged.connect(self.sehir_combo_degisti)
         kutu.addWidget(self.sehir_combo,3,1,1,1)
         self.bolge_combo_doldur()
+        self.bolge_combo.setCurrentText("Europe")
         self.sehir_combo.setCurrentText("Istanbul")
 
     def bolge_combo_doldur(self):
