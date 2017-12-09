@@ -232,9 +232,9 @@ class kurulumThread(QThread):
         bolge=zaman.split("/")[0]
         yer=zaman.split("/")[1]
         lokal_ayarlar=open("/tmp/locale.conf","w")
-        icerik="LC_ALL="+dil+".UTF-8 \n"
-        icerik+="LANG="+dil+".UTF-8 \n"
-        icerik+="LANGUAGE="+dil+".UTF-8"
+        icerik="LC_ALL="+dil+" \n"
+        icerik+="LANG="+dil+" \n"
+        icerik+="LANGUAGE="+dil
         lokal_ayarlar.write(icerik)
         lokal_ayarlar.close()
         os.system("cp /usr/share/zoneinfo/"+bolge+"/"+yer+" " + hedef + "/etc/localtime")
