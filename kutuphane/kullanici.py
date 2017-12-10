@@ -153,7 +153,7 @@ class Kullanici(QWidget):
         self.ileri_kontrol()
 
     def bilgisayar_adi_kontrol(self):
-        if self.bilgisayar_adi.text().isalnum() and len(self.bilgisayar_adi.text()) > 3:
+        if self.bilgisayar_adi.text().replace("-","").isalnum() and len(self.bilgisayar_adi.text()) > 3:
             self.bilgisayar_adi_ = self.bilgisayar_adi.text()
             self.bilgisayar_adi_icon.setPixmap(QPixmap("./resimler/oldu.svg"))
             self.bilgisayar_adi_info.setText("")
@@ -230,7 +230,7 @@ class Kullanici(QWidget):
     def otomatik_doldur(self):
         ad = self.gercek_ad.text()
         self.kullanici_adi.setText(ad.lower().replace(" ", ""))
-        self.bilgisayar_adi.setText(ad.lower().replace(" ", "")+"milis")
+        self.bilgisayar_adi.setText(ad.lower().replace(" ", "")+"-milis")
 
     def showEvent(self, event):
         self.e.setWindowTitle(self.e.d[self.e.s_d]["Kullanıcı Bilgileri"])
