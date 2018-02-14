@@ -9,7 +9,129 @@ from kutuphane import asamacizimi,hosgeldiniz,klavye,konum,kullanici,disk,bilgi,
 class MerkezPencere(QMainWindow):
     def __init__(self, ebeveyn=None):
         super(MerkezPencere, self).__init__(ebeveyn)
-        self.setStyleSheet("font: 11pt Dejavu Sans")
+        tema="""
+			QMainWindow{
+				font: 11pt Dejavu Sans; 
+				background-color:#353945;
+			}
+			QLabel{
+				color: #FFFFFF;
+			}
+
+			QPushButton{
+				background-color:#464B59;
+				color: #FFFFFF;
+				padding: 5px;
+			}
+
+			QPushButton:disabled{
+				background-color:#464B59;
+				color: grey;
+				padding: 5px;
+			}
+
+			QLineEdit{
+				background-color: #464B59;
+				color: #FFFFFF;
+				padding: 5px;
+			}
+
+			QComboBox {
+				padding-left: 5px;
+				height: 25px;
+				color: #FFFFFF;
+				background-color: #464B59;
+				selection-background-color: #00BBF2;
+				outline: 0;
+			}
+
+			QComboBox:on { 
+				padding-top: 3px;
+				padding-left: 4px;
+			}
+
+			QComboBox QAbstractItemView
+			{    
+				background-color: #464B59;
+				outline: 0;
+			}
+
+			QTreeView {
+				background-color: #464B59;
+				color: #ffffff;
+				outline: 0;
+				border: 0;
+				margin-top: 5px;
+				margin-bottom: 5px;
+			}
+
+			QTreeView::item {
+				background-color: transparent;
+				color: #FFFFFF;
+				padding: 5px;
+			}
+
+			QTreeView::item:selected {
+				background-color: #00BBF2;
+				color: #FFFFFF;
+			}
+
+			QTreeView QHeaderView:section {
+				background-color: #464B59;
+				color: #FFFFFF;
+				padding: 5px;
+			}
+
+			QCheckBox {
+				spacing: 5px;
+				color: #FFFFFF;
+			}
+
+			QCheckBox::indicator {
+				color: #FFFFFF;
+				width: 24px;
+				height: 24px;
+			}
+
+			QCheckBox::indicator:unchecked {
+			 image: url(resimler/isaretsiz.svg);
+			}
+
+			QCheckBox::indicator:unchecked:pressed {
+				image: url(resimler/isaretli.svg);
+			}
+
+			QCheckBox::indicator:checked {
+				image: url(resimler/isaretli.svg);
+			}
+
+			QCheckBox::indicator:checked:pressed {
+			image: url(resimler/isaretsiz.svg);
+			}
+
+			QProgressBar {
+				margin: 5px;
+				border-radius: 0px;
+				text-align: center;
+			}
+
+			QProgressBar::chunk {
+				background-color: #00BBF2;
+			}
+
+			QMessageBox{
+				font: 11pt Dejavu Sans; 
+				background-color:#353945;
+				color: #FFFFFF
+			}
+
+			QDialog{
+				font: 11pt Dejavu Sans; 
+				background-color:#353945;
+				color: #FFFFFF
+			}
+		"""
+        self.setStyleSheet(tema)      
         ##################################
         #Yükleyici için temel değişkenler
         self.toplam_asama_sayisi = 8

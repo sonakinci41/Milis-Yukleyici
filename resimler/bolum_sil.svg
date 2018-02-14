@@ -62,7 +62,7 @@
          transform="translate(550.28572,606.6479)"
          id="path4143"
          d="m 12,4 a 8,8 0 0 0 -8,8 8,8 0 0 0 8,8 8,8 0 0 0 8,-8 8,8 0 0 0 -8,-8 z m 0,0.8886719 A 7.1111112,7.1111112 0 0 1 19.111328,12 7.1111112,7.1111112 0 0 1 12,19.111328 7.1111112,7.1111112 0 0 1 4.8886719,12 7.1111112,7.1111112 0 0 1 12,4.8886719 Z"
-         style="opacity:1;fill:#f03916;fill-opacity:1;stroke:none" />
+         style="opacity:1;fill:#ff0000;fill-opacity:1;stroke:none" />
       <rect
          transform="rotate(-45)"
          y="827.06067"
@@ -70,7 +70,7 @@
          height="15.971"
          width="1"
          id="rect4203"
-         style="opacity:1;fill:#f03916;fill-opacity:1;stroke:none" />
+         style="opacity:1;fill:#ff0000;fill-opacity:1;stroke:none" />
     </g>
   </g>
 </svg>
