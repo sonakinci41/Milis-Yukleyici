@@ -264,15 +264,16 @@ class kurulumThread(QThread):
         os.system('chroot ' + hedef + ' userdel '+self.CANLI_KULL)
         os.system('chroot ' + hedef + ' rm /etc/shadow- /etc/gshadow- /etc/passwd- /etc/group- ')
         os.system('chroot ' + hedef + ' sed -i "/^'+self.CANLI_KULL+'/d" /etc/security/opasswd ')
-        os.system('chroot ' + hedef + ' cp /etc/slim.conf.orj /etc/slim.conf ')
+        #os.system('chroot ' + hedef + ' cp /etc/slim.conf.orj /etc/slim.conf ')
+        os.system('chroot ' + hedef + ' cp /etc/lightdm/lightdm.conf.orj /etc/lightdm/lightdm.conf ')
         os.system('chroot ' + hedef + ' rm -rf /home/'+isim+'/Desktop')
         os.system('chroot ' + hedef + ' su - '+isim+' -c "xdg-user-dirs-update" ')
         os.system('chroot ' + hedef + ' chown '+isim+':'+isim+' -R /home/'+isim)
         os.system('chroot ' + hedef + ' setfacl -m u:'+isim+':rw /dev/snd/* ')
         
         if otogiris is True:
-            os.system('chroot ' + hedef + ' sed -i s/"#default_user .*"/"default_user '+isim+'/" /etc/slim.conf')
-            os.system('chroot ' + hedef + ' sed -i s/"#auto_login .*"/"auto_login  yes/" /etc/slim.conf')
+            os.system('chroot ' + hedef + ' sed -i s/"#autologin-user .*"/"autologin-user='+isim+'/" /etc/lightdm/lightdm.conf')
+            os.system('chroot ' + hedef + ' sed -i s/"#autologin-user-timeout .*"/"autologin-user-timeout=0/" /etc/lightdm/lightdm.conf')
 
         self.f.surec_cubugu.setValue(100)
         self.f.bilgi_label.setText(self.e.d[self.e.s_d]["kişisel ayarlar oluşturuldu"])
