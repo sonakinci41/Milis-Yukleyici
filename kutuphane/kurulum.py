@@ -266,7 +266,7 @@ class kurulumThread(QThread):
         os.system('chroot ' + hedef + ' sed -i "/^'+self.CANLI_KULL+'/d" /etc/security/opasswd ')
         #os.system('chroot ' + hedef + ' cp /etc/slim.conf.orj /etc/slim.conf ')
         os.system('chroot ' + hedef + ' cp /etc/lightdm/lightdm.conf.orj /etc/lightdm/lightdm.conf ')
-        os.system('chroot ' + hedef + ' rm -rf /home/'+isim+'/Desktop')
+        #os.system('chroot ' + hedef + ' rm -rf /home/'+isim+'/Desktop')
         #os.system('chroot ' + hedef + ' su - '+isim+' -c "xdg-user-dirs-update --force" ')
         os.system('chroot ' + hedef + ' rm -rf /home/'+isim+'/.config/user-dirs.dir')
         os.system('chroot ' + hedef + ' chown '+isim+':'+isim+' -R /home/'+isim)
