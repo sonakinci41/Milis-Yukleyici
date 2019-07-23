@@ -1,6 +1,6 @@
 import gi
 gi.require_version('Gtk', '3.0')
-from kutuphaneler import diller, klavyeler, hosgeldiniz, klavye
+from kutuphaneler import diller, klavyeler, hosgeldiniz, klavye, konum
 #gi.require_version('GtkSource', '3.0')
 
 from gi.repository import Gtk#GtkSource, GObject, Gio, Gdk
@@ -10,11 +10,12 @@ class MerkezPencere(Gtk.Window):
 		Gtk.Window.__init__(self)
 		self.set_border_width(5)
 		self.set_resizable(False)
-		self.set_default_size(640, 320)
+		self.set_default_size(640, 350)
 		self.milis_ayarlari = {"dil":"Türkçe",
 								"klavye_model":("",""),
 								"klavye_duzen":("",""),
-								"klavye_varyant":("","")}
+								"klavye_varyant":("",""),
+								"konum":False}
 
 		self.hb = Gtk.HeaderBar()
 		self.hb.set_show_close_button(True)
@@ -33,7 +34,7 @@ class MerkezPencere(Gtk.Window):
 		self.ileri_dugme.set_image(Gtk.Arrow(Gtk.ArrowType.RIGHT, Gtk.ShadowType.NONE))
 		self.hb.pack_end(self.ileri_dugme)
 
-		self.stack_liste = [hosgeldiniz.StHosgeldiniz(self),klavye.StKlavye(self)]
+		self.stack_liste = [hosgeldiniz.StHosgeldiniz(self),klavye.StKlavye(self),konum.StKonum(self)]
 		self.stack_secili = 0
 		self.stack = Gtk.Stack()
 		self.add(self.stack)

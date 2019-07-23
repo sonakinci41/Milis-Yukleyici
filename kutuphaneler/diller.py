@@ -11,7 +11,10 @@ turkce ={"t1":"Milis Kurulum Aracı",
 "t11":"Klavye Ayarları",
 "t12":"Model",
 "t13":"Ülke",
-"t14":"Tür"
+"t14":"Tür",
+"t15":"Konum Ayarları",
+"t16":"Bölge",
+"t17":"Şehir"
 }
 
 ingilizce = {"t1":"Milis Installation Tool",
@@ -27,7 +30,10 @@ ingilizce = {"t1":"Milis Installation Tool",
 "t11":"Keyboard Settings",
 "t12":"Model",
 "t13":"Country",
-"t14":"Type"
+"t14":"Type",
+"t15":"Location Settings",
+"t16":"Zone",
+"t17":"City"
 }
 
 

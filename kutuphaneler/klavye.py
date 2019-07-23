@@ -8,7 +8,7 @@ class StKlavye(Gtk.Grid):
 		self.ebeveyn = ebeveyn
 		self.baslik = "Klavye Ayarları"
 		self.ad = "Klavye"
-		self.set_row_spacing(10)
+		self.set_row_spacing(20)
 
 		self.resim = Gtk.DrawingArea()
 		self.resim.set_size_request (630, 200)
