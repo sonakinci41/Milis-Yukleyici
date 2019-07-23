@@ -115,6 +115,7 @@ class StKullanici(Gtk.Grid):
 			self.kontroller[3] = True
 			if self.yon_kul_ayni_yazi.get_active():
 				self.kontroller[4] = self.kontroller[3]
+				self.ebeveyn.milis_ayarlari["yonetici_sifre"] = self.sifre_1_entry.get_text()
 		else:
 			self.sifre_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(255, 0, 0, 1.0))
 			self.kontroller[3] = False
@@ -137,7 +138,6 @@ class StKullanici(Gtk.Grid):
 				kontrol = True
 				break
 		if kontrol == False:
-			print(self.ebeveyn.milis_ayarlari)
 			self.ebeveyn.ileri_dugme.set_sensitive(True)
 			return True
 		else:
