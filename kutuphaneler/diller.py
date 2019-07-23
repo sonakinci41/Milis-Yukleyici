@@ -14,7 +14,18 @@ turkce ={"t1":"Milis Kurulum Aracı",
 "t14":"Tür",
 "t15":"Konum Ayarları",
 "t16":"Bölge",
-"t17":"Şehir"
+"t17":"Şehir",
+"t18":"Kullanıcı Ayarları",
+"t19":"Kullanıcı Adı",
+"t20":"Giriş Adı",
+"t21":"Bilgisayar Adı",
+"t22":"En az 3 karakterden oluşmalı",
+"t23":"En az 4 karakter ve harflerden oluşmalı",
+"t24":"Kullanıcı Şifresi",
+"t25":"En az 6 karakterden oluşmalı ve şifreler aynı olmalı",
+"t26":"Şifre istemeden otomatik giriş yap",
+"t27":"Yönetici hesabı için aynı şifreyi kullan",
+"t28":"Yönetici Şifresi",
 }
 
 ingilizce = {"t1":"Milis Installation Tool",
@@ -33,7 +44,18 @@ ingilizce = {"t1":"Milis Installation Tool",
 "t14":"Type",
 "t15":"Location Settings",
 "t16":"Zone",
-"t17":"City"
+"t17":"City",
+"t18":"User Settings",
+"t19":"User Name",
+"t20":"Login Name",
+"t21":"Computer Name",
+"t22":"Mint 3 characters",
+"t23":"Min 4 characters and letters",
+"t24":"User Password",
+"t25":"Min 6 characters and the passwords must be the same",
+"t26":"Log in automatically without requiring password",
+"t27":"Use same password for administrator account",
+"t28":"Admin Password"
 }
 
 

@@ -1,6 +1,6 @@
 import gi
 gi.require_version('Gtk', '3.0')
-from kutuphaneler import diller, klavyeler, hosgeldiniz, klavye, konum
+from kutuphaneler import diller, klavyeler, hosgeldiniz, klavye, konum, kullanici
 #gi.require_version('GtkSource', '3.0')
 
 from gi.repository import Gtk#GtkSource, GObject, Gio, Gdk
@@ -15,7 +15,13 @@ class MerkezPencere(Gtk.Window):
 								"klavye_model":("",""),
 								"klavye_duzen":("",""),
 								"klavye_varyant":("",""),
-								"konum":False}
+								"konum":False,
+								"kullanici_adi":"",
+								"giris_adi":"",
+								"bilgisayar_adi":"",
+								"kullanici_sifre":"",
+								"yonetici_sifre":"",
+								"oto_giris":False}
 
 		self.hb = Gtk.HeaderBar()
 		self.hb.set_show_close_button(True)
@@ -34,7 +40,7 @@ class MerkezPencere(Gtk.Window):
 		self.ileri_dugme.set_image(Gtk.Arrow(Gtk.ArrowType.RIGHT, Gtk.ShadowType.NONE))
 		self.hb.pack_end(self.ileri_dugme)
 
-		self.stack_liste = [hosgeldiniz.StHosgeldiniz(self),klavye.StKlavye(self),konum.StKonum(self)]
+		self.stack_liste = [hosgeldiniz.StHosgeldiniz(self),klavye.StKlavye(self),konum.StKonum(self),kullanici.StKullanici(self)]
 		self.stack_secili = 0
 		self.stack = Gtk.Stack()
 		self.add(self.stack)
@@ -60,10 +66,16 @@ class MerkezPencere(Gtk.Window):
 		self.stack_secili += 1
 		self.geri_dugme.set_sensitive(True)
 		self.baslik_ekle(self.stack_liste[self.stack_secili])
+		if self.stack_secili == 3:
+			if self.stack_liste[self.stack_secili].kontrol() == False:
+				self.stack_liste[self.stack_secili].yon_kul_ayni_gizle()
+			else:
+				self.ileri_dugme.set_sensitive(True)
 
 	def geri_basildi(self,widget):
 		self.stack_secili -= 1
 		self.baslik_ekle(self.stack_liste[self.stack_secili])
+		self.ileri_dugme.set_sensitive(True)
 		if self.stack_secili == 0:
 			self.geri_dugme.set_sensitive(False)
 
