@@ -26,6 +26,10 @@ turkce ={"t1":"Milis Kurulum Aracı",
 "t26":"Şifre istemeden otomatik giriş yap",
 "t27":"Yönetici hesabı için aynı şifreyi kullan",
 "t28":"Yönetici Şifresi",
+"t29":"Disk Ayarları",
+"t30":"<b>1-Sistem bölümü:</b> Milis'in sistem dosyalarını kopyalacağı bölümdür. Ext4 biçiminde biçimlenir. <u>ZORUNLU</u>\n<b>2-Takas bölümü:</b> Milis ram sıkıntısı yaşadığında dosyaları geçici olarak kopyalamak için bir disk bölümüne ihtiyaç duyar. Bilgisayarınızın Ram miktarı düşükse takas bölümü oluşturunuz. <u>İSTEĞE BAĞLI</u>\n<b>3-UEFI bölümü:</b> Eğer UEFI'li bir BIOS'a sahipseniz ve UEFI kullanmak istiyorsanız diskte bir EFI alanına ihtiyacınız var. Varolan bir işletim sisteminiz ve kullandığı EFI alanı varsa lütfen o alanı seçiniz. Diskinizde başka işletim sistemi yoksa ve UEFI kullanmak istiyorsanız lütfen bir EFI alanı oluşturunuz. <u>İSTEĞE BAĞLI</u>",
+"t31":"Diskler",
+"t32":"Yenile"
 }
 
 ingilizce = {"t1":"Milis Installation Tool",
@@ -55,7 +59,11 @@ ingilizce = {"t1":"Milis Installation Tool",
 "t25":"Min 6 characters and the passwords must be the same",
 "t26":"Log in automatically without requiring password",
 "t27":"Use same password for administrator account",
-"t28":"Admin Password"
+"t28":"Admin Password",
+"t29":"Disk Settings",
+"t30":"<b> 1-System partition: </b> This is the partition where the Militia will copy its systems. It is formatted in Ext4 format. <u>MUST NOT.</u>\n<b> 2-Swap partition: </b> Militia needs a disk partition to temporarily copy files when there is a ram shortage. If your computers RAM is low, create a swap partition. <u>OPTIONAL</u> \n<b> 3-UEFI partition: </b> If you have a BIOS with UEFI and want to use UEFI, you need an EFI space on the disk. If you have an existing operating system and the EFI domain it uses, please select it. If there are no other operating systems on your disk and you want to use UEFI, please create an EFI space. <u>OPTIONAL</u>",
+"t31":"Disks",
+"t32":"Refresh"
 }
 
 
