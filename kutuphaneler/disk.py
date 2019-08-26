@@ -11,6 +11,7 @@ class StDisk(Gtk.Grid):
 		self.set_column_spacing(10)
 		self.set_row_spacing(10)
 		self.diskler_liste = {}
+		self.disk_gecici = {"degisti":False}
 
 		self.bilgi_label = Gtk.Label()
 		self.bilgi_label.set_max_width_chars(90)
@@ -45,25 +46,49 @@ class StDisk(Gtk.Grid):
 		cr.set_source_rgb(0.1,0.1,0.1)
 		cr.rectangle(0,0,630,100)
 		cr.fill()
-		disk = self.diskler_liste[self.ebeveyn.milis_ayarlari["disk"]]
 		x_kor = 10
-		for bolum in disk["bölüm"]:
+		if not self.disk_gecici["degisti"]:
+			self.disk_gorunumu = {}
+			for bolum in self.disk_gecici["secilen"]["bölüm"]:
+				x_genislik = int(610*(float(bolum["boyut"])/float(self.disk_gecici["secilen"]["tum_boyut"])))
+				yazi_konum = ((x_kor + x_kor + x_genislik) / 2 ) - 10
+				self.disk_gorunumu[bolum["yol"]] = {"x_genislik":x_genislik,"x_kor":x_kor,"boyut":bolum["boyut"],"yazi_konum":yazi_konum,"secim":"yok"}
+				x_kor += x_genislik
+			self.disk_gecici["degisti"] = True
+
+		for bolum in self.disk_gorunumu.keys():
 			cr.set_line_width(3)
-			cr.set_source_rgb(1,1,1)
-			x_genislik = int(610*(float(bolum["boyut"])/float(disk["tum_boyut"])))
-			cr.rectangle(x_kor,10,x_genislik,80)
-			konum = ((x_kor + x_kor + x_genislik) / 2 ) - 10
-			x_kor += x_genislik
+			if self.disk_gecici["tiklanan"] == bolum:
+				cr.set_source_rgb(204, 255, 0)
+			else:
+				cr.set_source_rgb(1,1,1)
+			cr.rectangle(self.disk_gorunumu[bolum]["x_kor"],10,self.disk_gorunumu[bolum]["x_genislik"],80)
 			cr.stroke()
-			cr.move_to(konum,40)
-			cr.show_text(bolum["yol"])
-			cr.move_to(konum,60)
-			cr.show_text(bolum["boyut"])
+			cr.move_to(self.disk_gorunumu[bolum]["yazi_konum"],45)
+			cr.show_text(bolum)
+			cr.move_to(self.disk_gorunumu[bolum]["yazi_konum"],65)
+			cr.show_text("   "+self.disk_gorunumu[bolum]["boyut"])
 			cr.stroke()
 
+	def menu_olustur(self,pos):
+		menu = Gtk.Menu()
+		sistem = Gtk.MenuItem('Sistem Diski Yap')
+		takas = Gtk.MenuItem('Takas Diski Yap')
+		uefi = Gtk.MenuItem('UEFI Diski Yap')
+		menu.append(sistem)
+		menu.append(takas)
+		menu.append(uefi)
+		menu.popup(None, None, None, None, 0, Gtk.get_current_event_time())
+		menu.show_all()
+
 	def resim_tiklandi(self,widget,pos):
-		#tiklandiginda menu acilip secenek sunulacak uefi sistem takas secime gore renk degisecek
-		pass
+		self.menu_olustur(pos)
+		for disk in self.disk_gorunumu.keys():
+			x_kor = self.disk_gorunumu[disk]["x_kor"]
+			x_genislik = self.disk_gorunumu[disk]["x_genislik"]
+			if x_kor <= pos.x <= x_kor+x_genislik:
+				self.disk_gecici["tiklanan"] = disk
+		self.disk_resim.queue_draw()
 
 	def disk_doldur(self,widget):
 		self.diskler_combo.remove_all()
@@ -91,9 +116,11 @@ class StDisk(Gtk.Grid):
 		self.diskler_combo.set_active(0)
 
 	def disk_secildi(self,widget):
+		self.disk_gecici["degisti"] = False
+		self.disk_gecici["tiklanan"] = ""
 		secilen = self.diskler_combo.get_active_text().split(" | ")[0]
 		disk = self.diskler_liste[secilen]
-		self.ebeveyn.milis_ayarlari["disk"] = secilen
+		self.disk_gecici["secilen"] = disk
 		self.disk_resim.queue_draw()
 
 	def bolumBilgi(self, bolum):
