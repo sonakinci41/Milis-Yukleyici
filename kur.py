@@ -22,7 +22,9 @@ class MerkezPencere(Gtk.Window):
 								"kullanici_sifre":"",
 								"yonetici_sifre":"",
 								"oto_giris":False,
-								"disk":""}
+								"sistem_disk":"",
+								"takas_disk":"",
+								"uefi_disk":""}
 
 		self.hb = Gtk.HeaderBar()
 		self.hb.set_show_close_button(True)
@@ -41,8 +43,8 @@ class MerkezPencere(Gtk.Window):
 		self.ileri_dugme.set_image(Gtk.Arrow(Gtk.ArrowType.RIGHT, Gtk.ShadowType.NONE))
 		self.hb.pack_end(self.ileri_dugme)
 
-		self.stack_liste = [hosgeldiniz.StHosgeldiniz(self),klavye.StKlavye(self),konum.StKonum(self),kullanici.StKullanici(self),disk.StDisk(self)]
 		self.stack_secili = 0
+		self.stack_liste = [hosgeldiniz.StHosgeldiniz(self),klavye.StKlavye(self),konum.StKonum(self),kullanici.StKullanici(self),disk.StDisk(self)]
 		self.stack = Gtk.Stack()
 		self.add(self.stack)
 		self.stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
@@ -72,6 +74,8 @@ class MerkezPencere(Gtk.Window):
 				self.stack_liste[self.stack_secili].yon_kul_ayni_gizle()
 			else:
 				self.ileri_dugme.set_sensitive(True)
+		elif self.stack_secili == 4 and self.milis_ayarlari["sistem_disk"] == "":
+				self.ileri_dugme.set_sensitive(False)
 
 	def geri_basildi(self,widget):
 		self.stack_secili -= 1
