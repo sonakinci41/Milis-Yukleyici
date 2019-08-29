@@ -49,6 +49,9 @@ class StKullanici(Gtk.Grid):
 		self.sifre_2_entry.connect("changed", self.sifre_entry_degisti)
 		self.attach(self.sifre_2_entry,1,4,1,1)
 		self.sifre_bilgi = Gtk.Label()
+		self.sifre_bilgi.set_max_width_chars(25)
+		self.sifre_bilgi.set_line_wrap(True)
+		self.sifre_bilgi.set_use_markup(True)
 		self.sifre_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(255, 0, 0, 1.0))
 		self.attach(self.sifre_bilgi,2,3,1,2)
 
@@ -72,6 +75,9 @@ class StKullanici(Gtk.Grid):
 		self.yon_sifre_2_entry.connect("changed", self.yon_sifre_entry_degisti)
 		self.attach(self.yon_sifre_2_entry,1,8,1,1)
 		self.yon_sifre_bilgi = Gtk.Label()
+		self.yon_sifre_bilgi.set_max_width_chars(25)
+		self.yon_sifre_bilgi.set_line_wrap(True)
+		self.yon_sifre_bilgi.set_use_markup(True)
 		self.yon_sifre_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(255, 0, 0, 1.0))
 		self.attach(self.yon_sifre_bilgi,2,7,1,2)
 

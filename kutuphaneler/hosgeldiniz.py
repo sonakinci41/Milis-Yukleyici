@@ -24,7 +24,7 @@ class StHosgeldiniz(Gtk.Grid):
 		icon = Gtk.Image.new_from_file("./resimler/milis_yuvarlak.svg")
 		self.attach(icon,0,1,2,1)
 		self.yazi = Gtk.Label()
-		self.yazi.set_max_width_chars(90)
+		self.yazi.set_max_width_chars(70)
 		self.yazi.set_line_wrap(True)
 		self.yazi.set_justify(Gtk.Justification.LEFT)
 		self.attach(self.yazi,0,2,2,1)

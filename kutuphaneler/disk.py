@@ -14,7 +14,7 @@ class StDisk(Gtk.Grid):
 		self.disk_gecici = {"degisti":False}
 
 		self.bilgi_label = Gtk.Label()
-		self.bilgi_label.set_max_width_chars(90)
+		self.bilgi_label.set_max_width_chars(70)
 		self.bilgi_label.set_line_wrap(True)
 		self.bilgi_label.set_use_markup(True)
 		self.attach(self.bilgi_label,0,0,4,1)
