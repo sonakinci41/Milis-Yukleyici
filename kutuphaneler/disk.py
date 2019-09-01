@@ -45,6 +45,13 @@ class StDisk(Gtk.Grid):
 		self.disk_resim.set_events(Gdk.EventMask.BUTTON_PRESS_MASK)
 		self.disk_resim.connect("button_press_event", self.resim_tiklandi)
 
+		self.grub_kur_radio = Gtk.RadioButton.new_with_label_from_widget(None,"")
+		self.grub_kur_radio.connect("toggled", self.grub_kur_degisti, "kur")
+		self.attach(self.grub_kur_radio,0,3,4,1)
+		self.grub_kurma_radio = Gtk.RadioButton.new_with_label_from_widget(self.grub_kur_radio,"")
+		self.grub_kurma_radio.connect("toggled", self.grub_kur_degisti, "kurma")
+		self.attach(self.grub_kurma_radio,0,4,4,1)
+
 		self.disk_doldur(None)
 
 	def expose(self, widget, cr):
@@ -204,6 +211,12 @@ class StDisk(Gtk.Grid):
 		else:
 			return bilgi
 
+	def grub_kur_degisti(self,widget, islem):
+		if self.grub_kur_radio.get_active():
+			self.ebeveyn.milis_ayarlari["grub_kur"] = True
+		elif self.grub_kurma_radio.get_active():
+			self.ebeveyn.milis_ayarlari["grub_kur"] = False
+
 	def dil_ata(self,dil):
 		self.baslik = diller.diller[dil]["t29"]
 		self.bilgi_label.set_markup(diller.diller[dil]["t30"])
@@ -213,3 +226,5 @@ class StDisk(Gtk.Grid):
 		self.menu_text_takas = diller.diller[dil]["t34"]
 		self.menu_text_uefi = diller.diller[dil]["t35"]
 		self.disk_duzenle.set_label(diller.diller[dil]["t36"])
+		self.grub_kur_radio.set_label(diller.diller[dil]["t37"])
+		self.grub_kurma_radio.set_label(diller.diller[dil]["t38"])

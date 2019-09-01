@@ -12,7 +12,7 @@ class StHosgeldiniz(Gtk.Grid):
 		self.set_row_spacing(5)
 
 		self.dil_yazi = Gtk.Label()
-		self.attach(self.dil_yazi,0,0,1,1)
+		self.add(self.dil_yazi)
 
 		self.dil_combo = Gtk.ComboBoxText()
 		for dil in diller.diller.keys():

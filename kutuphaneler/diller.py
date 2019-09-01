@@ -33,7 +33,9 @@ turkce ={"t1":"Milis Kurulum Aracı",
 "t33":"Sistem Bölümü",
 "t34":"Takas Bölümü",
 "t35":"UEFI Bölümü",
-"t36":"Düzenle"
+"t36":"Düzenle",
+"t37":"Grub ön yükleyiciyi kur",
+"t38":"Grub ön yükleyiciyi kurma"
 }
 
 ingilizce = {"t1":"Milis Installation Tool",
@@ -71,7 +73,9 @@ ingilizce = {"t1":"Milis Installation Tool",
 "t33":"System Partition",
 "t34":"Swap Partition",
 "t35":"UEFI Partition",
-"t36":"Edit"
+"t36":"Edit",
+"t37":"Install grub loader",
+"t38":"Not install grub loader"
 }
 
 

@@ -1590,10 +1590,10 @@ varyantlar = {
             "dvorak": "English (Dvorak)"
         },
         {
-            "dvorak-intl": "English (Dvorak, international with dead keys)"
+            "dvorak-intl": "English (Dvorak, with dead keys)"
         },
         {
-            "dvorak-alt-intl": "English (Dvorak alternative international no dead keys)"
+            "dvorak-alt-intl": "English (Dvorak alternative no dead keys)"
         },
         {
             "dvorak-l": "English (left handed Dvorak)"
@@ -1617,7 +1617,7 @@ varyantlar = {
             "altgr-intl": "English (international AltGr dead keys)"
         },
         {
-            "olpc2": "English (the divide/multiply keys toggle the layout)"
+            "olpc2": "English (the divide/multiply toggle the layout)"
         },
         {
             "hbs": "Serbo-Croatian (US)"

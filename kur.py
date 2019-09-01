@@ -24,7 +24,8 @@ class MerkezPencere(Gtk.Window):
 								"oto_giris":False,
 								"sistem_disk":"",
 								"takas_disk":"",
-								"uefi_disk":""}
+								"uefi_disk":"",
+								"grub_kur":True}
 
 		self.hb = Gtk.HeaderBar()
 		self.hb.set_show_close_button(True)
