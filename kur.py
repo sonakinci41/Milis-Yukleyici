@@ -1,6 +1,6 @@
 import gi
 gi.require_version('Gtk', '3.0')
-from kutuphaneler import diller, klavyeler, hosgeldiniz, klavye, konum, kullanici, disk
+from kutuphaneler import diller, klavyeler, hosgeldiniz, klavye, konum, kullanici, disk, bilgi
 #gi.require_version('GtkSource', '3.0')
 
 from gi.repository import Gtk#GtkSource, GObject, Gio, Gdk
@@ -45,7 +45,7 @@ class MerkezPencere(Gtk.Window):
 		self.hb.pack_end(self.ileri_dugme)
 
 		self.stack_secili = 0
-		self.stack_liste = [hosgeldiniz.StHosgeldiniz(self),klavye.StKlavye(self),konum.StKonum(self),kullanici.StKullanici(self),disk.StDisk(self)]
+		self.stack_liste = [hosgeldiniz.StHosgeldiniz(self),klavye.StKlavye(self),konum.StKonum(self),kullanici.StKullanici(self),disk.StDisk(self),bilgi.StBilgi(self)]
 		self.stack = Gtk.Stack()
 		self.add(self.stack)
 		self.stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
@@ -77,6 +77,9 @@ class MerkezPencere(Gtk.Window):
 				self.ileri_dugme.set_sensitive(True)
 		elif self.stack_secili == 4 and self.milis_ayarlari["sistem_disk"] == "":
 				self.ileri_dugme.set_sensitive(False)
+		if self.stack_secili == 5:
+			self.stack_liste[self.stack_secili].dil_ata(self.milis_ayarlari["dil"])
+			print(self.milis_ayarlari)
 
 	def geri_basildi(self,widget):
 		self.stack_secili -= 1
