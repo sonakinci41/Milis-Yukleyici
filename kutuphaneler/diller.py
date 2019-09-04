@@ -41,7 +41,10 @@ turkce ={"t1":"Milis Kurulum Aracı",
 "t41":"Klavye Modeli",
 "t42":"Klavye Düzeni",
 "t43":"Klavte Varyantı",
-"t44":"Konum"
+"t44":"Konum",
+"t45":"Devam etmeniz halide seçmiş olduğunuz diske Milis Linux kurulacaktır",
+"t46":"Devam et",
+"t47":"Vazgeç"
 }
 
 ingilizce = {"t1":"Milis Installation Tool",
@@ -87,7 +90,10 @@ ingilizce = {"t1":"Milis Installation Tool",
 "t41":"Keyboard Model",
 "t42":"Keyboard Layout",
 "t43":"Keyboard Variant",
-"t44":"Location"
+"t44":"Location",
+"t45":"If you continue, Milis Linux will be installed on the disk you selected.",
+"t46":"Continue",
+"t47":"Cancel"
 }
 
 
