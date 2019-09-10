@@ -1,6 +1,6 @@
 import gi
 gi.require_version('Gtk', '3.0')
-from kutuphaneler import diller, klavyeler, hosgeldiniz, klavye, konum, kullanici, disk, bilgi
+from kutuphaneler import diller, klavyeler, hosgeldiniz, klavye, konum, kullanici, disk, bilgi, kurulum
 #gi.require_version('GtkSource', '3.0')
 
 from gi.repository import Gtk#GtkSource, GObject, Gio, Gdk
@@ -34,6 +34,7 @@ class OnayPencere(Gtk.Window):
 	def onay_basildi(self,widget):
 		self.ebeveyn.hb.props.title = self.stack.baslik
 		self.ebeveyn.stack.set_visible_child_name(self.stack.ad)
+		print(self.ebeveyn.milis_ayarlari)
 		self.destroy()
 
 	def red_basildi(self,widget):
@@ -85,7 +86,7 @@ class MerkezPencere(Gtk.Window):
 		self.hb.pack_end(self.ileri_dugme)
 
 		self.stack_secili = 0
-		self.stack_liste = [hosgeldiniz.StHosgeldiniz(self),klavye.StKlavye(self),konum.StKonum(self),kullanici.StKullanici(self),disk.StDisk(self),bilgi.StBilgi(self),disk.StDisk(self)]
+		self.stack_liste = [hosgeldiniz.StHosgeldiniz(self),klavye.StKlavye(self),konum.StKonum(self),kullanici.StKullanici(self),disk.StDisk(self),bilgi.StBilgi(self),kurulum.StKurulum(self)]
 		self.stack = Gtk.Stack()
 		self.add(self.stack)
 		self.stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
