@@ -34,8 +34,9 @@ class OnayPencere(Gtk.Window):
 	def onay_basildi(self,widget):
 		self.ebeveyn.hb.props.title = self.stack.baslik
 		self.ebeveyn.stack.set_visible_child_name(self.stack.ad)
-		print(self.ebeveyn.milis_ayarlari)
 		self.destroy()
+		self.stack.kurulum()
+
 
 	def red_basildi(self,widget):
 		self.ebeveyn.geri_basildi(None)
