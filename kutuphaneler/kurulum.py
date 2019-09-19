@@ -63,6 +63,7 @@ class StKurulum(Gtk.Grid):
 
 
 	def diskleri_coz(self):
+		print("Diskler Çözülüyor")
 		self.pb.set_fraction(0)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t49"])
 		command = subprocess.Popen(["df", "-h"], stdout=subprocess.PIPE)
@@ -76,8 +77,8 @@ class StKurulum(Gtk.Grid):
 		self.pb.set_fraction(100)
 
 	def disk_bagla(self):
+		print("Disk bağlanıyor")
 		self.pb.set_fraction(0)
-		print("GELDİ")
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t50"])
 		os.makedirs("/mnt/root", exist_ok=True)
 		self.pb.set_fraction(50)
@@ -85,6 +86,7 @@ class StKurulum(Gtk.Grid):
 		self.pb.set_fraction(100)
 
 	def chroot_olsutur(self):
+		print("Chroot")
 		self.pb.set_fraction(0)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t51"])
 		os.makedirs("/mnt/root/dev/shm", exist_ok=True)
@@ -117,6 +119,7 @@ class StKurulum(Gtk.Grid):
 		self.pb.set_fraction(100)
 
 	def dosya_hesapla(self,dizin="/"):
+		print("Hesapla")
 		self.pb.set_fraction(0)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t52"])
 		dosyaninici = os.listdir(dizin)
@@ -139,6 +142,7 @@ class StKurulum(Gtk.Grid):
 		self.pb.set_fraction(yuzde)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t53"]+" "+yol)
 		self.kopyalanan_sayisi += 1
+		print("Kopyalanıyor",yol)
 		return []
 
 	def dosya_kopyala(self,dizin,hedef):
@@ -157,6 +161,7 @@ class StKurulum(Gtk.Grid):
 					print(s,d,"Kopyalanamadı")
 
 	def fstab_olustur(self):
+		print("Fstab")
 		def fstab_parse():
 			device_list = []
 			blkid_output = subprocess.Popen("blkid", stdout=subprocess.PIPE)
@@ -192,15 +197,18 @@ class StKurulum(Gtk.Grid):
 
 
 	def chroot_komut(self, komut):
+		print("Chroot")
 		os.system("chroot {} /bin/sh -c \"{}\"".format("/mnt/root", komut))
 
 	def konum_ata(self):
+		print("Konum")
 		self.pb.set_fraction(0)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t55"])
 		self.chroot_komut("ln -s /usr/share/zoneinfo/{} /etc/localtime".format(self.ebeveyn.milis_ayarlari["konum"]))
 		self.pb.set_fraction(100)
 
 	def dil_ata(self):
+		print("Dil")
 		self.pb.set_fraction(0)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t55"])
 		if self.ebeveyn.milis_ayarlari["dil"] == "Türkçe":
@@ -231,6 +239,7 @@ class StKurulum(Gtk.Grid):
 
 
 	def host_ata(self):
+		print("Host")
 		self.pb.set_fraction(0)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t57"])
 		hosts_text = "# /etc/hosts\n"\
@@ -266,6 +275,7 @@ class StKurulum(Gtk.Grid):
 
 
 	def klavye_ata(self):
+		print("Klavye")
 		self.pb.set_fraction(0)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t58"])
 		if not self.keyboard_variant:
@@ -285,6 +295,7 @@ class StKurulum(Gtk.Grid):
 		self.pb.set_fraction(100)
 
 	def live_kullanici_sil(self):
+		print("Live")
 		self.pb.set_fraction(0)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t59"])
 		self.chroot_komut("userdel -r milis")
@@ -294,6 +305,7 @@ class StKurulum(Gtk.Grid):
 		self.pb.set_fraction(100)
 
 	def sudoers_ata(self):
+		print("Sudoers")
 		self.pb.set_fraction(0)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t60"])
 		sudoers = "# to use special input methods. This may allow users to compromise  the root\n"\
@@ -319,6 +331,7 @@ class StKurulum(Gtk.Grid):
 		self.pb.set_fraction(100)
 
 	def initciop_ata(self):
+		print("ınıtciop")
 		self.pb.set_fraction(0)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t61"])
 		self.chroot_komut("mkinitcpio -p linux")
@@ -326,6 +339,7 @@ class StKurulum(Gtk.Grid):
 
 
 	def kullanici_ekle(self):
+		print("Kullanici Ekle")
 		self.pb.set_fraction(0)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t62"])
 		groups_user = "-G audio,video,cdrom,wheel,lpadmin"
@@ -338,6 +352,7 @@ class StKurulum(Gtk.Grid):
 		self.pb.set_fraction(100)
 
 	def lightdm_oto_giris(self):
+		print("LightDm")
 		self.pb.set_fraction(0)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t63"])
 		conf_data = []
@@ -362,6 +377,7 @@ class StKurulum(Gtk.Grid):
 
 
 	def grub_ata(self):
+		print("Grub")
 		def boot_part(dev):
 			asd = subprocess.Popen("blkid", stdout=subprocess.PIPE)
 			qwe = asd.stdout.read().decode("utf-8")
@@ -391,6 +407,7 @@ class StKurulum(Gtk.Grid):
 		self.pb.set_fraction(100)
 
 	def diskleri_coz(self):
+		print("Diskler Çözülüyor")
 		self.pb.set_fraction(0)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t65"])
 		os.system("umount --force /mnt/root/dev/")
