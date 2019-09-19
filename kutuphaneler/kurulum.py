@@ -1,6 +1,6 @@
 from gi.repository import Gtk
 from kutuphaneler import diller
-import os, shutil
+import os, shutil, subprocess
 
 class StKurulum(Gtk.Grid):
 	def __init__(self,ebeveyn):
