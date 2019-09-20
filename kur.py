@@ -3,7 +3,7 @@ gi.require_version('Gtk', '3.0')
 from kutuphaneler import diller, klavyeler, hosgeldiniz, klavye, konum, kullanici, disk, bilgi, kurulum
 #gi.require_version('GtkSource', '3.0')
 
-from gi.repository import Gtk#GtkSource, GObject, Gio, Gdk
+from gi.repository import Gtk, GObject#Gdk#GtkSource, GObject, Gio, Gdk
 
 class OnayPencere(Gtk.Window):
 	def __init__(self,ebeveyn,stack):
@@ -34,8 +34,7 @@ class OnayPencere(Gtk.Window):
 	def onay_basildi(self,widget):
 		self.ebeveyn.hb.props.title = self.stack.baslik
 		self.ebeveyn.stack.set_visible_child_name(self.stack.ad)
-		self.destroy()
-		self.stack.kurulum()
+		self.stack.kurulum_baslat(self)
 
 
 	def red_basildi(self,widget):
@@ -139,6 +138,7 @@ class MerkezPencere(Gtk.Window):
 			self.stack.set_visible_child_name(stack.ad)
 
 if __name__ == '__main__':
+	GObject.threads_init()
 	pen = MerkezPencere()
 	pen.connect("destroy", Gtk.main_quit)
 	pen.show_all()
