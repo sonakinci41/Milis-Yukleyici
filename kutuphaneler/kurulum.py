@@ -136,7 +136,7 @@ class StKurulum(Gtk.Grid):
 				pass
 
 	def dosya_kopyala_progress(self,current,total,*user):
-		print(yol)
+		pass
 		"""
 		yuzde = (self.kopyalanan_sayisi / self.dosya_sayisi) * 100
 		if yuzde > 100:
@@ -159,7 +159,7 @@ class StKurulum(Gtk.Grid):
 			else:
 				try:
 					print(os.path.exists(d),s,d)
-					s_g.copy(d_g,Gio.FileCopyFlags.ALL_METADATA,None,self.dosya_kopyala_progress,None)
+					s_g.copy(d_g,Gio.FileCopyFlags.NONE,None,self.dosya_kopyala_progress,None)
 				except:
 					print("##################",s,d)
 
