@@ -152,15 +152,10 @@ class StKurulum(Gtk.Grid):
 			s_g = Gio.file_parse_name(s)
 			d_g = Gio.file_parse_name(d)
 			if os.path.isdir(s):
-				try:
-					self.dosya_kopyala(s,d)
-				except:
-					print(s,d,"Kopyalanamadı")
+				os.makedirs(hedef, exist_ok=True)
+				self.dosya_kopyala(s,d)
 			else:
-				try:
-					s_g.copy(d_g,Gio.FileCopyFlags.ALL_METADATA,None,self.dosya_kopyala_progress,None)
-				except:
-					print(s,d,"Kopyalanamadı")
+				s_g.copy(d_g,Gio.FileCopyFlags.ALL_METADATA,None,self.dosya_kopyala_progress,None)
 
 	def fstab_olustur(self):
 		print("Fstab")
