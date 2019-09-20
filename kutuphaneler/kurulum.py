@@ -22,20 +22,16 @@ class StKurulum(Gtk.Grid):
 		self.yuzde = 0
 
 	def kurulum_baslat(self,dialog):
+		self.ebeveyn.geri_dugme.set_sensitive(False)
+		self.ebeveyn.ileri_dugme.set_sensitive(False)
 		dialog.destroy()
 		th = threading.Thread(target=self.kurulum)
 		th.daemon = True
 		th.start()
 
 	def bilgi_guncelle(self,yuzde,yazi):
-		print(self.yuzde)
-		if yuzde == 0:
-			self.yuzde += 2.5
-			if self.yuzde < 100:
-				yuzde = self.yuzde
-			else:
-				yuzde = 100
-		self.pb.set_fraction(int(yuzde))
+		self.yuzde += 0.027
+		self.pb.set_fraction(int(self.yuzde))
 		self.bilgi_label.set_text(yazi)
 		self.resim.set_from_file("./resimler/resim_{}.jpg".format(str((self.resim_sayac%7)+1)))
 		self.resim_sayac += 1
@@ -74,7 +70,6 @@ class StKurulum(Gtk.Grid):
 		self.grub_ata()#Grup Ayarlanıyor
 		time.sleep(0.5)
 		self.diskleri_coz()#Diskler Çözülüyor
-		time.sleep(0.5)
 		#Kurulum Tamamlandı
 
 	def diskleri_coz(self):
@@ -334,7 +329,7 @@ class StKurulum(Gtk.Grid):
 		os.system("umount --force /mnt/root/sys/")
 		os.system("umount --force /mnt/root/proc/")
 		os.system("umount -lv /mnt/root")
-		GLib.idle_add(self.bilgi_guncelle,100,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t66"])
+		GLib.idle_add(self.bilgi_guncelle,1,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t66"])
 
 	def dil_ata(self,dil):
 		self.baslik = diller.diller[dil]["t48"]
