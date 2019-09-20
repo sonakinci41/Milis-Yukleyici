@@ -135,7 +135,9 @@ class StKurulum(Gtk.Grid):
 			except:
 				pass
 
-	def dosya_kopyala_progress(self,yol,isim):
+	def dosya_kopyala_progress(self,current,total,*user):
+		print(yol)
+		"""
 		yuzde = (self.kopyalanan_sayisi / self.dosya_sayisi) * 100
 		if yuzde > 100:
 			yuzde = 100
@@ -143,7 +145,7 @@ class StKurulum(Gtk.Grid):
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t53"]+" "+yol)
 		self.kopyalanan_sayisi += 1
 		print("Kopyalanıyor",yol)
-		return []
+		return []"""
 
 	def dosya_kopyala(self,dizin,hedef):
 		for i in os.listdir(dizin):
@@ -152,10 +154,14 @@ class StKurulum(Gtk.Grid):
 			s_g = Gio.file_parse_name(s)
 			d_g = Gio.file_parse_name(d)
 			if os.path.isdir(s):
-				os.makedirs(hedef, exist_ok=True)
+				os.makedirs(d, exist_ok=True)
 				self.dosya_kopyala(s,d)
 			else:
-				s_g.copy(d_g,Gio.FileCopyFlags.ALL_METADATA,None,self.dosya_kopyala_progress,None)
+				try:
+					print(os.path.exists(d),s,d)
+					s_g.copy(d_g,Gio.FileCopyFlags.ALL_METADATA,None,self.dosya_kopyala_progress,None)
+				except:
+					print("##################",s,d)
 
 	def fstab_olustur(self):
 		print("Fstab")
