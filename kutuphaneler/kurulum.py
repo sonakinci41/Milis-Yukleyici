@@ -31,7 +31,7 @@ class StKurulum(Gtk.Grid):
 
 	def bilgi_guncelle(self,yuzde,yazi):
 		self.yuzde += 0.027
-		self.pb.set_fraction(int(self.yuzde))
+		self.pb.set_fraction(self.yuzde)
 		self.bilgi_label.set_text(yazi)
 		self.resim.set_from_file("./resimler/resim_{}.jpg".format(str((self.resim_sayac%7)+1)))
 		self.resim_sayac += 1
