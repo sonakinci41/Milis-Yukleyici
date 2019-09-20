@@ -1,6 +1,6 @@
-from gi.repository import Gtk, Gio, Gdk, GLib
+from gi.repository import Gtk, Gio, GLib
 from kutuphaneler import diller
-import os, subprocess, threading
+import os, subprocess, threading, time
 
 class StKurulum(Gtk.Grid):
 	def __init__(self,ebeveyn):
@@ -19,6 +19,7 @@ class StKurulum(Gtk.Grid):
 		self.pb.set_fraction(100.0)
 		self.attach(self.pb,0,2,1,1)
 		self.resim_sayac = 7
+		self.yuzde = 0
 
 	def kurulum_baslat(self,dialog):
 		dialog.destroy()
@@ -26,8 +27,15 @@ class StKurulum(Gtk.Grid):
 		th.daemon = True
 		th.start()
 
-	def bilgi_guncelle(self,yuzde=0,yazi=""):
-		self.pb.set_fraction(yuzde)
+	def bilgi_guncelle(self,yuzde,yazi):
+		print(self.yuzde)
+		if yuzde == 0:
+			self.yuzde += 2.5
+			if self.yuzde < 100:
+				yuzde = self.yuzde
+			else:
+				yuzde = 100
+		self.pb.set_fraction(int(yuzde))
 		self.bilgi_label.set_text(yazi)
 		self.resim.set_from_file("./resimler/resim_{}.jpg".format(str((self.resim_sayac%7)+1)))
 		self.resim_sayac += 1
@@ -35,40 +43,39 @@ class StKurulum(Gtk.Grid):
 	def kurulum(self):
 		print("calisti")
 		self.diskleri_coz()#Diskler Çözülüyor
-		
+		time.sleep(0.5)
 		self.disk_bagla()#Diskler Bağlanıyor
-		self.resim.set_from_file("./resimler/resim_2.jpg")
+		time.sleep(0.5)
 		self.chroot_olsutur()#Chroot Oluşturuluyor
-		self.resim.set_from_file("./resimler/resim_3.jpg")
-		self.resim.set_from_file("./resimler/resim_4.jpg")
+		time.sleep(0.5)
 		self.dosya_kopyala("/","/mnt/root/")#Dosyalar Kopyalanıyor
-		self.resim.set_from_file("./resimler/resim_5.jpg")
+		time.sleep(0.5)
 		self.fstab_olustur()#Fstab Oluşturukuyor
-		self.resim.set_from_file("./resimler/resim_6.jpg")
+		time.sleep(0.5)
 		self.konum_ata()#Konum Ayarlanıyor
-		self.resim.set_from_file("./resimler/resim_7.jpg")
+		time.sleep(0.5)
 		#self.dil_ayar()#Dil Ayarlanıyor
-		self.resim.set_from_file("./resimler/resim_1.jpg")
+		time.sleep(0.5)
 		self.host_ata()#Hast Ayarları Yapılıyor
-		self.resim.set_from_file("./resimler/resim_2.jpg")
+		time.sleep(0.5)
 		self.klavye_ata()#Klavye Ayarlanıyor
-		self.resim.set_from_file("./resimler/resim_3.jpg")
+		time.sleep(0.5)
 		self.live_kullanici_sil()#Geçici Kullanıcı Siliniyor
-		self.resim.set_from_file("./resimler/resim_4.jpg")
+		time.sleep(0.5)
 		self.sudoers_ata()#Yetkili Kullanıcı Ayarlanıyor
-		self.resim.set_from_file("./resimler/resim_5.jpg")
+		time.sleep(0.5)
 		self.initciop_ata()#Inıtciop Oluşturuluyor
-		self.resim.set_from_file("./resimler/resim_6.jpg")
+		time.sleep(0.5)
 		self.kullanici_ekle()#Kullanıcı Ekleniyor
-		self.resim.set_from_file("./resimler/resim_7.jpg")
+		time.sleep(0.5)
 		if self.ebeveyn.milis_ayarlari["oto_giris"]:
 			self.lightdm_oto_giris()#Oto Matik Giriş Ayarlanıyor
+			time.sleep(0.5)
 		self.grub_ata()#Grup Ayarlanıyor
-		self.resim.set_from_file("./resimler/resim_1.jpg")
+		time.sleep(0.5)
 		self.diskleri_coz()#Diskler Çözülüyor
-		self.resim.set_from_file("./resimler/resim_2.jpg")
+		time.sleep(0.5)
 		#Kurulum Tamamlandı
-		Gdk.threads_leave()
 
 	def diskleri_coz(self):
 		print("Diskler Çözülüyor")
@@ -81,66 +88,35 @@ class StKurulum(Gtk.Grid):
 				if not mount_folder == "/bootmnt":
 					os.system("umount --force {}".format(mount_folder))
 		print("GELDİ")
-		GLib.idle_add(self.bilgi_guncelle,100,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t49"])
 
 	def disk_bagla(self):
 		print("Disk bağlanıyor")
 		GLib.idle_add(self.bilgi_guncelle,0,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t50"])
 		os.makedirs("/mnt/root", exist_ok=True)
-		GLib.idle_add(self.bilgi_guncelle,50,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t50"])
 		os.system("mount {} {}".format(self.ebeveyn.milis_ayarlari["sistem_disk"], "/mnt/root"))
-		GLib.idle_add(self.bilgi_guncelle,100,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t50"])
 
 	def chroot_olsutur(self):
 		GLib.idle_add(self.bilgi_guncelle,0,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t51"])
 		os.makedirs("/mnt/root/dev/shm", exist_ok=True)
-		GLib.idle_add(self.bilgi_guncelle,8,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t51"])
 		os.makedirs("/mnt/root/dev/pts", exist_ok=True)
-		GLib.idle_add(self.bilgi_guncelle,16,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t51"])
 		os.makedirs("/mnt/root/sys", exist_ok=True)
-		GLib.idle_add(self.bilgi_guncelle,24,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t51"])
 		os.makedirs("/mnt/root/proc", exist_ok=True)
-		GLib.idle_add(self.bilgi_guncelle,32,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t51"])
 		os.system("mount --bind /dev/ /mnt/root/dev/")
-		GLib.idle_add(self.bilgi_guncelle,40,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t51"])
 		os.system("mount --bind /dev/shm /mnt/root/dev/shm")
-		GLib.idle_add(self.bilgi_guncelle,48,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t51"])
 		os.system("mount --bind /dev/pts /mnt/root/dev/pts")
-		GLib.idle_add(self.bilgi_guncelle,56,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t51"])
 		os.system("mount --bind /sys/ /mnt/root/sys/")
-		GLib.idle_add(self.bilgi_guncelle,64,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t51"])
 		os.system("mount --bind /proc/ /mnt/root/proc/")
-		GLib.idle_add(self.bilgi_guncelle,72,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t51"])
 		os.system("chmod 555 /mnt/root/sys/")
-		GLib.idle_add(self.bilgi_guncelle,80,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t51"])
 		os.system("chmod 555 /mnt/root/proc/")
-		GLib.idle_add(self.bilgi_guncelle,88,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t51"])
 
 		if self.ebeveyn.milis_ayarlari["uefi_disk"] != "":
 			os.makedirs("/mnt/root/boot/efi", exist_ok=True)
 			os.system("mount -vt vfat {} /mnt/root/boot/efi".format(self.ebeveyn.milis_ayarlari["uefi_disk"]))
 			os.system("mount -vt efivarfs efivars /sys/firmware/efi/efivars")
-		GLib.idle_add(self.bilgi_guncelle,100,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t51"])
-
-	def dosya_hesapla(self,dizin="/"):
-		print("Hesapla")
-		GLib.idle_add(self.bilgi_guncelle,0,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t52"])
-		dosyaninici = os.listdir(dizin)
-		dosyaninici.sort()
-		for i in dosyaninici:
-			yol = os.path.join(dizin,i)
-			try:
-				if os.path.isdir(yol) and not os.path.islink(yol):
-					self.dosya_hesapla(yol)
-				else:
-					self.dosya_sayisi += 1
-					self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t52"]+" "+str(self.dosya_sayisi))
-			except:
-				pass
 
 	def dosya_kopyala(self,dizin,hedef):
 		for diz in os.listdir(dizin):
-			GLib.idle_add(self.bilgi_guncelle,0,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t53"]+diz)
+			GLib.idle_add(self.bilgi_guncelle,0,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t53"]+" "+diz)
 			os.system("rsync --delete -axHAWX --numeric-ids /"+os.path.join(dizin,diz)+" "+hedef+" --exclude /proc")
 
 	def fstab_olustur(self):
@@ -175,8 +151,6 @@ class StKurulum(Gtk.Grid):
 					print(device, "Bu ne?")
 			if self.ebeveyn.milis_ayarlari["uefi_disk"] != "":
 				fstab_file.write("efivarfs       /sys/firmware/efi/efivars  efivarfs  defaults  0      1\n")
-		GLib.idle_add(self.bilgi_guncelle,100,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t54"])
-
 
 	def chroot_komut(self, komut):
 		print("Chroot")
@@ -186,7 +160,6 @@ class StKurulum(Gtk.Grid):
 		print("Konum")
 		GLib.idle_add(self.bilgi_guncelle,0,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t55"])
 		self.chroot_komut("ln -s /usr/share/zoneinfo/{} /etc/localtime".format(self.ebeveyn.milis_ayarlari["konum"]))
-		GLib.idle_add(self.bilgi_guncelle,100,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t55"])
 
 	def dil_ayar(self):
 		print("Dil")
@@ -200,23 +173,17 @@ class StKurulum(Gtk.Grid):
 			locale.write("LC_COLLATE=C\n")
 			locale.flush()
 			locale.close()
-		GLib.idle_add(self.bilgi_guncelle,20,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t56"])
 
-		buffer = open("/mnt/root/etc/locale.gen").readlines()
-		with open("/mnt/root/etc/locale.gen", "w") as locale:
-			for i in buffer:
-				if i.startswith("#{}".format(self.locale.split(".")[0])):
-					locale.write(i[1:])
-					locale.flush()
-					locale.close()
-		GLib.idle_add(self.bilgi_guncelle,40,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t56"])
+		#buffer = open("/mnt/root/etc/locale.gen").readlines()
+		#with open("/mnt/root/etc/locale.gen", "w") as locale:
+		#	for i in buffer:
+		#		if i.startswith("#{}".format(self.locale.split(".")[0])):
+		#			locale.write(i[1:])
+		#			locale.flush()
+		#			locale.close()
 		self.chroot_komut("export LANG={}".format(self.locale))
-		GLib.idle_add(self.bilgi_guncelle,60,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t56"])
 		self.chroot_komut("export LANGUAGE={}".format(self.locale))
-		GLib.idle_add(self.bilgi_guncelle,80,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t56"])
-		self.chroot_komut("locale-gen {}".format(self.locale))
-		GLib.idle_add(self.bilgi_guncelle,100,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t56"])
-
+		#self.chroot_komut("locale-gen {}".format(self.locale))
 
 	def host_ata(self):
 		print("Host")
@@ -244,14 +211,11 @@ class StKurulum(Gtk.Grid):
 			hostname.write(self.ebeveyn.milis_ayarlari["bilgisayar_adi"])
 			hostname.flush()
 			hostname.close()
-		GLib.idle_add(self.bilgi_guncelle,50,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t57"])
 
 		with open("/mnt/root/etc/hosts", "w") as hosts:
 			hosts.write(hosts_text)
 			hosts.flush()
 			hosts.close()
-		GLib.idle_add(self.bilgi_guncelle,100,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t57"])
-
 
 	def klavye_ata(self):
 		print("Klavye")
@@ -268,16 +232,13 @@ class StKurulum(Gtk.Grid):
 			keyboard_conf.write(keyboard)
 			keyboard_conf.flush()
 			keyboard_conf.close()
-		GLib.idle_add(self.bilgi_guncelle,100,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t58"])
 
 	def live_kullanici_sil(self):
 		print("Live")
 		GLib.idle_add(self.bilgi_guncelle,0,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t59"])
 		self.chroot_komut("userdel -r milis")
-		GLib.idle_add(self.bilgi_guncelle,50,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t59"])
 		if os.path.exists("/mnt/root/home/milis"):
 			os.system("rm -rf /mnt/root/home/milis")
-		GLib.idle_add(self.bilgi_guncelle,100,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t59"])
 
 	def sudoers_ata(self):
 		print("Sudoers")
@@ -302,14 +263,11 @@ class StKurulum(Gtk.Grid):
 			sudoers_file.write(sudoers)
 			sudoers_file.flush()
 			sudoers_file.close()
-		GLib.idle_add(self.bilgi_guncelle,100,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t60"])
 
 	def initciop_ata(self):
 		print("ınıtciop")
 		GLib.idle_add(self.bilgi_guncelle,0,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t61"])
 		self.chroot_komut("mkinitcpio -p linux")
-		GLib.idle_add(self.bilgi_guncelle,100,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t61"])
-
 
 	def kullanici_ekle(self):
 		print("Kullanici Ekle")
@@ -317,27 +275,22 @@ class StKurulum(Gtk.Grid):
 		groups_user = "-G audio,video,cdrom,wheel,lpadmin"
 		self.chroot_komut("useradd -s {} -c '{}' {} -m {}".format("/bin/bash", self.ebeveyn.milis_ayarlari["giris_adi"],
 											groups_user, self.ebeveyn.milis_ayarlari["kullanici_adi"]))
-		GLib.idle_add(self.bilgi_guncelle,30,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t62"])
 		self.chroot_komut("yes {} | passwd {}".format(self.ebeveyn.milis_ayarlari["kullanici_sifre"], self.ebeveyn.milis_ayarlari["kullanici_adi"]))
-		GLib.idle_add(self.bilgi_guncelle,70,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t62"])
 		self.chroot_komut("yes {} | passwd root".format(self.ebeveyn.milis_ayarlari["yonetici_sifre"]))
-		GLib.idle_add(self.bilgi_guncelle,100,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t62"])
 
 	def lightdm_oto_giris(self):
 		print("LightDm")
 		GLib.idle_add(self.bilgi_guncelle,0,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t63"])
 		conf_data = []
-		with open("/mount/root/etc/lightdm/lightdm.conf") as conf:
+		with open("/mnt/root/etc/lightdm/lightdm.conf") as conf:
 			for text in conf.readlines():
 				if text.startswith("autologin-user="):
 					conf_data.append("autologin-user={}\n".format(self.ebeveyn.milis_ayarlari["kullanici_adi"]))
 				else:
 					conf_data.append(text)
 
-		GLib.idle_add(self.bilgi_guncelle,50,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t63"])
-		with open("/mount/root/etc/lightdm/lightdm.conf", "w") as conf:
+		with open("/mnt/root/etc/lightdm/lightdm.conf", "w") as conf:
 			conf.write("".join(conf_data))
-		GLib.idle_add(self.bilgi_guncelle,100,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t63"])
 
 	def disk_numara_sil(self,disk):
 		a = ""
@@ -365,32 +318,22 @@ class StKurulum(Gtk.Grid):
 		GLib.idle_add(self.bilgi_guncelle,0,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t64"])
 		if self.ebeveyn.milis_ayarlari["uefi_disk"] == "":
 			self.chroot_komut("grub-install --force {}".format(self.disk_numara_sil(self.ebeveyn.milis_ayarlari["sistem_disk"])))
-			GLib.idle_add(self.bilgi_guncelle,30,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t64"])
 		else:
 			self.chroot_komut("grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=\"{0}\" "\
 						"--recheck --debug --force".format("MilisLinux"))
-			GLib.idle_add(self.bilgi_guncelle,60,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t64"])
 			self.chroot_komut("efibootmgr --create --gpt --disk {1} --part {2} --write-signature "\
 						"--loader \"/EFI/{0}/grubx64.efi\"".format("MilisLinux", self.ebeveyn.milis_ayarlari["uefi_disk"], boot_part(self.ebeveyn.milis_ayarlari["uefi_disk"])))
-			GLib.idle_add(self.bilgi_guncelle,80,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t64"])
 		self.chroot_komut("grub-mkconfig -o /boot/grub/grub.cfg")
-		GLib.idle_add(self.bilgi_guncelle,100,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t64"])
 
 	def diskleri_coz(self):
 		print("Diskler Çözülüyor")
 		GLib.idle_add(self.bilgi_guncelle,0,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t65"])
 		os.system("umount --force /mnt/root/dev/")
-		GLib.idle_add(self.bilgi_guncelle,15,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t65"])
 		os.system("umount --force /mnt/root/dev/shm")
-		GLib.idle_add(self.bilgi_guncelle,30,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t65"])
 		os.system("umount --force /mnt/root/dev/pts")
-		GLib.idle_add(self.bilgi_guncelle,45,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t65"])
 		os.system("umount --force /mnt/root/sys/")
-		GLib.idle_add(self.bilgi_guncelle,60,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t65"])
 		os.system("umount --force /mnt/root/proc/")
-		GLib.idle_add(self.bilgi_guncelle,75,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t65"])
 		os.system("umount -lv /mnt/root")
-		GLib.idle_add(self.bilgi_guncelle,100,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t65"])
 		GLib.idle_add(self.bilgi_guncelle,100,diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t66"])
 
 	def dil_ata(self,dil):
