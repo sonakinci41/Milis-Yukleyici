@@ -371,16 +371,16 @@ class StKurulum(Gtk.Grid):
 		self.pb.set_fraction(0)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t64"])
 		if self.ebeveyn.milis_ayarlari["uefi_disk"] == "":
-			self.chroot_komut("grub2-install --force {}".format(self.disk_numara_sil(self.ebeveyn.milis_ayarlari["sistem_disk"])))
+			self.chroot_komut("grub-install --force {}".format(self.disk_numara_sil(self.ebeveyn.milis_ayarlari["sistem_disk"])))
 			self.pb.set_fraction(30)
 		else:
-			self.chroot_komut("grub2-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=\"{0}\" "\
+			self.chroot_komut("grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=\"{0}\" "\
 						"--recheck --debug --force".format("MilisLinux"))
 			self.pb.set_fraction(60)
 			self.chroot_komut("efibootmgr --create --gpt --disk {1} --part {2} --write-signature "\
 						"--loader \"/EFI/{0}/grubx64.efi\"".format("MilisLinux", self.ebeveyn.milis_ayarlari["uefi_disk"], boot_part(self.ebeveyn.milis_ayarlari["uefi_disk"])))
 			self.pb.set_fraction(80)
-		self.chroot_komut("grub2-mkconfig -o /boot/grub2/grub.cfg")
+		self.chroot_komut("grub-mkconfig -o /boot/grub/grub.cfg")
 		self.pb.set_fraction(100)
 
 	def diskleri_coz(self):
