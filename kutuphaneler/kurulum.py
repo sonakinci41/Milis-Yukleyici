@@ -1,4 +1,4 @@
-from gi.repository import Gtk
+from gi.repository import Gtk, Gio
 from kutuphaneler import diller
 import os, shutil, subprocess
 
@@ -149,14 +149,16 @@ class StKurulum(Gtk.Grid):
 		for i in os.listdir(dizin):
 			s = os.path.join(dizin,i)
 			d = os.path.join(hedef,i)
+			s_g = Gio.file_parse_name(s)
+			d_g = Gio.file_parse_name(d)
 			if os.path.isdir(s):
 				try:
-					shutil.copytree(s, d, symlinks=True, ignore=self.dosya_kopyala_progress)
+					self.dosya_kopyala(s,d)
 				except:
 					print(s,d,"Kopyalanamadı")
 			else:
 				try:
-					shutil.copy2(s,d)
+					s_g.copy(d_g,Gio.FileCopyFlags.ALL_METADATA,None,self.dosya_kopyala_progress,None)
 				except:
 					print(s,d,"Kopyalanamadı")
 
