@@ -38,7 +38,7 @@ class StKurulum(Gtk.Grid):
 		self.resim.set_from_file("./resimler/resim_6.jpg")
 		self.konum_ata()#Konum Ayarlanıyor
 		self.resim.set_from_file("./resimler/resim_7.jpg")
-		self.dil_ata()#Dil Ayarlanıyor
+		#self.dil_ayar()#Dil Ayarlanıyor
 		self.resim.set_from_file("./resimler/resim_1.jpg")
 		self.host_ata()#Hast Ayarları Yapılıyor
 		self.resim.set_from_file("./resimler/resim_2.jpg")
@@ -137,7 +137,7 @@ class StKurulum(Gtk.Grid):
 
 	def dosya_kopyala(self,dizin,hedef):
 		for diz in os.listdir(dizin):
-			os.system("rsync --delete -axHAWX --numeric-ids /"+diz+" "+hedef+" --exclude /proc")
+			os.system("rsync --delete -axHAWX --numeric-ids /"+os.path.join(dizin,diz)+" "+hedef+" --exclude /proc")
 
 	def fstab_olustur(self):
 		print("Fstab")
@@ -186,7 +186,7 @@ class StKurulum(Gtk.Grid):
 		self.chroot_komut("ln -s /usr/share/zoneinfo/{} /etc/localtime".format(self.ebeveyn.milis_ayarlari["konum"]))
 		self.pb.set_fraction(100)
 
-	def dil_ata(self):
+	def dil_ayar(self):
 		print("Dil")
 		self.pb.set_fraction(0)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t55"])
@@ -257,8 +257,6 @@ class StKurulum(Gtk.Grid):
 		print("Klavye")
 		self.pb.set_fraction(0)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t58"])
-		if not self.keyboard_variant:
-			self.keyboard_variant = ""
 		keyboard = "Section \"InputClass\"\n"\
 				"\t\tIdentifier \"system-keyboard\"\n"\
 				"\t\tMatchIsKeyboard \"on\"\n"\
@@ -267,7 +265,7 @@ class StKurulum(Gtk.Grid):
 				"\t\tOption \"XkbVariant\" \"{}\"\n"\
 				"EndSection\n".format(self.ebeveyn.milis_ayarlari["klavye_model"][0],
 							self.ebeveyn.milis_ayarlari["klavye_duzen"][0],self.ebeveyn.milis_ayarlari["klavye_varyant"][0])
-		with open(self.mount_path+"/root"+"/etc/X11/xorg.conf.d/10-keyboard.conf", "w") as keyboard_conf:
+		with open("/mnt/root/etc/X11/xorg.conf.d/10-keyboard.conf", "w") as keyboard_conf:
 			keyboard_conf.write(keyboard)
 			keyboard_conf.flush()
 			keyboard_conf.close()
@@ -303,7 +301,7 @@ class StKurulum(Gtk.Grid):
 				"#%wheel ALL=(ALL)       NOPASSWD: ALL\n"\
 				"{}    ALL=(ALL)       ALL".format(self.ebeveyn.milis_ayarlari["kullanici_adi"])
 
-		with open("mnt/root/etc/sudoers", "w") as sudoers_file:
+		with open("/mnt/root/etc/sudoers", "w") as sudoers_file:
 			sudoers_file.write(sudoers)
 			sudoers_file.flush()
 			sudoers_file.close()
@@ -373,7 +371,7 @@ class StKurulum(Gtk.Grid):
 		self.pb.set_fraction(0)
 		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t64"])
 		if self.ebeveyn.milis_ayarlari["uefi_disk"] == "":
-			self.chroot_komut("grub2-install --force {}".format(disk_numara_sil(self.ebeveyn.milis_ayarlari["sistem_disk"])))
+			self.chroot_komut("grub2-install --force {}".format(self.disk_numara_sil(self.ebeveyn.milis_ayarlari["sistem_disk"])))
 			self.pb.set_fraction(30)
 		else:
 			self.chroot_komut("grub2-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=\"{0}\" "\
