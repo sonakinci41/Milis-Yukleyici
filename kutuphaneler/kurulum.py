@@ -30,7 +30,7 @@ class StKurulum(Gtk.Grid):
 		self.resim.set_from_file("./resimler/resim_2.jpg")
 		self.chroot_olsutur()#Chroot Oluşturuluyor
 		self.resim.set_from_file("./resimler/resim_3.jpg")
-		self.dosya_hesapla()#Kopyalanacak Dosyalar Hesaplanıyor
+		#self.dosya_hesapla()#Kopyalanacak Dosyalar Hesaplanıyor
 		self.resim.set_from_file("./resimler/resim_4.jpg")
 		self.dosya_kopyala("/","/mnt/root/")#Dosyalar Kopyalanıyor
 		self.resim.set_from_file("./resimler/resim_5.jpg")
@@ -135,33 +135,9 @@ class StKurulum(Gtk.Grid):
 			except:
 				pass
 
-	def dosya_kopyala_progress(self,current,total,*user):
-		pass
-		"""
-		yuzde = (self.kopyalanan_sayisi / self.dosya_sayisi) * 100
-		if yuzde > 100:
-			yuzde = 100
-		self.pb.set_fraction(yuzde)
-		self.bilgi_label.set_text(diller.diller[self.ebeveyn.milis_ayarlari["dil"]]["t53"]+" "+yol)
-		self.kopyalanan_sayisi += 1
-		print("Kopyalanıyor",yol)
-		return []"""
-
 	def dosya_kopyala(self,dizin,hedef):
-		for i in os.listdir(dizin):
-			s = os.path.join(dizin,i)
-			d = os.path.join(hedef,i)
-			s_g = Gio.file_parse_name(s)
-			d_g = Gio.file_parse_name(d)
-			if os.path.isdir(s):
-				os.makedirs(d, exist_ok=True)
-				self.dosya_kopyala(s,d)
-			else:
-				try:
-					print(os.path.exists(d),s,d)
-					s_g.copy(d_g,Gio.FileCopyFlags.NONE,None,self.dosya_kopyala_progress,None)
-				except:
-					print("##################",s,d)
+		for diz in os.listdir(dizin):
+			os.system("rsync --delete -axHAWX --numeric-ids /"+diz+" "+hedef+" --exclude /proc")
 
 	def fstab_olustur(self):
 		print("Fstab")
