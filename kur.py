@@ -108,6 +108,7 @@ class MerkezPencere(Gtk.Window):
 		self.hb.props.title = self.stack_liste[self.stack_secili].baslik
 
 	def ileri_basildi(self,widget):
+		print(self.milis_ayarlari)
 		self.stack_secili += 1
 		self.geri_dugme.set_sensitive(True)
 		self.baslik_ekle(self.stack_liste[self.stack_secili])

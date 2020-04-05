@@ -161,7 +161,7 @@ class StKlavye(Gtk.Grid):
 	def unicodeToString(self, model, layout, variant=""):
 		try:
 			keycodes = {}
-			tus_yerlesimi_command = subprocess.Popen(["ckbcomp", "-model", model, "-layout", layout, "-variant", variant],
+			tus_yerlesimi_command = subprocess.Popen(["/home/trlinux/Downloads/console-setup/Keyboard/ckbcomp", "-model", model, "-layout", layout, "-variant", variant],
 													stdout=subprocess.PIPE)
 			ciktilar = tus_yerlesimi_command.stdout.read()
 			for cikti in ciktilar.decode("utf-8").split("\n"):
