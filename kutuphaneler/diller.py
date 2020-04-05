@@ -63,7 +63,13 @@ turkce ={"t1":"Milis Kurulum Aracı",
 "t63":"Lightdm Ayarları Yapılıyor",
 "t64":"Grub Ayarları Yapılıyor",
 "t65":"Diskler Çözülüyor",
-"t66":"Kurulum Tamamlandı"
+"t66":"Kurulum Tamamlandı",
+"t67":"Simge",
+"t68":"Ad",
+"t69":"Format",
+"t70":"Boyut",
+"t71":"Kullanım",
+"t72":"Bayraklar",
 }
 
 ingilizce = {"t1":"Milis Installation Tool",
@@ -131,7 +137,13 @@ ingilizce = {"t1":"Milis Installation Tool",
 "t63":"Setting Lightdm",
 "t64":"Setting Grub",
 "t65":"Umount Disks",
-"t66":"Installation Complete"
+"t66":"Installation Complete",
+"t67":"Icon",
+"t68":"Name",
+"t69":"Format",
+"t70":"Size",
+"t71":"Use",
+"t72":"Flags",
 }
 
 

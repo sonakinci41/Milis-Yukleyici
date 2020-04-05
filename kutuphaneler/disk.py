@@ -1,4 +1,4 @@
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GdkPixbuf
 from kutuphaneler import diller
 import parted, subprocess
 
@@ -11,13 +11,13 @@ class StDisk(Gtk.Grid):
 		self.set_column_spacing(10)
 		self.set_row_spacing(10)
 		self.diskler_liste = {}
-		self.disk_gecici = {"degisti":False}
+		self.ayarli_diskler = {}
 
-		self.bilgi_label = Gtk.Label()
-		self.bilgi_label.set_max_width_chars(70)
-		self.bilgi_label.set_line_wrap(True)
-		self.bilgi_label.set_use_markup(True)
-		self.attach(self.bilgi_label,0,0,4,1)
+		#self.bilgi_label = Gtk.Label()
+		#self.bilgi_label.set_max_width_chars(70)
+		#self.bilgi_label.set_line_wrap(True)
+		#self.bilgi_label.set_use_markup(True)
+		#self.attach(self.bilgi_label,0,0,4,1)
 
 		self.diskler_yazi = Gtk.Label()
 		self.attach(self.diskler_yazi,0,1,1,1)
@@ -31,6 +31,7 @@ class StDisk(Gtk.Grid):
 		self.disk_yenile.set_always_show_image(True)
 		self.disk_yenile.set_image(Gtk.Image(stock=Gtk.STOCK_REFRESH))
 		self.attach(self.disk_yenile,2,1,1,1)
+		self.set_baseline_row(2)
 
 		self.disk_duzenle = Gtk.Button()
 		self.disk_duzenle.connect("clicked", self.disk_duzenle_surec)
@@ -38,12 +39,42 @@ class StDisk(Gtk.Grid):
 		self.disk_duzenle.set_image(Gtk.Image(stock=Gtk.STOCK_EDIT))
 		self.attach(self.disk_duzenle,3,1,1,1)
 
-		self.disk_resim = Gtk.DrawingArea()
-		self.attach(self.disk_resim,0,2,4,1)
-		self.disk_resim.set_size_request(630, 100)
-		self.disk_resim.connect("draw", self.expose)
-		self.disk_resim.set_events(Gdk.EventMask.BUTTON_PRESS_MASK)
-		self.disk_resim.connect("button_press_event", self.resim_tiklandi)
+		self.disk_liste_store = Gtk.ListStore(GdkPixbuf.Pixbuf(),str,str,str,str,str)
+		self.disk_liste = Gtk.TreeView(model = self.disk_liste_store)
+		self.disk_liste.connect("row-activated",self.disk_liste_tiklandi)
+
+		sutun_icon = Gtk.CellRendererPixbuf()
+		sutun_icon.set_fixed_size(32,32)
+		self.sutun_icon = Gtk.TreeViewColumn("Simge",sutun_icon, gicon = 0)
+		self.disk_liste.append_column(self.sutun_icon)
+
+		sutun_text = Gtk.CellRendererText()
+		self.sutun_ad = Gtk.TreeViewColumn("Ad",sutun_text, text = 1)
+		self.disk_liste.append_column(self.sutun_ad)
+
+		sutun_text = Gtk.CellRendererText()
+		self.sutun_format = Gtk.TreeViewColumn("Format",sutun_text, text = 2)
+		self.disk_liste.append_column(self.sutun_format)
+
+		sutun_text = Gtk.CellRendererText()
+		self.sutun_boyut = Gtk.TreeViewColumn("Boyut",sutun_text, text = 3)
+		self.disk_liste.append_column(self.sutun_boyut)
+
+		sutun_text = Gtk.CellRendererText()
+		self.sutun_kullanim = Gtk.TreeViewColumn("Kullanım",sutun_text, text = 4)
+		self.disk_liste.append_column(self.sutun_kullanim)
+
+		sutun_text = Gtk.CellRendererText()
+		self.sutun_bayrak = Gtk.TreeViewColumn("Bayraklar",sutun_text, text = 5)
+		self.disk_liste.append_column(self.sutun_bayrak)
+
+		scroll = Gtk.ScrolledWindow()
+		scroll.set_min_content_width(630)
+		scroll.set_min_content_height(250)
+		scroll.set_policy(Gtk.PolicyType.AUTOMATIC,Gtk.PolicyType.AUTOMATIC)
+		scroll.add(self.disk_liste)
+
+		self.attach(scroll,0,2,4,1)
 
 		self.grub_kur_radio = Gtk.RadioButton.new_with_label_from_widget(None,"")
 		self.grub_kur_radio.connect("toggled", self.grub_kur_degisti, "kur")
@@ -54,102 +85,15 @@ class StDisk(Gtk.Grid):
 
 		self.disk_doldur(None)
 
-	def expose(self, widget, cr):
-		# 10 10 dan başlayacak aralık 610 a 80 hesapları ona göre yapılacak
-		cr.set_source_rgb(0.1,0.1,0.1)
-		cr.rectangle(0,0,630,100)
-		cr.fill()
-		x_kor = 10
-		if not self.disk_gecici["degisti"]:
-			self.disk_gorunumu = {}
-			for bolum in self.disk_gecici["secilen"]["bölüm"]:
-				x_genislik = int(610*(float(bolum["boyut"])/float(self.disk_gecici["secilen"]["tum_boyut"])))
-				yazi_konum = ((x_kor + x_kor + x_genislik) / 2 ) - 25
-				self.disk_gorunumu[bolum["yol"]] = {"x_genislik":x_genislik,"x_kor":x_kor,"boyut":bolum["boyut"],"yazi_konum":yazi_konum}
-				x_kor += x_genislik
-			self.disk_gecici["degisti"] = True
+	def disk_liste_tiklandi(self,widget,path,coloumn):
+		satir = self.disk_liste_store[path]
+		print(satir)
 
-		for bolum in self.disk_gorunumu.keys():
-			ozel = False
-			if bolum == self.ebeveyn.milis_ayarlari["sistem_disk"]:
-				cr.set_source_rgb(0.5, 1, 0.5)
-				cr.rectangle(self.disk_gorunumu[bolum]["x_kor"],10,self.disk_gorunumu[bolum]["x_genislik"],80)
-				cr.fill()
-				ozel = True
-			if bolum == self.ebeveyn.milis_ayarlari["takas_disk"]:
-				cr.set_source_rgb(1, 0.5, 0.5)
-				cr.rectangle(self.disk_gorunumu[bolum]["x_kor"],10,self.disk_gorunumu[bolum]["x_genislik"],80)
-				cr.fill()
-				ozel = True
-			if bolum == self.ebeveyn.milis_ayarlari["uefi_disk"]:
-				cr.set_source_rgb(0.5, 0.5, 1)
-				cr.rectangle(self.disk_gorunumu[bolum]["x_kor"],10,self.disk_gorunumu[bolum]["x_genislik"],80)
-				cr.fill()
-				ozel = True
-			cr.set_line_width(3)
-			if self.disk_gecici["tiklanan"] == bolum:
-				cr.set_source_rgb(0.9, 1, 0)
-			else:
-				cr.set_source_rgb(1,1,1)
-			cr.set_font_size(12)
-			cr.rectangle(self.disk_gorunumu[bolum]["x_kor"],10,self.disk_gorunumu[bolum]["x_genislik"],80)
-			cr.stroke()
-
-			if ozel:
-				cr.set_source_rgb(0.1,0.1,0.1)
-			else:
-				cr.set_source_rgb(1,1,1)
-			cr.move_to(self.disk_gorunumu[bolum]["yazi_konum"],45)
-			cr.show_text(bolum)
-			cr.move_to(self.disk_gorunumu[bolum]["yazi_konum"],65)
-			cr.show_text("   "+self.disk_gorunumu[bolum]["boyut"])
-			cr.stroke()
-
-	def menu_olustur(self,pos):
-		menu = Gtk.Menu()
-		if self.ebeveyn.milis_ayarlari["sistem_disk"] != self.disk_gecici["tiklanan"] and self.ebeveyn.milis_ayarlari["takas_disk"] != self.disk_gecici["tiklanan"] and self.ebeveyn.milis_ayarlari["uefi_disk"] != self.disk_gecici["tiklanan"]:
-			if self.ebeveyn.milis_ayarlari["sistem_disk"] == "":
-				sistem = Gtk.MenuItem(self.menu_text_sistem)
-				sistem.connect("activate", self.sistem_diski_secildi)
-				menu.append(sistem)
-			if self.ebeveyn.milis_ayarlari["takas_disk"] == "":
-				takas = Gtk.MenuItem(self.menu_text_takas)
-				takas.connect("activate", self.takas_diski_secildi)
-				menu.append(takas)
-			if self.ebeveyn.milis_ayarlari["uefi_disk"] == "":
-				uefi = Gtk.MenuItem('UEFI Bölümü')
-				uefi.connect("activate", self.uefi_diski_secildi)
-				menu.append(uefi)
-			if self.ebeveyn.milis_ayarlari["sistem_disk"] == "" or self.ebeveyn.milis_ayarlari["takas_disk"] == "" or self.ebeveyn.milis_ayarlari["uefi_disk"] == "":
-				menu.popup(None, None, None, None, 0, Gtk.get_current_event_time())
-				menu.show_all()
-
-	def sistem_diski_secildi(self,widget):
-		self.ebeveyn.milis_ayarlari["sistem_disk"] = self.disk_gecici["tiklanan"]
-		self.disk_resim.queue_draw()
-		self.ebeveyn.ileri_dugme.set_sensitive(True)
-
-	def takas_diski_secildi(self,widget):
-		self.ebeveyn.milis_ayarlari["takas_disk"] = self.disk_gecici["tiklanan"]
-		self.disk_resim.queue_draw()
-
-	def uefi_diski_secildi(self,widget):
-		self.ebeveyn.milis_ayarlari["uefi_disk"] = self.disk_gecici["tiklanan"]
-		self.disk_resim.queue_draw()
 
 	def disk_duzenle_surec(self,widget):
 		surec = subprocess.Popen(['gparted'])
 		surec.wait()
 		self.disk_doldur(None)
-
-	def resim_tiklandi(self,widget,pos):
-		for disk in self.disk_gorunumu.keys():
-			x_kor = self.disk_gorunumu[disk]["x_kor"]
-			x_genislik = self.disk_gorunumu[disk]["x_genislik"]
-			if x_kor <= pos.x <= x_kor+x_genislik:
-				self.disk_gecici["tiklanan"] = disk
-		self.disk_resim.queue_draw()
-		self.menu_olustur(pos)
 
 	def disk_doldur(self,widget):
 		self.diskler_combo.remove_all()
@@ -177,18 +121,21 @@ class StDisk(Gtk.Grid):
 		self.diskler_combo.set_active(0)
 
 	def disk_secildi(self,widget):
-		self.ebeveyn.milis_ayarlari["sistem_disk"] = ""
-		self.ebeveyn.milis_ayarlari["takas_disk"] = ""
-		self.ebeveyn.milis_ayarlari["uefi_disk"] = ""
-		self.disk_gecici["degisti"] = False
-		self.disk_gecici["tiklanan"] = ""
-		if self.ebeveyn.stack_secili == 4:
-			self.ebeveyn.ileri_dugme.set_sensitive(False)
-		if self.diskler_combo.get_active_text():
-			secilen = self.diskler_combo.get_active_text().split(" | ")[0]
-			disk = self.diskler_liste[secilen]
-			self.disk_gecici["secilen"] = disk
-			self.disk_resim.queue_draw()
+		disk = self.diskler_combo.get_active_text()
+		if disk != None:
+			disk = disk.split(" | ")[0]
+			self.disk_liste_store.clear()
+			sayac = 0
+			for bolum in self.diskler_liste[disk]["bölüm"]:
+				if sayac > 9:
+					icon_name = str(sayac)[-1]
+				else:
+					icon_name = str(sayac)
+				icon_name = "./resimler/"+icon_name + ".svg"
+				icon = GdkPixbuf.Pixbuf.new_from_file(icon_name)
+				self.disk_liste_store.append([icon,bolum["yol"],bolum["tip"],bolum["boyut"],"",bolum["bayraklar"]])
+				sayac += 1
+			
 
 	def bolumBilgi(self, bolum):
 		bilgi = {}
@@ -219,7 +166,7 @@ class StDisk(Gtk.Grid):
 
 	def dil_ata(self,dil):
 		self.baslik = diller.diller[dil]["t29"]
-		self.bilgi_label.set_markup(diller.diller[dil]["t30"])
+		#self.bilgi_label.set_markup(diller.diller[dil]["t30"])
 		self.diskler_yazi.set_text(diller.diller[dil]["t31"])
 		self.disk_yenile.set_label(diller.diller[dil]["t32"])
 		self.menu_text_sistem = diller.diller[dil]["t33"]
@@ -228,3 +175,9 @@ class StDisk(Gtk.Grid):
 		self.disk_duzenle.set_label(diller.diller[dil]["t36"])
 		self.grub_kur_radio.set_label(diller.diller[dil]["t37"])
 		self.grub_kurma_radio.set_label(diller.diller[dil]["t38"])
+		self.sutun_icon.set_title(diller.diller[dil]["t67"])
+		self.sutun_ad.set_title(diller.diller[dil]["t68"])
+		self.sutun_format.set_title(diller.diller[dil]["t69"])
+		self.sutun_boyut.set_title(diller.diller[dil]["t70"])
+		self.sutun_kullanim.set_title(diller.diller[dil]["t71"])
+		self.sutun_bayrak.set_title(diller.diller[dil]["t72"])

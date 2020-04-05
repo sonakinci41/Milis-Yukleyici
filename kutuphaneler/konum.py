@@ -69,6 +69,8 @@ class StKonum(Gtk.Grid):
 					self.duzenli_ulke[degistir[0]] = [degistir[1]+"/"+degistir[2]]
 				else:
 					self.duzenli_ulke[degistir[0]].append(degistir[1]+"/"+degistir[2])
+			else:
+				print(i)
 		self.bolge_combo_doldur()
 
 	def koordinat_pixel_tespiti(self, longitude, latitude, time_zone=""):
@@ -81,6 +83,7 @@ class StKonum(Gtk.Grid):
 	def bolge_combo_doldur(self):
 		sayac = 0
 		kontrol = True
+		self.bolge_combo.remove_all()
 		for sehir in list(self.duzenli_ulke.keys()):
 			self.bolge_combo.append_text(sehir)
 			if self.resim_secilen[0] == sehir:
@@ -103,6 +106,8 @@ class StKonum(Gtk.Grid):
 		self.sehir_combo.remove_all()
 		sayac = 0
 		var = False
+		if self.bolge_combo.get_active_text() == None:
+			return
 		for ulke in self.duzenli_ulke[self.bolge_combo.get_active_text()]:
 			self.sehir_combo.append_text(ulke)
 			if ulke == self.resim_secilen[1]:
