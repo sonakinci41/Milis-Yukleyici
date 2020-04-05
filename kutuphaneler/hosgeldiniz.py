@@ -72,13 +72,13 @@ class StHosgeldiniz(Gtk.Grid):
 		self.ebeveyn.stack_liste[1].duzenler_doldur()
 
 	def belge_tiklandi(self,widget):
-		webbrowser.open("https://www.milislinux.org/belgeler/")
+		webbrowser.open("https://mls.akdeniz.edu.tr/belgeler/")
 
 	def forum_tiklandi(self,widget):
 		webbrowser.open("https://forum.milislinux.org/")
 
 	def git_tiklandi(self,widget):
-		webbrowser.open("https://notabug.org/milislinux/milis")
+		webbrowser.open("https://mls.akdeniz.edu.tr/git/")
 
 	def iletisim_tiklandi(self,widget):
-		webbrowser.open("https://milislinux.zulipchat.com/")
+		webbrowser.open("https://mls.akdeniz.edu.tr/mm/")
