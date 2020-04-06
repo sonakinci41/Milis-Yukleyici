@@ -70,6 +70,11 @@ turkce ={"t1":"Milis Kurulum Aracı",
 "t70":"Boyut",
 "t71":"Kullanım",
 "t72":"Bayraklar",
+"t73":"Biçimlendirme",
+"t74":"Biçimlendir",
+"t75":"Bağlama Noktası",
+"t76":"İptal",
+"t77":"Uygulama",
 }
 
 ingilizce = {"t1":"Milis Installation Tool",
@@ -144,6 +149,11 @@ ingilizce = {"t1":"Milis Installation Tool",
 "t70":"Size",
 "t71":"Use",
 "t72":"Flags",
+"t73":"Not Format",
+"t74":"Format",
+"t75":"Mount Point",
+"t76":"Cancel",
+"t77":"Apply",
 }
 
 

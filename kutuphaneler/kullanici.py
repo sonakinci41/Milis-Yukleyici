@@ -11,13 +11,16 @@ class StKullanici(Gtk.Grid):
 		self.set_column_spacing(10)
 		self.kontroller = [False,False,False,False,False]
 
+		self.kirmizi = Gdk.RGBA(1.0, 0.15, 0.44, 1.0)
+		self.yesil = Gdk.RGBA(0.65, 0.88, 0.18, 1.0)
+
 		self.kul_yazi = Gtk.Label()
 		self.attach(self.kul_yazi,0,0,1,1)
 		self.kul_entry = Gtk.Entry()
 		self.kul_entry.connect("changed", self.kul_entry_degisti)
 		self.attach(self.kul_entry,1,0,1,1)
 		self.kul_bilgi = Gtk.Label()
-		self.kul_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(255, 0, 0, 1.0))
+		self.kul_bilgi.override_color(Gtk.StateFlags.NORMAL, self.kirmizi)
 		self.attach(self.kul_bilgi,2,0,1,1)
 
 		self.gir_yazi = Gtk.Label()
@@ -26,7 +29,7 @@ class StKullanici(Gtk.Grid):
 		self.gir_entry.connect("changed", self.gir_entry_degisti)
 		self.attach(self.gir_entry,1,1,1,1)
 		self.gir_bilgi = Gtk.Label()
-		self.gir_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(255, 0, 0, 1.0))
+		self.gir_bilgi.override_color(Gtk.StateFlags.NORMAL, self.kirmizi)
 		self.attach(self.gir_bilgi,2,1,1,1)
 
 		self.bil_yazi = Gtk.Label()
@@ -35,7 +38,7 @@ class StKullanici(Gtk.Grid):
 		self.bil_entry.connect("changed", self.bil_entry_degisti)
 		self.attach(self.bil_entry,1,2,1,1)
 		self.bil_bilgi = Gtk.Label()
-		self.bil_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(255, 0, 0, 1.0))
+		self.bil_bilgi.override_color(Gtk.StateFlags.NORMAL, self.kirmizi)
 		self.attach(self.bil_bilgi,2,2,1,1)
 
 		self.sifre_yazi = Gtk.Label()
@@ -52,7 +55,7 @@ class StKullanici(Gtk.Grid):
 		self.sifre_bilgi.set_max_width_chars(25)
 		self.sifre_bilgi.set_line_wrap(True)
 		self.sifre_bilgi.set_use_markup(True)
-		self.sifre_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(255, 0, 0, 1.0))
+		self.sifre_bilgi.override_color(Gtk.StateFlags.NORMAL, self.kirmizi)
 		self.attach(self.sifre_bilgi,2,3,1,2)
 
 		self.oto_giris_yazi = Gtk.CheckButton()
@@ -78,62 +81,62 @@ class StKullanici(Gtk.Grid):
 		self.yon_sifre_bilgi.set_max_width_chars(25)
 		self.yon_sifre_bilgi.set_line_wrap(True)
 		self.yon_sifre_bilgi.set_use_markup(True)
-		self.yon_sifre_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(255, 0, 0, 1.0))
+		self.yon_sifre_bilgi.override_color(Gtk.StateFlags.NORMAL, self.kirmizi)
 		self.attach(self.yon_sifre_bilgi,2,7,1,2)
 
 
 	def kul_entry_degisti(self, widget):
 		if self.kul_entry.get_text().isalnum() and len(self.kul_entry.get_text()) > 3:
-			self.kul_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(0, 255, 0, 1.0))
+			self.kul_bilgi.override_color(Gtk.StateFlags.NORMAL, self.yesil)
 			self.ebeveyn.milis_ayarlari["kullanici_adi"] = self.kul_entry.get_text()
 			self.kontroller[0] = True
 		else:
 			self.kontroller[0] = False
-			self.kul_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(255, 0, 0, 1.0))
+			self.kul_bilgi.override_color(Gtk.StateFlags.NORMAL, self.kirmizi)
 
 		self.gir_entry.set_text(self.kul_entry.get_text())
 		self.bil_entry.set_text(self.kul_entry.get_text()+"-makine")
 
 	def gir_entry_degisti(self,widget):
 		if self.gir_entry.get_text().replace("-","").isalnum() and len(self.gir_entry.get_text()) > 3:
-			self.gir_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(0, 255, 0, 1.0))
+			self.gir_bilgi.override_color(Gtk.StateFlags.NORMAL, self.yesil)
 			self.ebeveyn.milis_ayarlari["giris_adi"] = self.gir_entry.get_text()
 			self.kontroller[1] = True
 		else:
 			self.kontroller[1] = False
-			self.gir_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(255, 0, 0, 1.0))
+			self.gir_bilgi.override_color(Gtk.StateFlags.NORMAL, self.kirmizi)
 		self.kontrol()
 
 	def bil_entry_degisti(self,widget):
 		if self.bil_entry.get_text().replace("-","").isalnum() and len(self.bil_entry.get_text()) > 3:
-			self.bil_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(0, 255, 0, 1.0))
+			self.bil_bilgi.override_color(Gtk.StateFlags.NORMAL, self.yesil)
 			self.ebeveyn.milis_ayarlari["bilgisayar_adi"] = self.bil_entry.get_text()
 			self.kontroller[2] = True
 		else:
 			self.kontroller[2] = False
-			self.bil_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(255, 0, 0, 1.0))
+			self.bil_bilgi.override_color(Gtk.StateFlags.NORMAL, self.kirmizi)
 		self.kontrol()
 
 	def sifre_entry_degisti(self,widget):
 		if self.sifre_kontrol(self.sifre_1_entry.get_text(),self.sifre_2_entry.get_text()):
-			self.sifre_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(0, 255, 0, 1.0))
+			self.sifre_bilgi.override_color(Gtk.StateFlags.NORMAL, self.yesil)
 			self.ebeveyn.milis_ayarlari["kullanici_sifre"] = self.sifre_1_entry.get_text()
 			self.kontroller[3] = True
 			if self.yon_kul_ayni_yazi.get_active():
 				self.kontroller[4] = self.kontroller[3]
 				self.ebeveyn.milis_ayarlari["yonetici_sifre"] = self.sifre_1_entry.get_text()
 		else:
-			self.sifre_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(255, 0, 0, 1.0))
+			self.sifre_bilgi.override_color(Gtk.StateFlags.NORMAL, self.kirmizi)
 			self.kontroller[3] = False
 		self.kontrol()
 
 	def yon_sifre_entry_degisti(self,widget):
 		if self.sifre_kontrol(self.yon_sifre_1_entry.get_text(),self.yon_sifre_2_entry.get_text()):
-			self.yon_sifre_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(0, 255, 0, 1.0))
+			self.yon_sifre_bilgi.override_color(Gtk.StateFlags.NORMAL, self.yesil)
 			self.ebeveyn.milis_ayarlari["yonetici_sifre"] = self.yon_sifre_1_entry.get_text()
 			self.kontroller[4] = True
 		else:
-			self.yon_sifre_bilgi.override_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(255, 0, 0, 1.0))
+			self.yon_sifre_bilgi.override_color(Gtk.StateFlags.NORMAL, self.kirmizi)
 			self.kontroller[4] = False
 		self.kontrol()
 
