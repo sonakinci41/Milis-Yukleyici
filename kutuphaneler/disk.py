@@ -13,11 +13,11 @@ class StDisk(Gtk.Grid):
 		self.diskler_liste = {}
 		self.ayarli_diskler = {}
 
-		#self.bilgi_label = Gtk.Label()
-		#self.bilgi_label.set_max_width_chars(70)
-		#self.bilgi_label.set_line_wrap(True)
-		#self.bilgi_label.set_use_markup(True)
-		#self.attach(self.bilgi_label,0,0,4,1)
+		self.bilgi_label = Gtk.Label()
+		self.bilgi_label.set_max_width_chars(70)
+		self.bilgi_label.set_line_wrap(True)
+		self.bilgi_label.set_use_markup(True)
+		self.attach(self.bilgi_label,0,0,4,1)
 
 		self.diskler_yazi = Gtk.Label()
 		self.attach(self.diskler_yazi,0,1,1,1)
@@ -70,7 +70,7 @@ class StDisk(Gtk.Grid):
 
 		scroll = Gtk.ScrolledWindow()
 		scroll.set_min_content_width(630)
-		scroll.set_min_content_height(250)
+		scroll.set_min_content_height(140)
 		scroll.set_policy(Gtk.PolicyType.AUTOMATIC,Gtk.PolicyType.AUTOMATIC)
 		scroll.add(self.disk_liste)
 
@@ -87,8 +87,30 @@ class StDisk(Gtk.Grid):
 
 	def disk_liste_tiklandi(self,widget,path,coloumn):
 		satir = self.disk_liste_store[path]
-		dialog = DiskDialog(self,satir)
-		dialog.show_all()
+		print(satir[:5])
+		menu = Gtk.Menu()
+		##############################################################
+		if satir[2] == "linux-swap" or satir[2] =="swap":
+			menu_takas = Gtk.ImageMenuItem(diller.diller[self.dil]["t34"])
+			icon = Gtk.Image.new_from_file("./resimler/takas-32.svg")
+			menu_takas.set_image(icon)
+			menu.add(menu_takas)
+		###############################################################
+		elif satir[2] == "ext4":
+			menu_sistem = Gtk.ImageMenuItem(diller.diller[self.dil]["t33"])
+			icon = Gtk.Image.new_from_file("./resimler/milis-logo-32.svg")
+			menu_sistem.set_image(icon)
+			menu.add(menu_sistem)
+		###############################################################
+		elif satir[2] == "fat32":
+			menu_efi = Gtk.ImageMenuItem(diller.diller[self.dil]["t35"])
+			icon = Gtk.Image.new_from_file("./resimler/uefi-32.svg")
+			menu_efi.set_image(icon)
+			menu.add(menu_efi)
+		###############################################################
+		menu.attach_to_widget(widget)
+		menu.show_all()
+		menu.popup_at_pointer()
 
 	def disk_duzenle_surec(self,widget):
 		surec = subprocess.Popen(['gparted'])
@@ -167,12 +189,9 @@ class StDisk(Gtk.Grid):
 	def dil_ata(self,dil):
 		self.dil = dil
 		self.baslik = diller.diller[dil]["t29"]
-		#self.bilgi_label.set_markup(diller.diller[dil]["t30"])
+		self.bilgi_label.set_markup(diller.diller[dil]["t30"])
 		self.diskler_yazi.set_text(diller.diller[dil]["t31"])
 		self.disk_yenile.set_label(diller.diller[dil]["t32"])
-		self.menu_text_sistem = diller.diller[dil]["t33"]
-		self.menu_text_takas = diller.diller[dil]["t34"]
-		self.menu_text_uefi = diller.diller[dil]["t35"]
 		self.disk_duzenle.set_label(diller.diller[dil]["t36"])
 		self.grub_kur_radio.set_label(diller.diller[dil]["t37"])
 		self.grub_kurma_radio.set_label(diller.diller[dil]["t38"])
@@ -182,80 +201,3 @@ class StDisk(Gtk.Grid):
 		self.sutun_boyut.set_title(diller.diller[dil]["t70"])
 		self.sutun_kullanim.set_title(diller.diller[dil]["t71"])
 		self.sutun_bayrak.set_title(diller.diller[dil]["t72"])
-
-
-
-class DiskDialog(Gtk.Window):
-	def __init__(self,ebeveyn,disk_bilgi):
-		Gtk.Window.__init__(self)
-		self.ebeveyn = ebeveyn
-		self.set_transient_for(ebeveyn.ebeveyn)
-		self.set_destroy_with_parent(True)
-		print(disk_bilgi[1],disk_bilgi[2],disk_bilgi[3],disk_bilgi[4],disk_bilgi[5])
-		kutu = Gtk.Grid()
-		kutu.set_row_spacing(10)
-		kutu.set_column_spacing(10)
-		self.add(kutu)
-
-		self.ad_label = Gtk.Label()
-		kutu.attach(self.ad_label,0,0,1,1)
-		boyut = Gtk.Label(disk_bilgi[1])
-		kutu.attach(boyut,1,0,1,1)
-
-		self.boyut_label = Gtk.Label()
-		kutu.attach(self.boyut_label,0,1,1,1)
-		boyut = Gtk.Label(disk_bilgi[3]+" GB")
-		kutu.attach(boyut,1,1,1,1)
-
-		self.koru_radio = Gtk.RadioButton.new_with_label_from_widget(None,"")
-		self.koru_radio.connect("toggled", self.radio_degisti, "koru")
-		kutu.attach(self.koru_radio,0,2,2,1)
-		self.bicimle_radio = Gtk.RadioButton.new_with_label_from_widget(self.koru_radio,"")
-		self.bicimle_radio.connect("toggled", self.radio_degisti, "bicimle")
-		kutu.attach(self.bicimle_radio,0,3,2,1)
-
-		self.format_label = Gtk.Label()
-		kutu.attach(self.format_label,0,4,1,1)
-		self.format_combo = Gtk.ComboBoxText()
-		kutu.attach(self.format_combo,1,4,1,1)
-
-		disk_tipleri = ["ext4","ext3","ext2","f2fs","swap","vfat","xfs"]
-		sayac = 0
-		for form in disk_tipleri:
-			self.format_combo.append_text(form)
-			if form == disk_bilgi[2]:
-				self.format_combo.set_active(sayac)
-			elif disk_bilgi[2] == "fat32":
-				self.format_combo.set_active(5)
-			sayac+=1
-		self.format_combo.set_sensitive(False)
-
-		self.baglama_label = Gtk.Label()
-		kutu.attach(self.baglama_label,0,5,1,1)
-		self.baglama_entry = Gtk.Entry()
-		kutu.attach(self.baglama_entry,1,5,1,1)
-
-		self.iptal_dugme = Gtk.Button()
-		kutu.attach(self.iptal_dugme,0,6,1,1)
-		self.uygula_dugme = Gtk.Button()
-		kutu.attach(self.uygula_dugme,1,6,1,1)
-
-		self.dil_ata()
-		
-
-	def radio_degisti(self,widget,islem):
-		if islem == "koru":
-			self.format_combo.set_sensitive(False)
-		elif islem == "bicimle":
-			self.format_combo.set_sensitive(True)
-
-	def dil_ata(self):
-		dil = self.ebeveyn.dil
-		self.boyut_label.set_text(diller.diller[dil]["t70"])
-		self.ad_label.set_text(diller.diller[dil]["t68"])
-		self.koru_radio.set_label(diller.diller[dil]["t73"])
-		self.bicimle_radio.set_label(diller.diller[dil]["t74"])
-		self.format_label.set_text(diller.diller[dil]["t69"])
-		self.baglama_label.set_text(diller.diller[dil]["t75"])
-		self.iptal_dugme.set_label(diller.diller[dil]["t76"])
-		self.uygula_dugme.set_label(diller.diller[dil]["t77"])
