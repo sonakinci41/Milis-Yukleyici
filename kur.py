@@ -32,9 +32,35 @@ class OnayPencere(Gtk.Window):
 		grid.attach(self.red_dugme,2,2,2,1)
 
 	def onay_basildi(self,widget):
-		self.ebeveyn.hb.props.title = self.stack.baslik
-		self.ebeveyn.stack.set_visible_child_name(self.stack.ad)
-		self.stack.kurulum_baslat(self)
+		#self.ebeveyn.hb.props.title = self.stack.baslik
+		#self.ebeveyn.stack.set_visible_child_name(self.stack.ad)
+		#self.stack.kurulum_baslat(self)
+		yazilacak = ""
+		keymap = self.ebeveyn.milis_ayarlari['klavye_duzen'][0] + self.ebeveyn.milis_ayarlari['klavye_varyant'][0]
+		yazilacak += "KEYMAP {}\n".format(keymap)
+		yazilacak += "HOSTNAME {}\n".format(self.ebeveyn.milis_ayarlari['bilgisayar_adi'])
+		if self.ebeveyn.milis_ayarlari['dil'] == "Türkçe":
+			yazilacak += "LOCALE tr_TR.utf8\n"
+		elif self.ebeveyn.milis_ayarlari['dil'] == "English":
+			yazilacak += "LOCALE en_US.utf8\n"
+		zone = self.ebeveyn.milis_ayarlari['konum']
+		if zone == 'Europe/Istanbul':
+			zone = 'Turkey'
+		yazilacak += "TIMEZONE {}\n".format(zone)
+		yazilacak += "ROOTPASSWORD {}\n".format(self.ebeveyn.milis_ayarlari['yonetici_sifre'])
+		yazilacak += "USERLOGIN {}\n".format(self.ebeveyn.milis_ayarlari['giris_adi'])
+		yazilacak += "USERNAME {}\n".format(self.ebeveyn.milis_ayarlari['kullanici_adi'])
+		yazilacak += "USERPASSWORD {}\n".format(self.ebeveyn.milis_ayarlari['kullanici_sifre'])
+		yazilacak += "USERGROUPS tty,floppy,disk,lp,audio,video,cdrom,adm,wheel,users\n"
+		yazilacak += "BOOTLOADER {}\n".format(self.ebeveyn.milis_ayarlari['grub_kur'])
+		yazilacak += "TEXTCONSOLE 0\n"
+		if self.ebeveyn.milis_ayarlari["sistem_disk"] != "":
+			yazilacak += "MOUNTPOINT {}\n".format(self.ebeveyn.milis_ayarlari["sistem_disk"])
+		if self.ebeveyn.milis_ayarlari["takas_disk"] != "":
+			yazilacak += "MOUNTPOINT {}\n".format(self.ebeveyn.milis_ayarlari["takas_disk"])
+		if self.ebeveyn.milis_ayarlari["uefi_disk"] != "":
+			yazilacak += "MOUNTPOINT {}\n".format(self.ebeveyn.milis_ayarlari["uefi_disk"])
+		print(yazilacak)
 
 
 	def red_basildi(self,widget):
@@ -119,6 +145,7 @@ class MerkezPencere(Gtk.Window):
 		elif self.stack_secili == 4 and self.milis_ayarlari["sistem_disk"] == "":
 				self.ileri_dugme.set_sensitive(False)
 		elif self.stack_secili == 5:
+			print(self.milis_ayarlari)
 			self.stack_liste[self.stack_secili].dil_ata(self.milis_ayarlari["dil"])
 
 	def geri_basildi(self,widget):
