@@ -8,8 +8,8 @@ class StDisk(Gtk.Grid):
 		self.ebeveyn = ebeveyn
 		self.baslik = "Disk Ayarları"
 		self.ad = "Disk"
-		self.set_column_spacing(10)
-		self.set_row_spacing(10)
+		self.set_column_spacing(5)
+		self.set_row_spacing(5)
 		self.diskler_liste = {}
 		self.ayarli_diskler = {}
 

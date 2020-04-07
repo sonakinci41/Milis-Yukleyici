@@ -32,8 +32,8 @@ class OnayPencere(Gtk.Window):
 		grid.attach(self.red_dugme,2,2,2,1)
 
 	def onay_basildi(self,widget):
-		#self.ebeveyn.hb.props.title = self.stack.baslik
-		#self.ebeveyn.stack.set_visible_child_name(self.stack.ad)
+		self.ebeveyn.hb.props.title = self.stack.baslik
+		self.ebeveyn.stack.set_visible_child_name(self.stack.ad)
 		#self.stack.kurulum_baslat(self)
 		yazilacak = ""
 		keymap = self.ebeveyn.milis_ayarlari['klavye_duzen'][0] + self.ebeveyn.milis_ayarlari['klavye_varyant'][0]
@@ -61,7 +61,12 @@ class OnayPencere(Gtk.Window):
 		if self.ebeveyn.milis_ayarlari["uefi_disk"] != "":
 			yazilacak += "MOUNTPOINT {}\n".format(self.ebeveyn.milis_ayarlari["uefi_disk"])
 		print(yazilacak)
-
+		self.ebeveyn.ileri_dugme.set_sensitive(False)
+		self.ebeveyn.geri_dugme.set_sensitive(False)
+		self.stack.terminal.komutlar.append("screenfetch")
+		self.stack.terminal.komutlar.append("echo '\n\n\n\n\n KURULUM BAŞARIYLA TAMAMLANDI'")
+		self.stack.terminal.komut_calistir()
+		self.destroy()
 
 	def red_basildi(self,widget):
 		self.ebeveyn.geri_basildi(None)
@@ -145,7 +150,6 @@ class MerkezPencere(Gtk.Window):
 		elif self.stack_secili == 4 and self.milis_ayarlari["sistem_disk"] == "":
 				self.ileri_dugme.set_sensitive(False)
 		elif self.stack_secili == 5:
-			print(self.milis_ayarlari)
 			self.stack_liste[self.stack_secili].dil_ata(self.milis_ayarlari["dil"])
 
 	def geri_basildi(self,widget):
