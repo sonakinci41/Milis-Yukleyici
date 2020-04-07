@@ -87,23 +87,25 @@ class StDisk(Gtk.Grid):
 
 	def disk_liste_tiklandi(self,widget,path,coloumn):
 		satir = self.disk_liste_store[path]
-		print(satir[:5])
 		menu = Gtk.Menu()
 		##############################################################
 		if satir[2] == "linux-swap" or satir[2] =="swap":
 			menu_takas = Gtk.ImageMenuItem(diller.diller[self.dil]["t34"])
+			menu_takas.connect("activate",self.takas_diski_ata, satir)
 			icon = Gtk.Image.new_from_file("./resimler/takas-32.svg")
 			menu_takas.set_image(icon)
 			menu.add(menu_takas)
 		###############################################################
 		elif satir[2] == "ext4":
 			menu_sistem = Gtk.ImageMenuItem(diller.diller[self.dil]["t33"])
+			menu_sistem.connect("activate",self.sistem_diski_ata, satir)
 			icon = Gtk.Image.new_from_file("./resimler/milis-logo-32.svg")
 			menu_sistem.set_image(icon)
 			menu.add(menu_sistem)
 		###############################################################
 		elif satir[2] == "fat32":
 			menu_efi = Gtk.ImageMenuItem(diller.diller[self.dil]["t35"])
+			menu_efi.connect("activate",self.efi_diski_ata, satir)
 			icon = Gtk.Image.new_from_file("./resimler/uefi-32.svg")
 			menu_efi.set_image(icon)
 			menu.add(menu_efi)
@@ -112,12 +114,36 @@ class StDisk(Gtk.Grid):
 		menu.show_all()
 		menu.popup_at_pointer()
 
+	def takas_diski_ata(self,widget,disk):
+		disk = "{} {} {}G [SWAP] 0".format(disk[1],disk[2],disk[3])
+		print(disk)
+		self.ebeveyn.milis_ayarlari["takas_disk"] = disk
+		self.disk_secildi(None)
+
+	def sistem_diski_ata(self,widget,disk):
+		disk = "{} {} {}G / 1".format(disk[1],disk[2],disk[3])
+		print(disk)
+		self.ebeveyn.milis_ayarlari["sistem_disk"] = disk
+		self.ebeveyn.ileri_dugme.set_sensitive(True)
+		self.disk_secildi(None)
+
+	def efi_diski_ata(self,widget,disk):
+		disk = "{} {} {}G /boot/efi 0".format(disk[1],disk[2],disk[3])
+		print(disk)
+		self.ebeveyn.milis_ayarlari["uefi_disk"] = disk
+		self.disk_secildi(None)
+
 	def disk_duzenle_surec(self,widget):
 		surec = subprocess.Popen(['gparted'])
 		surec.wait()
 		self.disk_doldur(None)
 
 	def disk_doldur(self,widget):
+		self.ebeveyn.milis_ayarlari["takas_disk"] = ""
+		self.ebeveyn.milis_ayarlari["sistem_disk"] = ""
+		self.ebeveyn.milis_ayarlari["uefi_disk"] = ""
+		if self.ebeveyn.stack_secili == 4:
+			self.ebeveyn.ileri_dugme.set_sensitive(False)
 		self.diskler_combo.remove_all()
 		self.diskler = parted.getAllDevices()
 		for disk in self.diskler:
@@ -148,6 +174,8 @@ class StDisk(Gtk.Grid):
 			disk = disk.split(" | ")[0]
 			self.disk_liste_store.clear()
 			sayac = 0
+
+			s_diskler = self.secili_diskler_ayikla()
 			for bolum in self.diskler_liste[disk]["bölüm"]:
 				if sayac > 9:
 					icon_name = str(sayac)[-1]
@@ -155,9 +183,35 @@ class StDisk(Gtk.Grid):
 					icon_name = str(sayac)
 				icon_name = "./resimler/"+icon_name + ".svg"
 				icon = GdkPixbuf.Pixbuf.new_from_file(icon_name)
-				self.disk_liste_store.append([icon,bolum["yol"],bolum["tip"],bolum["boyut"],"",bolum["bayraklar"]])
+				if s_diskler[0] and s_diskler[0] == bolum["yol"]:
+					bagnok = "/"
+				elif s_diskler[1] and s_diskler[1] == bolum["yol"]:
+					bagnok = "[SWAP]"
+				elif s_diskler[2] and s_diskler[2] == bolum["yol"]:
+					bagnok = "/boot/efi"
+				else:
+					bagnok = ""
+				self.disk_liste_store.append([icon,bolum["yol"],bolum["tip"],bolum["boyut"],bagnok,bolum["bayraklar"]])
 				sayac += 1
-			
+
+	def secili_diskler_ayikla(self):
+		sistem_disk = self.ebeveyn.milis_ayarlari["sistem_disk"]
+		takas_disk = self.ebeveyn.milis_ayarlari["takas_disk"]
+		efi_disk = self.ebeveyn.milis_ayarlari["uefi_disk"]
+		if sistem_disk == "":
+			sistem_disk = False
+		else:
+			sistem_disk = sistem_disk.split()[0]
+		if takas_disk == "":
+			takas_disk = False
+		else:
+			takas_disk = takas_disk.split()[0]
+		if efi_disk == "":
+			efi_disk = False
+		else:
+			efi_disk = efi_disk.split()[0]
+		return (sistem_disk, takas_disk, efi_disk)
+
 
 	def bolumBilgi(self, bolum):
 		bilgi = {}
