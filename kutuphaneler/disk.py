@@ -22,22 +22,22 @@ class StDisk(Gtk.Grid):
 		self.diskler_yazi = Gtk.Label()
 		self.attach(self.diskler_yazi,0,1,1,1)
 
-		self.diskler_combo = Gtk.ComboBoxText()
-		self.diskler_combo.connect("changed", self.disk_secildi)
-		self.attach(self.diskler_combo,1,1,1,1)
-
 		self.disk_yenile = Gtk.Button()
 		self.disk_yenile.connect("clicked", self.disk_doldur)
 		self.disk_yenile.set_always_show_image(True)
 		self.disk_yenile.set_image(Gtk.Image(stock=Gtk.STOCK_REFRESH))
-		self.attach(self.disk_yenile,2,1,1,1)
+		self.attach(self.disk_yenile,1,1,1,1)
 		self.set_baseline_row(2)
 
 		self.disk_duzenle = Gtk.Button()
 		self.disk_duzenle.connect("clicked", self.disk_duzenle_surec)
 		self.disk_duzenle.set_always_show_image(True)
 		self.disk_duzenle.set_image(Gtk.Image(stock=Gtk.STOCK_EDIT))
-		self.attach(self.disk_duzenle,3,1,1,1)
+		self.attach(self.disk_duzenle,2,1,1,1)
+
+		self.diskler_combo = Gtk.ComboBoxText()
+		self.diskler_combo.connect("changed", self.disk_secildi)
+		self.attach(self.diskler_combo,3,1,1,1)
 
 		self.disk_liste_store = Gtk.ListStore(GdkPixbuf.Pixbuf(),str,str,str,str,str)
 		self.disk_liste = Gtk.TreeView(model = self.disk_liste_store)
@@ -78,7 +78,13 @@ class StDisk(Gtk.Grid):
 
 		self.grub_kur_radio = Gtk.RadioButton.new_with_label_from_widget(None,"")
 		self.grub_kur_radio.connect("toggled", self.grub_kur_degisti, "kur")
-		self.attach(self.grub_kur_radio,0,3,4,1)
+		self.attach(self.grub_kur_radio,0,3,3,1)
+
+		self.grub_combo = Gtk.ComboBoxText()
+		self.grub_combo.connect("changed", self.grub_combo_degisti)
+		self.attach(self.grub_combo,3,3,1,1)
+
+
 		self.grub_kurma_radio = Gtk.RadioButton.new_with_label_from_widget(self.grub_kur_radio,"")
 		self.grub_kurma_radio.connect("toggled", self.grub_kur_degisti, "kurma")
 		self.attach(self.grub_kurma_radio,0,4,4,1)
@@ -145,12 +151,14 @@ class StDisk(Gtk.Grid):
 		if self.ebeveyn.stack_secili == 4:
 			self.ebeveyn.ileri_dugme.set_sensitive(False)
 		self.diskler_combo.remove_all()
+		self.grub_combo.remove_all()
 		self.diskler = parted.getAllDevices()
 		for disk in self.diskler:
 			try:
 				if parted.Disk(disk).type == "msdos" or parted.Disk(disk).type == "gpt":
 					self.diskler_liste[disk.path] = {"parted":parted.Disk(disk),"tum_boyut":format(disk.getSize(unit="GB"), '.2f'),"bölüm":[]}
 					self.diskler_combo.append_text(disk.path+" | "+disk.model+" | "+format(disk.getSize(unit="GB"), '.2f')+"GB")
+					self.grub_combo.append_text(disk.path+" | "+disk.model+" | "+format(disk.getSize(unit="GB"), '.2f')+"GB")
 			except parted.DiskLabelException:
 				disk = parted.freshDisk(disk, "msdos")
 				# CDROM Aygıtları için
@@ -162,11 +170,13 @@ class StDisk(Gtk.Grid):
 					disk = disk.device
 					self.diskler_liste[disk.path] = {"parted":parted.Disk(disk),"tum_boyut":format(disk.getSize(unit="GB"), '.2f'),"bölüm":[]}
 					self.diskler_combo.append_text(disk.path+" | "+disk.model+" | "+format(disk.getSize(unit="GB"), '.2f')+"GB")
+					self.grub_combo.append_text(disk.path+" | "+disk.model+" | "+format(disk.getSize(unit="GB"), '.2f')+"GB")
 			for bolum in parted.Disk(disk).partitions:
 				gelen = self.bolumBilgi(bolum)
 				if gelen:
 					self.diskler_liste[disk.path]["bölüm"].append(gelen)
 		self.diskler_combo.set_active(0)
+		self.grub_combo.set_active(0)
 
 	def disk_secildi(self,widget):
 		disk = self.diskler_combo.get_active_text()
@@ -236,9 +246,20 @@ class StDisk(Gtk.Grid):
 
 	def grub_kur_degisti(self,widget, islem):
 		if self.grub_kur_radio.get_active():
-			self.ebeveyn.milis_ayarlari["grub_kur"] = True
+			disk = self.grub_combo.get_active_text()
+			disk = disk.split(" | ")
+			disk = disk[0]
+			self.ebeveyn.milis_ayarlari["grub_kur"] = disk
+			self.grub_combo.set_sensitive(True)
 		elif self.grub_kurma_radio.get_active():
-			self.ebeveyn.milis_ayarlari["grub_kur"] = False
+			self.ebeveyn.milis_ayarlari["grub_kur"] = ""
+			self.grub_combo.set_sensitive(False)
+
+	def grub_combo_degisti(self,widget):
+		disk = widget.get_active_text()
+		disk = disk.split(" | ")
+		disk = disk[0]
+		self.ebeveyn.milis_ayarlari["grub_kur"] = disk
 
 	def dil_ata(self,dil):
 		self.dil = dil
