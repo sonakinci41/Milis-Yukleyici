@@ -60,11 +60,12 @@ class OnayPencere(Gtk.Window):
 			yazilacak += "MOUNTPOINT {}\n".format(self.ebeveyn.milis_ayarlari["takas_disk"])
 		if self.ebeveyn.milis_ayarlari["uefi_disk"] != "":
 			yazilacak += "MOUNTPOINT {}\n".format(self.ebeveyn.milis_ayarlari["uefi_disk"])
-		print(yazilacak)
+		f = open("/tmp/milis_kur_ayar.txt","w")
+		f.write(yazilacak)
+		f.close()
 		self.ebeveyn.ileri_dugme.set_sensitive(False)
 		self.ebeveyn.geri_dugme.set_sensitive(False)
-		self.stack.terminal.komutlar.append("screenfetch")
-		self.stack.terminal.komutlar.append("echo '\n\n\n\n\n KURULUM BAŞARIYLA TAMAMLANDI'")
+		self.stack.terminal.komutlar.append("milis-kur2 /tmp/milis_kur_ayar.txt text")
 		self.stack.terminal.komut_calistir()
 		self.destroy()
 
