@@ -94,9 +94,14 @@ class Terminal(Vte.Terminal):
 		#Satırlara bölelim
 		bol = text.split("\n")
 		#Son satırı almaya çalışacağız
-		bol = bol[-2]
+		son = ""
+		bol = bol[::-1]
+		for satir in bol:
+			if satir != '':
+				son = satir
+				break
 		#Bu son satır root[ arada birşeyler ]# ise o zaman tamam bitmiş
-		if bol[:6] == "root [" and bol[-3:] == "]# " and len(self.komutlar) != 0:
+		if son[:6] == "root [" and son[-3:] == "]# " and len(self.komutlar) != 0:
 			#Bittiyse dosya yazımı tamamlanmıştı dosyayı okuyalım
 			okunan = self.takip_oku()
 			#Çalışan komut komutların 0. arkadaşı
@@ -107,7 +112,21 @@ class Terminal(Vte.Terminal):
 			if len(self.komutlar) != 0:
 				self.komut_calistir()
 			else:
-				print("KURULUM BİTTİ")
+				okunan = okunan.split("\n")
+				if okunan[-1] == "OK" or okunan[-2] == "OK":
+					print("KURULUM BAŞARILI")
+					self.ebeveyn.ebeveyn.ileri_basildi(None)
+				else:
+					baslik = diller.diller[self.ebeveyn.ebeveyn.milis_ayarlari["dil"]]["t77"]
+					soru = Gtk.MessageDialog(self.ebeveyn.ebeveyn,0,Gtk.MessageType.WARNING, Gtk.ButtonsType.OK,baslik)
+					soru.set_title(diller.diller[self.ebeveyn.ebeveyn.milis_ayarlari["dil"]]["t77"])
+					soru.format_secondary_text(diller.diller[self.ebeveyn.ebeveyn.milis_ayarlari["dil"]]["t78"])
+					cevap = soru.run()
+					if cevap == Gtk.ResponseType.OK:
+						soru.destroy()
+					self.ebeveyn.ebeveyn.stack_secili = 1
+					self.ebeveyn.ebeveyn.geri_basildi(None)
+					print("KURULUM BAŞARISIZ")
 
 
 	def takip_oku(self):

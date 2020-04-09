@@ -7,6 +7,8 @@ class StBilgi(Gtk.Grid):
 		self.ebeveyn = ebeveyn
 		self.baslik = "Kurulum Bilgisi"
 		self.ad = "Bilgi"
+		self.set_column_spacing(5)
+		self.set_row_spacing(5)
 
 		self.sistem_dili_label = Gtk.Label()
 		self.sistem_dili_label.set_hexpand(True)

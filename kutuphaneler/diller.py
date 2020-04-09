@@ -70,6 +70,13 @@ turkce ={"t1":"Milis Kurulum Aracı",
 "t70":"Boyut",
 "t71":"Kullanım",
 "t72":"Bayraklar",
+"t73":"Onaylıyor Musunuz?",
+"t74":"Milis Linux kurulumu başarıyla tamamlanmıştır. Dilerseniz Milis Linux'u denemeye devam edebilirsiniz. Yada bilgisayarınızı yeniden başlatıp yeni sisteminizi kullanmaya başlayabilirsiniz. Milis Linux yüklediğiniz için teşekkür ederiz",
+"t75":"Yeniden Başlat",
+"t76":"Denemeye Devam Et",
+"t77":"Hata",
+"t78":"Özür dileriz.Kurulum sırasında bir hata ile karşılaşıldı. Lütfen bizimle iletişime geçerek hatayı bildiriniz."
+
 }
 
 ingilizce = {"t1":"Milis Installation Tool",
@@ -144,6 +151,12 @@ ingilizce = {"t1":"Milis Installation Tool",
 "t70":"Size",
 "t71":"Use",
 "t72":"Flags",
+"t73": "Do You Confirm?",
+"t74": "Milis Linux installation has been successfully completed. You can continue trying Milis Linux. Or you can restart your computer and start using your new system. Thank you for installing Milis Linux",
+"t75":"Restart Computer",
+"t76":"Continue Trying",
+"t77":"Error",
+"t78": "Sorry. An error was encountered during setup. Please contact us and report the error.",
 }
 
 diller = {"Türkçe":turkce,"English":ingilizce}

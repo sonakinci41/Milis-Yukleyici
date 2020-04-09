@@ -1,82 +1,10 @@
 import gi
 gi.require_version('Gtk', '3.0')
-from kutuphaneler import diller, klavyeler, hosgeldiniz, klavye, konum, kullanici, disk, bilgi, kurulum
+from kutuphaneler import diller, klavyeler, hosgeldiniz, klavye, konum, kullanici, disk, bilgi, kurulum, bitti
 #gi.require_version('GtkSource', '3.0')
 
 from gi.repository import Gtk
 
-class OnayPencere(Gtk.Window):
-	def __init__(self,ebeveyn,stack):
-		Gtk.Window.__init__(self)
-		self.set_border_width(5)
-		self.ebeveyn = ebeveyn
-		self.stack = stack
-		self.set_resizable(False)
-		self.set_default_size(300, 100)
-		grid = Gtk.Grid()
-		self.add(grid)
-		self.onay_label = Gtk.Label()
-		dikkat_resim = Gtk.Image()
-		dikkat_resim.set_from_stock(Gtk.STOCK_DIALOG_WARNING,Gtk.IconSize.DIALOG)
-		grid.attach(dikkat_resim,0,0,1,2)
-		grid.attach(self.onay_label,1,0,3,2)
-		self.onay_dugme = Gtk.Button()
-		self.onay_dugme.connect("clicked",self.onay_basildi)
-		self.onay_dugme.set_always_show_image(True)
-		self.onay_dugme.set_image(Gtk.Image(stock=Gtk.STOCK_APPLY))
-		grid.attach(self.onay_dugme,0,2,2,1)
-		self.red_dugme = Gtk.Button()
-		self.red_dugme.connect("clicked",self.red_basildi)
-		self.red_dugme.set_always_show_image(True)
-		self.red_dugme.set_image(Gtk.Image(stock=Gtk.STOCK_CANCEL))
-		grid.attach(self.red_dugme,2,2,2,1)
-
-	def onay_basildi(self,widget):
-		self.ebeveyn.hb.props.title = self.stack.baslik
-		self.ebeveyn.stack.set_visible_child_name(self.stack.ad)
-		#self.stack.kurulum_baslat(self)
-		yazilacak = ""
-		keymap = self.ebeveyn.milis_ayarlari['klavye_duzen'][0] + self.ebeveyn.milis_ayarlari['klavye_varyant'][0]
-		yazilacak += "KEYMAP {}\n".format(keymap)
-		yazilacak += "HOSTNAME {}\n".format(self.ebeveyn.milis_ayarlari['bilgisayar_adi'])
-		if self.ebeveyn.milis_ayarlari['dil'] == "Türkçe":
-			yazilacak += "LOCALE tr_TR.utf8\n"
-		elif self.ebeveyn.milis_ayarlari['dil'] == "English":
-			yazilacak += "LOCALE en_US.utf8\n"
-		zone = self.ebeveyn.milis_ayarlari['konum']
-		if zone == 'Europe/Istanbul':
-			zone = 'Turkey'
-		yazilacak += "TIMEZONE {}\n".format(zone)
-		yazilacak += "ROOTPASSWORD {}\n".format(self.ebeveyn.milis_ayarlari['yonetici_sifre'])
-		yazilacak += "USERLOGIN {}\n".format(self.ebeveyn.milis_ayarlari['giris_adi'])
-		yazilacak += "USERNAME {}\n".format(self.ebeveyn.milis_ayarlari['kullanici_adi'])
-		yazilacak += "USERPASSWORD {}\n".format(self.ebeveyn.milis_ayarlari['kullanici_sifre'])
-		yazilacak += "USERGROUPS tty,floppy,disk,lp,audio,video,cdrom,adm,wheel,users\n"
-		yazilacak += "BOOTLOADER {}\n".format(self.ebeveyn.milis_ayarlari['grub_kur'])
-		yazilacak += "TEXTCONSOLE 0\n"
-		if self.ebeveyn.milis_ayarlari["sistem_disk"] != "":
-			yazilacak += "MOUNTPOINT {}\n".format(self.ebeveyn.milis_ayarlari["sistem_disk"])
-		if self.ebeveyn.milis_ayarlari["takas_disk"] != "":
-			yazilacak += "MOUNTPOINT {}\n".format(self.ebeveyn.milis_ayarlari["takas_disk"])
-		if self.ebeveyn.milis_ayarlari["uefi_disk"] != "":
-			yazilacak += "MOUNTPOINT {}\n".format(self.ebeveyn.milis_ayarlari["uefi_disk"])
-		f = open("/tmp/milis_kur_ayar.txt","w")
-		f.write(yazilacak)
-		f.close()
-		self.ebeveyn.ileri_dugme.set_sensitive(False)
-		self.ebeveyn.geri_dugme.set_sensitive(False)
-		self.stack.terminal.komutlar.append("milis-kur2 /tmp/milis_kur_ayar.txt text")
-		self.stack.terminal.komut_calistir()
-		self.destroy()
-
-	def red_basildi(self,widget):
-		self.ebeveyn.geri_basildi(None)
-		self.destroy()
-
-	def dil_ata(self,dil):
-		self.onay_label.set_text(diller.diller[dil]["t45"])
-		self.onay_dugme.set_label(diller.diller[dil]["t46"])
-		self.red_dugme.set_label(diller.diller[dil]["t47"])
 
 class MerkezPencere(Gtk.Window):
 	def __init__(self):
@@ -118,7 +46,7 @@ class MerkezPencere(Gtk.Window):
 		self.hb.pack_end(self.ileri_dugme)
 
 		self.stack_secili = 0
-		self.stack_liste = [hosgeldiniz.StHosgeldiniz(self),klavye.StKlavye(self),konum.StKonum(self),kullanici.StKullanici(self),disk.StDisk(self),bilgi.StBilgi(self),kurulum.StKurulum(self)]
+		self.stack_liste = [hosgeldiniz.StHosgeldiniz(self),klavye.StKlavye(self),konum.StKonum(self),kullanici.StKullanici(self),disk.StDisk(self),bilgi.StBilgi(self),kurulum.StKurulum(self),bitti.StBitti(self)]
 		self.stack = Gtk.Stack()
 		self.add(self.stack)
 		self.stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
@@ -152,6 +80,10 @@ class MerkezPencere(Gtk.Window):
 				self.ileri_dugme.set_sensitive(False)
 		elif self.stack_secili == 5:
 			self.stack_liste[self.stack_secili].dil_ata(self.milis_ayarlari["dil"])
+		elif self.stack_secili == 7:
+			self.ileri_dugme.set_sensitive(False)
+			self.geri_dugme.set_sensitive(False)
+
 
 	def geri_basildi(self,widget):
 		self.stack_secili -= 1
@@ -162,9 +94,51 @@ class MerkezPencere(Gtk.Window):
 
 	def baslik_ekle(self,stack):
 		if self.stack_secili == 6:
-			onay = OnayPencere(self,stack)
-			onay.dil_ata(self.milis_ayarlari["dil"])
-			onay.show_all()
+			baslik = diller.diller[self.milis_ayarlari["dil"]]["t73"]
+			soru = Gtk.MessageDialog(self,0,Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK_CANCEL,baslik)
+			soru.set_title(diller.diller[self.milis_ayarlari["dil"]]["t73"])
+			soru.format_secondary_text(diller.diller[self.milis_ayarlari["dil"]]["t45"])
+			cevap = soru.run()
+			if cevap == Gtk.ResponseType.OK:
+				soru.destroy()
+				self.hb.props.title = stack.baslik
+				self.stack.set_visible_child_name(stack.ad)
+				#self.stack.kurulum_baslat(self)
+				yazilacak = ""
+				keymap = self.milis_ayarlari['klavye_duzen'][0] + self.milis_ayarlari['klavye_varyant'][0]
+				yazilacak += "KEYMAP {}\n".format(keymap)
+				yazilacak += "HOSTNAME {}\n".format(self.milis_ayarlari['bilgisayar_adi'])
+				if self.milis_ayarlari['dil'] == "Türkçe":
+					yazilacak += "LOCALE tr_TR.utf8\n"
+				elif self.milis_ayarlari['dil'] == "English":
+					yazilacak += "LOCALE en_US.utf8\n"
+				zone = self.milis_ayarlari['konum']
+				if zone == 'Europe/Istanbul':
+					zone = 'Turkey'
+				yazilacak += "TIMEZONE {}\n".format(zone)
+				yazilacak += "ROOTPASSWORD {}\n".format(self.milis_ayarlari['yonetici_sifre'])
+				yazilacak += "USERLOGIN {}\n".format(self.milis_ayarlari['giris_adi'])
+				yazilacak += "USERNAME {}\n".format(self.milis_ayarlari['kullanici_adi'])
+				yazilacak += "USERPASSWORD {}\n".format(self.milis_ayarlari['kullanici_sifre'])
+				yazilacak += "USERGROUPS tty,floppy,disk,lp,audio,video,cdrom,adm,wheel,users,pulse-access\n"
+				yazilacak += "BOOTLOADER {}\n".format(self.milis_ayarlari['grub_kur'])
+				yazilacak += "TEXTCONSOLE 0\n"
+				if self.milis_ayarlari["sistem_disk"] != "":
+					yazilacak += "MOUNTPOINT {}\n".format(self.milis_ayarlari["sistem_disk"])
+				if self.milis_ayarlari["takas_disk"] != "":
+					yazilacak += "MOUNTPOINT {}\n".format(self.milis_ayarlari["takas_disk"])
+				if self.milis_ayarlari["uefi_disk"] != "":
+					yazilacak += "MOUNTPOINT {}\n".format(self.milis_ayarlari["uefi_disk"])
+				f = open("/tmp/milis_kur_ayar.txt","w")
+				f.write(yazilacak)
+				f.close()
+				self.ileri_dugme.set_sensitive(False)
+				self.geri_dugme.set_sensitive(False)
+				stack.terminal.komutlar.append("milis-kur2 /tmp/milis_kur_ayar.txt text")
+				stack.terminal.komut_calistir()
+			else:
+				self.stack_secili = 5
+				soru.destroy()
 		else:
 			self.hb.props.title = stack.baslik
 			self.stack.set_visible_child_name(stack.ad)

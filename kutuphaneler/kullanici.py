@@ -58,9 +58,9 @@ class StKullanici(Gtk.Grid):
 		self.sifre_bilgi.override_color(Gtk.StateFlags.NORMAL, self.kirmizi)
 		self.attach(self.sifre_bilgi,2,3,1,2)
 
-		self.oto_giris_yazi = Gtk.CheckButton()
-		self.attach(self.oto_giris_yazi,0,5,2,1)
-		self.oto_giris_yazi.connect("clicked", self.oto_giris_degisti)
+		#self.oto_giris_yazi = Gtk.CheckButton()
+		#self.attach(self.oto_giris_yazi,0,5,2,1)
+		#self.oto_giris_yazi.connect("clicked", self.oto_giris_degisti)
 
 		self.yon_kul_ayni_yazi = Gtk.CheckButton()
 		self.yon_kul_ayni_yazi.set_active(True)
@@ -192,7 +192,7 @@ class StKullanici(Gtk.Grid):
 		self.bil_bilgi.set_text(diller.diller[dil]["t23"])
 		self.sifre_yazi.set_text(diller.diller[dil]["t24"])
 		self.sifre_bilgi.set_text(diller.diller[dil]["t25"])
-		self.oto_giris_yazi.set_label(diller.diller[dil]["t26"])
+		#self.oto_giris_yazi.set_label(diller.diller[dil]["t26"])
 		self.yon_kul_ayni_yazi.set_label(diller.diller[dil]["t27"])
 		self.yon_sifre_yazi.set_text(diller.diller[dil]["t28"])
 		self.yon_sifre_bilgi.set_text(diller.diller[dil]["t25"])
