@@ -3,7 +3,7 @@ gi.require_version('Gtk', '3.0')
 from kutuphaneler import diller, klavyeler, hosgeldiniz, klavye, konum, kullanici, disk, bilgi, kurulum, bitti
 #gi.require_version('GtkSource', '3.0')
 
-from gi.repository import Gtk
+from gi.repository import Gtk, GdkPixbuf
 
 
 class MerkezPencere(Gtk.Window):
@@ -27,6 +27,10 @@ class MerkezPencere(Gtk.Window):
 					"takas_disk":"",
 					"uefi_disk":"",
 					"grub_kur":True}
+
+		icon = GdkPixbuf.Pixbuf.new_from_file("./resimler/icon.svg")
+		self.set_icon(icon)
+
 
 		self.hb = Gtk.HeaderBar()
 		self.hb.set_show_close_button(True)
